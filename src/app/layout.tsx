@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
           {/* <Sidebar> */}
           <div className=' md:hidden float-right  m-2' onClick={()=>setIsMenu(!isMenu)}>{isMenu?<IoMdClose/>:<FaBars />}</div>
-        {isMenu&&<div ref={menuRef}><Navbar /></div>}
+        {isMenu&&<div ref={menuRef} className=' md:hidden'><Navbar /></div>}
         <div className=' max-md:hidden'><Navbar/></div>
         <div>{children}</div>
        {/*  </Sidebar> */}
