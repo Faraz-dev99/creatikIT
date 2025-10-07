@@ -37,8 +37,9 @@ export default function Navbar() {
 
   return (
     <div className="flex  justify-between items-center bg-gray-950 text-gray-300">
-      <div className="" />
-      <nav className="px-2">
+      <div className=" border w-40 md:hidden p-2">logo</div>
+      <div className=" max-md:hidden"/>
+      <nav className="px-2 " style={{zIndex:1000}}>
         <ul className="flex">
           {/* Notifications */}
           <li ref={notificationsRef} className="grid place-items-center relative">
@@ -53,7 +54,7 @@ export default function Navbar() {
             </div>
 
             {openMenu === "notifications" && (
-              <div className=" absolute top-full md:right-0 max-md:right-[-120px]">
+              <div className=" absolute top-full md:right-0 max-md:right-[-125px]">
                 <PopUps>
                   <div className="flex flex-col w-[300px] max-md:w-[270px] min-h-[400px]">
                     <div className="flex justify-between items-center py-4 px-4 w-full text-lg bg-gray-300">
@@ -69,7 +70,7 @@ export default function Navbar() {
           </li>
 
           {/* Quick Add */}
-          <li ref={quickAddRef} className="flex items-center relative gap-2">
+          <li ref={quickAddRef} className="flex items-center relative gap-1">
             <div
               className="flex items-center gap-2 w-full h-full text-gray-200 cursor-pointer p-4 max-md:p-2 hover:bg-gray-800"
               onClick={() => setOpenMenu(openMenu === "quickAdd" ? null : "quickAdd")}
@@ -80,7 +81,7 @@ export default function Navbar() {
               {openMenu === "quickAdd" ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
             </div>
             {openMenu === "quickAdd" && (
-              <div className=" absolute top-full right-0">
+              <div className=" absolute top-full right-0 max-md:right-[-70px]">
                 <PopUps>
                   <div className="flex flex-col">
                     {[
@@ -119,7 +120,7 @@ export default function Navbar() {
               {openMenu === "adminMail" ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
             </div>
             {openMenu === "adminMail" && (
-              <div className=" absolute top-full right-0">
+              <div className=" absolute top-full right-0 max-md:right-[-40px]">
                 <PopUps>
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3">
