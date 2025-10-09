@@ -157,11 +157,11 @@ export default function Dashboard() {
             <section className=" mt-6 bg-white p-5">
                 <h2 className=" font-bold text-xl mb-10">OWNER FOLLOWUP</h2>
 
-                <div className=" flex flex-wrap flex-2  max-lg:flex-col gap-12 px-5">
+                <div className=" grid grid-cols-4 max-lg:grid-cols-1 gap-12 px-5">
 
                     {
                         ownerFollowUpData.map((item, index) => {
-                            return <div key={index} className=" flex flex-col items-center gap-1">
+                            return <div key={index} className=" flex flex-col gap-1">
 
 
                                 <div>
@@ -184,11 +184,11 @@ export default function Dashboard() {
             <section className=" mt-6 bg-white p-5">
                 <h2 className=" font-bold text-xl mb-10">TENANT FOLLOWUP</h2>
 
-                <div className=" flex flex-wrap justify-around flex-2  max-lg:flex-col gap-12 px-5">
+                <div className=" grid grid-cols-4 max-lg:grid-cols-1 gap-12 px-5">
 
                     {
                         TenantFollowUpData.map((item, index) => {
-                            return <div key={index} className=" flex flex-col items-center gap-1">
+                            return <div key={index} className=" flex flex-col gap-1">
 
 
                                 <div>

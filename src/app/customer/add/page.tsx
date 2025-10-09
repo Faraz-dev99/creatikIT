@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
-export default function customerEdit() {
+export default function customerAdd() {
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
     const [currentTablePage, setCurrentTablePage] = useState(1);
     const rowsPerTablePage = 4;
@@ -159,7 +159,7 @@ export default function customerEdit() {
                 <h2 className=" flex gap-2 items-center font-light">
                     <span className=" text-teal-600 ">Dashboard</span>/
                     <span className=" text-teal-600 ">OWNER Provider</span>/
-                    <span>Edit</span>
+                    <span>Add</span>
                 </h2>
 
                 <button className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Back</button>
@@ -168,17 +168,14 @@ export default function customerEdit() {
             <section className=" flex flex-col m-3  mt-6  p-3 max-md:p-2 mb bg-white rounded-lg shadow-sm">
 
                 <h2 className=" text-xl p-3 font-bold mb-6">
-                    <span className=" text-teal-500">Edit Owner Information</span>
+                    <span className=" text-teal-500">Add Owner Information</span>
                 </h2>
 
                 <div className=" p-3">
-                    <h1 className=" text-2xl mb-2">Personal Information</h1>
-                    <div className=" max-w-[200px]">
-                        {<SingleSelect options={owners} label="Owner" onChange={handleSelectChange} />}
-                    </div>
-                    <hr className=" mt-10 mb-10 border-t border-t-gray-400" />
+                    
                     <div className="grid grid-cols-2 gap-3 max-lg:grid-cols-1">
                         <div className="flex flex-col gap-3">
+                            <SingleSelect options={owners} label="Compaign" onChange={handleSelectChange} />
                             <label className="relative block w-full">
                                 <input
                                     type="text"
@@ -211,7 +208,7 @@ export default function customerEdit() {
 
                             <label className="relative block w-full">
                                 <input
-                                    type="email"
+                                    type="text"
                                     placeholder=" "
                                     className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500"
                                 />
@@ -219,7 +216,7 @@ export default function customerEdit() {
         peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
         peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
         peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
-                                    Email
+                                    Address
                                 </p>
                             </label>
 
@@ -270,9 +267,20 @@ export default function customerEdit() {
                         </div>
 
                         <div className="flex flex-col gap-3">
-                            <SingleSelect options={owners} label="Customer Type" onChange={handleSelectChange} />
-                            <SingleSelect options={owners} label="Customer Subtype" onChange={handleSelectChange} />
-
+                            <SingleSelect options={owners} label="Contact Type" onChange={handleSelectChange} />
+                            <label className="relative block w-full">
+                                <input
+                                    type="text"
+                                    placeholder=" "
+                                    className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500"
+                                />
+                                <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+        peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
+        peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
+                                    Contact No
+                                </p>
+                            </label>
                             <label className="relative block w-full">
                                 <input
                                     type="text"
@@ -300,7 +308,6 @@ export default function customerEdit() {
                                     Area
                                 </p>
                             </label>
-
                             <label className="relative block w-full">
                                 <input
                                     type="text"
@@ -311,12 +318,53 @@ export default function customerEdit() {
         peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
         peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
         peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
-                                    Address
+                                    Email
                                 </p>
                             </label>
 
-                            <SingleSelect options={owners} label="Responsive Ui" onChange={handleSelectChange} />
+                            
+
+                            <SingleSelect options={owners} label="Reference Id" onChange={handleSelectChange} />
                             <DateSelector label="Customer Date" onChange={handleSelectChange} />
+                            <label className="relative block w-full">
+                                <input
+                                    type="text"
+                                    placeholder=" "
+                                    className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500"
+                                />
+                                <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+        peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
+        peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
+                                    Others
+                                </p>
+                            </label>
+                            <label className="relative block w-full">
+                                <input
+                                    type="text"
+                                    placeholder=" "
+                                    className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500"
+                                />
+                                <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+        peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
+        peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
+                                    Video
+                                </p>
+                            </label>
+                            <label className="relative block w-full">
+                                <input
+                                    type="text"
+                                    placeholder=" "
+                                    className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500"
+                                />
+                                <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+        peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
+        peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
+                                    Google Map
+                                </p>
+                            </label>
                         </div>
                     </div>
 
@@ -325,7 +373,7 @@ export default function customerEdit() {
                 </div>
 
                 <div className=" w-full flex items-center justify-center mt-10 mb-10">
-                    <button className=" py-2 px-2 w-full max-w-[300px] border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Save Changes</button>
+                    <button className=" py-2 px-2 w-full max-w-[300px] border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Save</button>
                 </div>
 
 

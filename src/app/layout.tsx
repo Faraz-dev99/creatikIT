@@ -1,40 +1,57 @@
 "use client";
 import './globals.css'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode } from 'react'
 import Navbar from './component/Nav'
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import Sidebar from './component/Sidebar'
-import { FaBars } from "react-icons/fa6";
-import { IoMdClose } from "react-icons/io";
+import { AppSidebar } from '../components/app-sidebar'
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger,
+} from '@/components/ui/sidebar'
+import { Separator } from '../components/ui/separator'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '../components/ui/breadcrump'
 
 export default function RootLayout({ children }: { children: ReactNode }) {
- /*  const [isMenu,setIsMenu]=useState(false);
-  const menuRef=useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-      const handleClickOutside = (e: MouseEvent) => {
-        if (
-          menuRef.current &&
-          !menuRef.current.contains(e.target as Node)) {
-          setIsMenu(false);
-        }
-      };
-      document.addEventListener("mousedown", handleClickOutside);
-      return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []); */
-  
-
   return (
     <html lang="en">
-      <body>
-        <div className=' md:hidden'><Navbar/></div>
-         {/*  <Sidebar> */}
-          {/* <div className=' md:hidden float-right  m-2' onClick={()=>setIsMenu(!isMenu)}>{isMenu?<IoMdClose/>:<FaBars />}</div>
-         {isMenu&&<div ref={menuRef} className=' md:hidden'><Navbar /></div>}  */}
-        <div className=' max-md:hidden'><Navbar/></div>
-        <div>{children}</div>
-       {/*  </Sidebar> */}
-       
+      <body className="min-h-screen bg-background">
+        <SidebarProvider>
+          {/* Sidebar menu */}
+          <AppSidebar />
+
+          {/* Main content area */}
+          <SidebarInset>
+            {/* Header with toggle button and breadcrumb */}
+            <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-950 text-white px-4 shadow-sm">
+
+              <div className="flex items-center gap-2">
+                <SidebarTrigger className="-ml-1" />
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 data-[orientation=vertical]:h-4"
+                />
+                
+              </div>
+
+              {/* Optional: you can place Navbar items on right side */}
+              <div className="ml-auto w-full">
+                <Navbar />
+              </div>
+            </header>
+
+            {/* Page content */}
+            <main className="flex flex-1 flex-col gap-4 pt-0">
+              {children}
+            </main>
+          </SidebarInset>
+        </SidebarProvider>
       </body>
     </html>
   )

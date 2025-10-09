@@ -8,14 +8,15 @@ import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function customerIndex() {
-    const router=useRouter();
+    const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
     const [currentTablePage, setCurrentTablePage] = useState(1);
     const rowsPerTablePage = 4;
     const customerData = [
         {
-            id:"123",
+            id: "123",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -27,7 +28,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"345",
+            id: "345",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -39,7 +40,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"343",
+            id: "343",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -51,7 +52,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"532",
+            id: "532",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -63,7 +64,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"464",
+            id: "464",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -75,7 +76,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"342",
+            id: "342",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -87,7 +88,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"466",
+            id: "466",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -99,7 +100,7 @@ export default function customerIndex() {
             date: '2025-10-04',
         },
         {
-            id:"453",
+            id: "453",
             campaign: 'Summer Sale',
             type: 'Promotional',
             subType: 'Email Blast',
@@ -112,7 +113,7 @@ export default function customerIndex() {
         },
     ];
 
-    const editCustomer=(id:string | number)=>{
+    const editCustomer = (id: string | number) => {
         router.push(`/customer/edit/${id}`)
     }
 
@@ -139,7 +140,7 @@ export default function customerIndex() {
         'unassigned',
     ];
 
-    const city=[
+    const city = [
         'jaiput',
         'ajmer'
     ]
@@ -167,8 +168,8 @@ export default function customerIndex() {
                     <span className=" text-teal-600 text-2xl">Dashboard</span>/
                     <span>OWNER</span>
                 </h2>
-                
-                <button className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Add New</button>
+
+                <Link href={"/customer/add"} className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Add New</Link>
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white">
@@ -176,7 +177,7 @@ export default function customerIndex() {
 
                 <div className=" m-5 relative ">
                     <div className=" flex justify-between items-center  py-1 px-2 border border-gray-800 rounded-md">
-                        <h3 className=" flex items-center gap-1"><CiSearch />Advance Search</h3> 
+                        <h3 className=" flex items-center gap-1"><CiSearch />Advance Search</h3>
                         <button type="button" onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)} className=" p-2 hover:bg-gray-200 rounded-md cursor-pointer">{toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}</button>
                     </div>
                     <div className={` overflow-hidden ${toggleSearchDropdown ? ' max-h-[2000px] ' : ' max-h-0 '} transition-all duration-500 ease-in-out px-5`}>
@@ -193,7 +194,7 @@ export default function customerIndex() {
                                 <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">Customer type</label>
                                     {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div> 
+                                </div>
                                 <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">Customer Subtype</label>
                                     {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
@@ -205,7 +206,7 @@ export default function customerIndex() {
                                 <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">Location</label>
                                     {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div> 
+                                </div>
                                 <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">User</label>
                                     {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
@@ -217,21 +218,21 @@ export default function customerIndex() {
                                 <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">End Date</label>
                                     {<DateSelector label="End Date" onChange={handleSelectChange} />}
-                                </div> 
-                                 <div>
+                                </div>
+                                <div>
                                     <label className=" block mb-2 text-sm font-medium text-gray-900">Limit</label>
                                     {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
                                 </div>
 
 
                             </div>
-                            
-                            
+
+
                         </div>
                         <form className=" flex max-md:flex-col justify-between items-center mb-5">
                             <div className=" min-w-[80%]">
                                 <label className=" block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
-                                <input type='text' placeholder="type text here.." className=" border border-gray-400 rounded-md px-3 py-2 outline-none w-full" />
+                                <input type='text' placeholder="type text here.." className=" border border-gray-300 rounded-md px-3 py-2 outline-none w-full" />
                             </div>
                             <div className=" flex flex-wrap justify-center items-center">
                                 <button type="submit" className=" border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
@@ -246,61 +247,76 @@ export default function customerIndex() {
                     <span className=" text-teal-500">Customers</span>
                 </h2>
 
-                <div className=" border border-gray-400 rounded-md m-2 overflow-auto">
+                <div className=" border border-gray-300 rounded-md m-2 overflow-auto">
                     <div className=" flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Delete All</button>
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">SMS All</button>
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Email All</button>
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
                     </div>
-                    <table className="min-w-full border border-gray-300 border-collapse">
-                        <thead className="bg-gray-100 ">
-                            <tr className=" text-left">
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">S.No.</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Campaign</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Type</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">SubType</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Email</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">City</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Location</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Contact no</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Assign To</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Date</th>
-                                <th className="border-b border-b-gray-400 px-4 py-2 font-medium">Actions</th>
+                    <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                        <thead className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 uppercase text-sm font-semibold">
+                            <tr>
+                                <th className="px-4 py-3 text-left">S.No.</th>
+                                <th className="px-4 py-3 text-left">Campaign</th>
+                                <th className="px-4 py-3 text-left">Type</th>
+                                <th className="px-4 py-3 text-left">SubType</th>
+                                <th className="px-4 py-3 text-left">Email</th>
+                                <th className="px-4 py-3 text-left">City</th>
+                                <th className="px-4 py-3 text-left">Location</th>
+                                <th className="px-4 py-3 text-left">Contact no</th>
+                                <th className="px-4 py-3 text-left">Assign To</th>
+                                <th className="px-4 py-3 text-left">Date</th>
+                                <th className="px-4 py-3 text-left">Actions</th>
                             </tr>
                         </thead>
-                        <tbody className=" text-gray-800">
-                            {currentRows.map((item, index) => (
-                                <tr key={index+item.email}>
-                                    <td className="border-b border-gray-400 px-4 py-2">{indexOfFirstRow + index + 1}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.campaign}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.type}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.subType}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.email}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.city}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.location}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.contact}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.assignTo}</td>
-                                    <td className="border-b border-gray-400 px-4 py-2">{item.date}</td>
-                                    <td className=" flex gap-2 border-b border-gray-400 px-4 py-2">
-                                        <Button
-                                            sx={{
-                                                backgroundColor: "#48bb784d",
-                                                color: "#4CAF50",
-                                                width: "20px",
-                                            }} onClick={()=>editCustomer(item.id)}><MdEdit /></Button>
 
+                        <tbody className="text-gray-800 text-sm">
+                            {currentRows.map((item, index) => (
+                                <tr
+                                    key={index + item.email}
+                                    className="border-t border-gray-100 hover:bg-gray-50 transition-colors"
+                                >
+                                    <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
+                                    <td className="px-4 py-3 font-medium text-gray-900">{item.campaign}</td>
+                                    <td className="px-4 py-3">{item.type}</td>
+                                    <td className="px-4 py-3">{item.subType}</td>
+                                    <td className="px-4 py-3">{item.email}</td>
+                                    <td className="px-4 py-3">{item.city}</td>
+                                    <td className="px-4 py-3">{item.location}</td>
+                                    <td className="px-4 py-3">{item.contact}</td>
+                                    <td className="px-4 py-3">{item.assignTo}</td>
+                                    <td className="px-4 py-3">{item.date}</td>
+                                    <td className="px-4 py-2 flex gap-2 items-center">
                                         <Button
                                             sx={{
-                                                backgroundColor: "#F565654D",
-                                                color: "#F44336",
-                                                width: "20px",
-                                            }} ><MdDelete /></Button>
+                                                backgroundColor: "#E8F5E9",
+                                                color: "#2E7D32",
+                                                minWidth: "32px",
+                                                height: "32px",
+                                                borderRadius: "8px",
+                                            }}
+                                            onClick={() => editCustomer(item.id)}
+                                        >
+                                            <MdEdit />
+                                        </Button>
+                                        <Button
+                                            sx={{
+                                                backgroundColor: "#FDECEA",
+                                                color: "#C62828",
+                                                minWidth: "32px",
+                                                height: "32px",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
+                                            <MdDelete />
+                                        </Button>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
 
                     <div className="flex justify-between items-center mt-3 py-3 px-5">
 
@@ -312,7 +328,7 @@ export default function customerIndex() {
                         <div className=" flex gap-3">
 
                             <button
-                            type="button"
+                                type="button"
                                 onClick={prevtablePage}
                                 disabled={currentTablePage === 1}
                                 className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
@@ -321,7 +337,7 @@ export default function customerIndex() {
                             </button>
 
                             <button
-                            type="button"
+                                type="button"
                                 onClick={nexttablePage}
                                 disabled={currentTablePage === totalTablePages}
                                 className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"

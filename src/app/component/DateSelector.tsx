@@ -22,11 +22,10 @@ export default function DateSelector({ label, onChange }: DateSelectorProps) {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <FormControl
         sx={{
-            m: 1, width: {
+            width: {
                 xs: '100%',   // mobile
                 sm: '100%',      // small screens
-                md: '100%',      // medium screens
-                lg: 300,      // large screens
+                md: '100%',      // medium screens 
             },
             minWidth:{
                 md:200,
@@ -44,7 +43,7 @@ export default function DateSelector({ label, onChange }: DateSelectorProps) {
               variant: "outlined",
               sx: {
                 "& .MuiInputBase-root": {
-                  borderRadius: "8px",
+                  borderRadius: "8px",                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                 },
               },
             },

@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
-export default function customerEdit() {
+export default function followupEdit() {
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
     const [currentTablePage, setCurrentTablePage] = useState(1);
     const rowsPerTablePage = 4;

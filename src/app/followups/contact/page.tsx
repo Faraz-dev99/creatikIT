@@ -16,10 +16,10 @@ export default function customerFollowups() {
     const customerData = [
         {
             id: "234",
-            name: "siddharthKumar",
-            contactNo: "65434343",
-            user: "Naman",
-            date: "27-05-2025"
+            Name: "siddharthKumar",
+            ContactNo: "65434343",
+            User: "Naman",
+            Date: "27-05-2025"
         },
     ];
 
@@ -153,7 +153,7 @@ export default function customerFollowups() {
 
 
                 <h2 className=" text-xl mt-5 p-3 font-bold">
-                    <span className=" text-teal-500">Customer Followups</span>
+                    <span className=" text-teal-500">Contact Followups</span>
                 </h2>
 
                 <div className=" border border-gray-400 rounded-md m-2 overflow-auto">
@@ -168,7 +168,7 @@ export default function customerFollowups() {
                             <tr>
                                 <th className="px-4 py-3 text-left">S.No.</th>
                                 <th className="px-4 py-3 text-left">Name</th>
-                                <th className="px-4 py-3 text-left">Contact no</th>
+                                <th className="px-4 py-3 text-left">Contact No</th>
                                 <th className="px-4 py-3 text-left">User</th>
                                 <th className="px-4 py-3 text-left">Date</th>
                                 <th className="px-4 py-3 text-left">Actions</th>
@@ -179,19 +179,30 @@ export default function customerFollowups() {
                         <tbody className="text-gray-800 text-sm">
                             {currentRows.map((item, index) => (
                                 <tr
-                                    key={index + item.id}
+                                    key={index + item.Name}
                                     className="border-t border-gray-100 hover:bg-gray-50 transition-colors"
                                 >
                                     <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
-                                    <td className="px-4 py-3 font-medium text-gray-900">{item.name}</td>    
-                                    <td className="px-4 py-3">{item.contactNo}</td>
-                                    <td className="px-4 py-3">{item.user}</td>
-                                    <td className="px-4 py-3">{item.date}</td>
+                                    <td className="px-4 py-3 font-medium text-gray-900">{item.Name}</td>
+                                    <td className="px-4 py-3">{item.ContactNo}</td>
+                                    <td className="px-4 py-3">{item.User}</td>
+                                    <td className="px-4 py-3">{item.Date}</td>
                                     <td className="px-4 py-2 flex gap-2 items-center">
                                         <Button
                                             sx={{
                                                 backgroundColor: "#E8F5E9",
-                                                color: "#2E7D32",
+                                                color: "#4CAF50",
+                                                minWidth: "32px",
+                                                height: "32px",
+                                                borderRadius: "8px",
+                                            }}
+                                        >
+                                            <MdAdd />
+                                        </Button>
+                                        <Button
+                                            sx={{
+                                                backgroundColor: "#E8F5E9",
+                                                color: "#4CAF50",
                                                 minWidth: "32px",
                                                 height: "32px",
                                                 borderRadius: "8px",
@@ -212,10 +223,12 @@ export default function customerFollowups() {
                                             <MdDelete />
                                         </Button>
                                     </td>
+
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
 
                     <div className="flex justify-between items-center mt-3 py-3 px-5">
 

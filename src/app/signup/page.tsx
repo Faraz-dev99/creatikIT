@@ -25,25 +25,58 @@ export default function Signup() {
     username?: string | boolean;
   }>({});
 
-  const addUser = (e: React.FormEvent) => {
-    e.preventDefault();
+  const addUser = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!userDetail.email || !userDetail.password || !userDetail.username) {
-      if (!userDetail.email) {
-        setErrors({ email: '*Email is required' })
-      }
-      if (!userDetail.username) {
-        setErrors((prev) => ({ ...prev, username: '*Username is required' }))
-      }
-      if (!userDetail.password) {
-        setErrors((prev) => ({ ...prev, password: '*Password is required' }))
-      }
+  // Basic frontend validation
+  if (!userDetail.email || !userDetail.password || !userDetail.username) {
+    if (!userDetail.email) {
+      setErrors({ email: '*Email is required' });
+    }
+    if (!userDetail.username) {
+      setErrors((prev) => ({ ...prev, username: '*Username is required' }));
+    }
+    if (!userDetail.password) {
+      setErrors((prev) => ({ ...prev, password: '*Password is required' }));
+    }
+    return;
+  } else {
+    setErrors({});
+  }
+
+  // Prepare payload to match your backend
+  const payload = {
+    fullName: userDetail.username,
+    email: userDetail.email,
+    password: userDetail.password,
+  };
+
+  try {
+    const res = await fetch('http://localhost:5001/api/user/signup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      // backend error (like user already exists)
+      alert(data.message || 'Signup failed');
       return;
     }
-    else {
-      setErrors({})
-    }
+
+    // Success
+    alert('Signup successful!');
+    // Optionally, redirect to login page
+    // router.push('/login'); // if using next/navigation
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Something went wrong. Please try again.');
   }
+};
 
   const userInfo = (e: React.ChangeEvent<HTMLInputElement>) => {
     let name = e.target.name;

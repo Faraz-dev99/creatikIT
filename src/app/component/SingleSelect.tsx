@@ -49,7 +49,6 @@ export default function SingleSelect({ options, label, onChange }: OptionProps) 
                 xs: '100%',   // mobile
                 sm: '100%',      // small screens
                 md: '100%',      // medium screens
-                lg: 300,      // large screens
             },
             minWidth:{
                 md:200,
