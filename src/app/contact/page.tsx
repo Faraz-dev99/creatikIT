@@ -8,6 +8,7 @@ import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function Contacts() {
     interface Contact {
         _id: string;
@@ -175,7 +176,7 @@ export default function Contacts() {
                     <span>Contact</span>
                 </h2>
 
-                <button className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Add New</button>
+                <Link href={"/contact/add"} className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Add New</Link>
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white">
