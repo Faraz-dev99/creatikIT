@@ -55,7 +55,7 @@ const LoginPage: React.FC = () => {
   }, [redirect]);
 
   return (
-    <div className="bg-cyan-500 dark:bg-gray-900 min-h-screen flex justify-center items-center p-4">
+    <div className="bg-cyan-500 dark:bg-gray-900 max-md:min-h-[calc(100vh-52px)] md:min-h-[calc(100vh-56px)] flex justify-center items-center p-4 h-full">
       <div className="bg-gradient-to-r from-blue-500 to-yellow-500 p-[2px] rounded-xl shadow-2xl w-full max-w-5xl">
         <div className="bg-gray-200 dark:bg-gray-800 rounded-xl flex flex-col md:flex-row overflow-hidden">
           {/* Left Section */}
@@ -77,8 +77,8 @@ const LoginPage: React.FC = () => {
                 />
                 <label
                   className="absolute left-4 top-0 bg-gray-200 dark:bg-gray-800 px-1 text-gray-500 text-sm transition-all duration-200 
-                    peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                    peer-focus:-top-2 peer-focus:text-sm peer-focus:text-cyan-600"
+                    peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
+                    peer-focus:-top-6 peer-focus:text-sm peer-focus:text-cyan-600"
                 >
                   Enter Your Email
                 </label>
@@ -96,8 +96,8 @@ const LoginPage: React.FC = () => {
                 />
                 <label
                   className="absolute left-4 top-0 bg-gray-200 dark:bg-gray-800 px-1 text-gray-500 text-sm transition-all duration-200 
-                    peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
-                    peer-focus:-top-2 peer-focus:text-sm peer-focus:text-cyan-600"
+                    peer-placeholder-shown:top-2 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 
+                    peer-focus:-top-6 peer-focus:text-sm peer-focus:text-cyan-600"
                 >
                   Password
                 </label>

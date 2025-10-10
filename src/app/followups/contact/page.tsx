@@ -8,6 +8,7 @@ import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function customerFollowups() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -71,15 +72,15 @@ export default function customerFollowups() {
         console.log("Selected items:", selected);
     };
 
-    return <div className=" flex max-h-[calc(100vh-56px)] overflow-auto bg-gray-200">
+    return <div className=" flex min-h-[calc(100vh-56px)] max-md:py-10 overflow-auto bg-gray-200">
         <div className=" p-4 max-md:p-3 w-full">
             <div className=" flex justify-between items-center">
                 <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-teal-600 text-2xl">Dashboard</span>/
+                    <span className=" text-[#1a2a4f]-600 text-2xl">Dashboard</span>/
                     <span>FollowUps</span>
                 </h2>
 
-                <button className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Add New</button>
+                <Link href="/contact/add" className=" py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">Add New</Link>
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white rounded-lg shadow-sm">
@@ -144,7 +145,7 @@ export default function customerFollowups() {
                                 <input type='text' placeholder="type text here.." className=" border border-gray-400 rounded-md px-3 py-2 outline-none w-full" />
                             </div>
                             <div className=" flex flex-wrap justify-center items-center">
-                                <button type="submit" className=" border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
+                                <button type="submit" className=" border border-[#1a2a4f] text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
                                 <button type="reset" className=" text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">clear Search</button>
                             </div>
                         </form>
@@ -153,7 +154,7 @@ export default function customerFollowups() {
 
 
                 <h2 className=" text-xl mt-5 p-3 font-bold">
-                    <span className=" text-teal-500">Contact Followups</span>
+                    <span className=" text-[#1a2a4f]">Contact Followups</span>
                 </h2>
 
                 <div className=" border border-gray-400 rounded-md m-2 overflow-auto">
@@ -163,8 +164,8 @@ export default function customerFollowups() {
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Email All</button>
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
                     </div>
-                    <table className="min-w-full border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                        <thead className="bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 uppercase text-sm font-semibold">
+                    <table className="table-auto w-full border-collapse text-sm">
+                        <thead className="bg-[#1a2a4f] text-white">
                             <tr>
                                 <th className="px-4 py-3 text-left">S.No.</th>
                                 <th className="px-4 py-3 text-left">Name</th>
@@ -175,59 +176,48 @@ export default function customerFollowups() {
                                 <th className="px-4 py-3 text-left">By Contact</th>
                             </tr>
                         </thead>
-
-                        <tbody className="text-gray-800 text-sm">
+                        <tbody>
                             {currentRows.map((item, index) => (
                                 <tr
                                     key={index + item.Name}
-                                    className="border-t border-gray-100 hover:bg-gray-50 transition-colors"
+                                    className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
                                 >
                                     <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
-                                    <td className="px-4 py-3 font-medium text-gray-900">{item.Name}</td>
+                                    <td className="px-4 py-3">{item.Name}</td>
                                     <td className="px-4 py-3">{item.ContactNo}</td>
                                     <td className="px-4 py-3">{item.User}</td>
                                     <td className="px-4 py-3">{item.Date}</td>
-                                    <td className="px-4 py-2 flex gap-2 items-center">
-                                        <Button
-                                            sx={{
-                                                backgroundColor: "#E8F5E9",
-                                                color: "#4CAF50",
-                                                minWidth: "32px",
-                                                height: "32px",
-                                                borderRadius: "8px",
-                                            }}
-                                        >
-                                            <MdAdd />
-                                        </Button>
-                                        <Button
-                                            sx={{
-                                                backgroundColor: "#E8F5E9",
-                                                color: "#4CAF50",
-                                                minWidth: "32px",
-                                                height: "32px",
-                                                borderRadius: "8px",
-                                            }}
-                                            onClick={() => editCustomer(item.id)}
-                                        >
-                                            <MdEdit />
-                                        </Button>
-                                        <Button
-                                            sx={{
-                                                backgroundColor: "#FDECEA",
-                                                color: "#C62828",
-                                                minWidth: "32px",
-                                                height: "32px",
-                                                borderRadius: "8px",
-                                            }}
-                                        >
-                                            <MdDelete />
-                                        </Button>
+                                    <td className="px-2 py-2">
+                                        <div className="flex gap-4 items-center">
+                                            <div className="relative group">
+                                                <button
+                                                    onClick={() => editCustomer(item.id)}
+                                                    className="flex items-center gap-2 text-[#1a2a4f] hover:text-blue-600 transition-all duration-300"
+                                                >
+                                                    <MdEdit size={16} className="stroke-current hover:fill-blue-600 hover:stroke-none transition-all duration-300" />
+                                                </button>
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-700 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                                    Edit
+                                                </span>
+                                            </div>
+
+                                            <div className="relative group cursor-pointer">
+                                                <MdDelete
+                                                    size={16}
+                                                    className="stroke-current hover:fill-red-600 hover:stroke-none transition-all duration-300"
+                                                />
+                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-600 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                                    Delete
+                                                </span>
+                                            </div>
+                                        </div>
                                     </td>
 
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
 
 
                     <div className="flex justify-between items-center mt-3 py-3 px-5">

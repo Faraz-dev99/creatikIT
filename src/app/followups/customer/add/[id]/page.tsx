@@ -164,22 +164,22 @@ export default function followupAdd() {
         alert("Added Successfully")
     }
 
-    return <div className="flex h-[calc(100vh-56px)] overflow-y-auto bg-gray-200">
+    return <div className="flex h-[calc(100vh-56px)] max-md:py-10 overflow-y-auto bg-gray-200">
         <div className="p-4 max-md:p-3 w-full pb-10 overflow-y-auto">
             <div className=" flex justify-between items-center gap-4 flex-wrap">
                 <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-teal-600 ">Dashboard</span>/
-                    <span className=" text-teal-600 ">FollowUps</span>/
+                    <span className=" text-[#1a2a4f]-600 ">Dashboard</span>/
+                    <span className=" text-[#1a2a4f]-600 ">FollowUps</span>/
                     <span>Add New</span>
                 </h2>
 
-                <button className=" py-2 px-2 border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer">Back</button>
+                <button className=" py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">Back</button>
             </div>
 
             <section className=" flex flex-col m-3  mt-6  p-6 max-md:p-4 mb bg-white rounded-lg shadow-sm">
 
                 <h2 className=" text-xl font-bold mb-4">
-                    <span className=" text-teal-500">Add</span>
+                    <span className=" text-[#1a2a4f]">Add</span>
                 </h2>
 
 
@@ -209,7 +209,7 @@ export default function followupAdd() {
                         </label>
 
                         <div className=" w-full flex items-center justify-center mt-10 mb-10">
-                    <button className=" py-2 px-2 w-full max-w-[300px] border border-teal-500 rounded-md text-teal-500  hover:bg-teal-500 hover:text-white transition-all duration-300 cursor-pointer" onClick={addFollowup}>Add</button>
+                    <button className=" py-2 px-2 w-full max-w-[300px] border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer" onClick={addFollowup}>Add</button>
                 </div>
 
 

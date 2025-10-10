@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 
             {/* Page content */}
             <main className="flex flex-1 flex-col gap-4 pt-0">
-              <div className="flex items-center absolute top-[70px] left-2 gap-2 max-w-[100px] md:hidden">
+              <div className="flex items-center absolute top-[70px] bg-transparent left-2 gap-2 max-w-[100px]  md:hidden">
                 <SidebarTrigger className="-ml-1" />
                 <Separator
                   orientation="vertical"
@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 />
                 
               </div>
-              <div className=' bg-gray-200 max-md:pt-10'>
+              <div className=' bg-gray-200 '>
                 {children}
               </div>
               

@@ -99,15 +99,15 @@ export default function Signup() {
         <h1 className=' text-xl font-bold text-white '>Register Account</h1>
       </div>
 
-      <form className='flex flex-col justify-center  my-3 w-full max-w-96  gap-3 py-8 px-10 rounded-lg bg-white border-2 border-teal-500' onSubmit={addUser}>
+      <form className='flex flex-col justify-center  my-3 w-full max-w-96  gap-3 py-8 px-10 rounded-lg bg-white border-2 border-[#1a2a4f]' onSubmit={addUser}>
 
         <label className="relative block w-full">
-          <input type='text' placeholder=' ' name='username' className=' peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-teal-600' value={userDetail.username} onChange={userInfo} />
+          <input type='text' placeholder=' ' name='username' className=' peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-[#1a2a4f]-600' value={userDetail.username} onChange={userInfo} />
 
           <p
             className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
     peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
-    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600
+    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-[#1a2a4f]-600
     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600"
           >
             Fullname
@@ -122,13 +122,13 @@ export default function Signup() {
             value={userDetail.email}
             onChange={userInfo}
             placeholder=" "
-            className="peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-teal-600"
+            className="peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-[#1a2a4f]-600"
           />
 
           <p
             className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
     peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
-    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600
+    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-[#1a2a4f]-600
     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600"
           >
             Email
@@ -137,12 +137,12 @@ export default function Signup() {
         {errors.email && !userDetail.email ? <div className=' text-xs font-medium text-red-600 -mt-2'>{errors.email}</div> : null}
 
         <label className="relative block w-full">
-          <input type={showPassword ? "text" : "password"} placeholder=' ' name='password' className=' peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-teal-600' value={userDetail.password} onChange={userInfo} />
+          <input type={showPassword ? "text" : "password"} placeholder=' ' name='password' className=' peer px-2 bg-transparent outline-none  w-full pb-3 pt-3 border border-gray-500 focus:border-[#1a2a4f]-600' value={userDetail.password} onChange={userInfo} />
 
           <p
             className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
     peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
-    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-teal-600
+    peer-focus:-top-2 peer-focus:text-xs peer-focus:text-[#1a2a4f]-600
     peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600"
           >
             Password
@@ -155,8 +155,8 @@ export default function Signup() {
 
 
         <div className=' flex gap-2 text-sm font-normal mt-5'><span>accept term & conditions</span><input type='checkbox' checked={term} onChange={(e) => setTerm(e.target.checked)} /></div>
-        <button type='submit' className=' bg-teal-600 text-white py-2 mt-4 rounded-md  font-medium'>signup</button>
-        <div className=' flex gap-2 text-[13px] mt-5'>Already have an account? <Link href={'/login'} className=' text-teal-600 font-bold'>Sign In</Link></div>
+        <button type='submit' className=' bg-[#1a2a4f]-600 text-white py-2 mt-4 rounded-md  font-medium'>signup</button>
+        <div className=' flex gap-2 text-[13px] mt-5'>Already have an account? <Link href={'/login'} className=' text-[#1a2a4f]-600 font-bold'>Sign In</Link></div>
       </form>
       <p className=' mb-6 mt-1 text-zinc-200 mr-2'>&copy;2025 all rights reservedback</p>
     </div>

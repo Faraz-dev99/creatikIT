@@ -130,7 +130,7 @@ export default function Dashboard() {
 
     ]
     return <ProtectedRoute>
-    <div className=" flex max-h-[calc(100vh-56px)] overflow-auto bg-gray-200">
+    <div className=" flex min-h-[calc(100vh-56px)] max-md:py-10 overflow-auto bg-gray-200">
         {/* Sidebar */}
 
         <div>
