@@ -12,6 +12,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Separator } from "../components/ui/separator";
+import ProtectedRoute from "./component/ProtectedRoutes";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="min-h-screen bg-gray-200">{children}</main>
         ) : (
           // 🟣 All other pages — show sidebar and navbar
+          <ProtectedRoute>
           <SidebarProvider>
             <AppSidebar />
 
@@ -57,6 +59,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               </main>
             </SidebarInset>
           </SidebarProvider>
+          </ProtectedRoute>
         )}
       </body>
     </html>

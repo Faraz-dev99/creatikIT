@@ -8,11 +8,15 @@ import { IoPersonOutline } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import PopUps from "./PopUps";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import ProtectedRoute from "./ProtectedRoutes";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<
     "notifications" | "quickAdd" | "adminMail" | null
   >(null);
+  const router=useRouter();
 
   const notificationsRef = useRef<HTMLLIElement>(null);
   const quickAddRef = useRef<HTMLLIElement>(null);
@@ -36,7 +40,15 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const logoutDashboard=()=>{
+    Cookies.remove("token");
+    router.push("/");
+    console.log("working")
+
+  }
+
   return (
+    <ProtectedRoute>
     <div className="flex justify-end items-end bg-gray-950 text-gray-300">
       <div className=" max-md:hidden" />
       <nav className="px-2 " style={{ zIndex: 1000 }}>
@@ -163,13 +175,14 @@ export default function Navbar() {
           </li>
 
           {/* Logout button */}
-          <li className="grid place-items-center relative cursor-pointer text-xl p-4 max-md:px-2 hover:bg-gray-800">
-            <Link href="/">
+          <li className="grid place-items-center relative cursor-pointer text-xl p-4 max-md:px-2 hover:bg-gray-800" onClick={logoutDashboard}>
+            
               <CiLogout />
-            </Link>
+           
           </li>
         </ul>
       </nav>
     </div>
+    </ProtectedRoute>
   );
 }

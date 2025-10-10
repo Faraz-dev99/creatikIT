@@ -10,6 +10,7 @@ import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusSquare } from "lucide-react";
+import ProtectedRoute from "../component/ProtectedRoutes";
 export default function Contacts() {
     interface Contact {
         _id: string;
@@ -170,7 +171,8 @@ export default function Contacts() {
     };
 
 
-    return <div className=" flex min-h-[calc(100vh-56px)] overflow-auto bg-gray-200 max-md:py-10">
+    return <ProtectedRoute>
+    <div className=" flex min-h-[calc(100vh-56px)] overflow-auto bg-gray-200 max-md:py-10">
         <div className=" p-4 max-md:p-3 w-full">
             <div className=" flex justify-between items-center">
                 <h2 className=" flex gap-2 items-center font-light">
@@ -400,4 +402,5 @@ export default function Contacts() {
         </div>
 
     </div>
+    </ProtectedRoute>
 }

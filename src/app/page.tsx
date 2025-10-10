@@ -11,8 +11,8 @@ import Admin from "./admin/page"
 // app/page.tsx
 export default function Page() {
     
-  return <ProtectedRoute>
+  return <div>
      <Admin />
-    </ProtectedRoute>
+   </div>
 }
 

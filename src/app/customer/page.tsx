@@ -10,6 +10,7 @@ import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusSquare } from "lucide-react";
+import ProtectedRoute from "../component/ProtectedRoutes";
 export default function customerIndex() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -162,7 +163,8 @@ export default function customerIndex() {
         console.log("Selected items:", selected);
     };
 
-    return <div className=" flex min-h-[calc(100vh-56px)] max-md:py-10 overflow-auto bg-gray-200">
+    return <ProtectedRoute>
+    <div className=" flex min-h-[calc(100vh-56px)] max-md:py-10 overflow-auto bg-gray-200">
         <div className=" p-4 max-md:p-3 w-full">
             <div className=" flex justify-between items-center">
                 <h2 className=" flex gap-2 items-center font-light">
@@ -368,4 +370,5 @@ export default function customerIndex() {
         </div>
 
     </div>
+    </ProtectedRoute>
 }
