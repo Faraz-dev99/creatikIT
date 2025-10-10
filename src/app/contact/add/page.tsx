@@ -7,7 +7,9 @@ import Button from '@mui/material/Button';
 import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
+
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 interface contactDataInterface {
     Campaign: string;
     Name: string;
@@ -117,12 +119,12 @@ export default function ContactAdd() {
                 <div className="flex justify-between items-center gap-4 flex-wrap">
                     <h2 className="flex gap-2 items-center font-light">
                         <span className="text-[#1a2a4f]600">Dashboard</span> /
-                        <span className="text-[#1a2a4f]600">OWNER Provider</span> /
+                        <span className="text-[#1a2a4f]600">Contact</span> /
                         <span>Add</span>
                     </h2>
 
-                    <Link href={"/contact"} className="py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">
-                        Back
+                    <Link href={"/contact"} className="flex gap-1  items-center py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">
+                        <ArrowLeft size ={16} />Back
                     </Link>
                 </div>
 

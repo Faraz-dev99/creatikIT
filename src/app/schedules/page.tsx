@@ -77,7 +77,7 @@ export default function SchedulePage() {
   // ✅ Edit redirect
   const handleEdit = (id?: string) => {
     if (!id) return;
-    window.location.href = `/add?id=${id}`; // pass ID as query
+    window.location.href = `schedules/edit?id=${id}`; // pass ID as query
   };
 
   const handleClear = () => {
@@ -99,7 +99,7 @@ export default function SchedulePage() {
         {/* Card Container */}
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 relative">
           {/* Add Button */}
-          <Link href="/add">
+          <Link href="/schedules/add">
             <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md absolute right-4 top-4 hover:cursor-pointer font-semibold">
               <PlusSquare size={18} /> Add
             </button>

@@ -1,69 +1,64 @@
+
 "use client";
-import './globals.css'
-import { ReactNode } from 'react'
-import Navbar from './component/Nav'
-import { AppSidebar } from '../components/app-sidebar'
+
+import "./globals.css";
+import { ReactNode } from "react";
+import { usePathname } from "next/navigation";
+import Navbar from "./component/Nav";
+import { AppSidebar } from "../components/app-sidebar";
 import {
   SidebarProvider,
   SidebarInset,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
-import { Separator } from '../components/ui/separator'
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from '../components/ui/breadcrump'
+} from "@/components/ui/sidebar";
+import { Separator } from "../components/ui/separator";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+
+  // Check if the current route is /admin
+  const isAdminPage = pathname === "/";
+
   return (
     <html lang="en">
       <body className="min-h-screen bg-background">
-        <SidebarProvider>
-          {/* Sidebar menu */}
-          <AppSidebar />
+        {isAdminPage ? (
+          // 🟢 Admin page — no sidebar or navbar
+          <main className="min-h-screen bg-gray-200">{children}</main>
+        ) : (
+          // 🟣 All other pages — show sidebar and navbar
+          <SidebarProvider>
+            <AppSidebar />
 
-          {/* Main content area */}
-          <SidebarInset>
-            {/* Header with toggle button and breadcrumb */}
-            <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-950 text-white px-4 shadow-sm">
+            <SidebarInset>
+              <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-950 text-white px-4 shadow-sm">
+                <div className="flex items-center gap-2 max-md:hidden">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator
+                    orientation="vertical"
+                    className="mr-2 data-[orientation=vertical]:h-4"
+                  />
+                </div>
 
-              <div className="flex items-center gap-2 max-md:hidden">
-                <SidebarTrigger className="-ml-1" />
-                <Separator
-                  orientation="vertical"
-                  className="mr-2 data-[orientation=vertical]:h-4"
-                />
-                
-              </div>
+                <div className="ml-auto w-full">
+                  <Navbar />
+                </div>
+              </header>
 
-              {/* Optional: you can place Navbar items on right side */}
-              <div className="ml-auto w-full">
-                <Navbar />
-              </div>
-            </header>
-
-            {/* Page content */}
-            <main className="flex flex-1 flex-col gap-4 pt-0">
-              <div className="flex items-center absolute top-[70px] bg-transparent left-2 gap-2 max-w-[100px]  md:hidden">
-                <SidebarTrigger className="-ml-1" />
-                <Separator
-                  orientation="vertical"
-                  className="mr-2 data-[orientation=vertical]:h-4"
-                />
-                
-              </div>
-              <div className=' bg-gray-200 '>
-                {children}
-              </div>
-              
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
+              <main className="flex flex-1 flex-col gap-4 pt-0">
+                <div className="flex items-center absolute top-[70px] left-2 gap-2 max-w-[100px] md:hidden">
+                  <SidebarTrigger className="-ml-1" />
+                  <Separator
+                    orientation="vertical"
+                    className="mr-2 data-[orientation=vertical]:h-4"
+                  />
+                </div>
+                <div className="bg-gray-200 max-md:pt-10">{children}</div>
+              </main>
+            </SidebarInset>
+          </SidebarProvider>
+        )}
       </body>
     </html>
-  )
+  );
 }

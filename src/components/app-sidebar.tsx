@@ -106,7 +106,7 @@ const data = {
     },
     {
       title: "Schedules",
-      url: "#",
+      url: "/schedules",
       icon: PenSquareIcon,
     },
     {

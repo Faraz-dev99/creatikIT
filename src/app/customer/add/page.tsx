@@ -159,7 +159,7 @@ export default function customerAdd() {
             <div className=" flex justify-between items-center gap-4 flex-wrap">
                 <h2 className=" flex gap-2 items-center font-light">
                     <span className=" text-[#1a2a4f]-600 ">Dashboard</span>/
-                    <span className=" text-[#1a2a4f]-600 ">OWNER Provider</span>/
+                    <span className=" text-[#1a2a4f]-600 ">Customer</span>/
                     <span>Add</span>
                 </h2>
 

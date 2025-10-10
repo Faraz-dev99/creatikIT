@@ -7,6 +7,7 @@ import { LuKey } from "react-icons/lu";
 import { IoPersonOutline } from "react-icons/io5";
 import { useEffect, useRef, useState } from "react";
 import PopUps from "./PopUps";
+import Link from "next/link";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<
@@ -36,21 +37,25 @@ export default function Navbar() {
   }, []);
 
   return (
-    <div className="flex  justify-between items-center bg-gray-950 text-gray-300">
-      <div className=" border w-40 md:hidden p-2">logo</div>
-      <div className=" max-md:hidden"/>
-      <nav className="px-2 " style={{zIndex:1000}}>
+    <div className="flex justify-end items-end bg-gray-950 text-gray-300">
+      <div className=" max-md:hidden" />
+      <nav className="px-2 " style={{ zIndex: 1000 }}>
         <ul className="flex">
           {/* Notifications */}
-          <li ref={notificationsRef} className="grid place-items-center relative">
-            <div className="grid place-items-center w-full h-full max-md:text-xs text-gray-200 cursor-pointer p-4 max-md:p-2 hover:bg-gray-800" onClick={() =>
-              setOpenMenu(openMenu === "notifications" ? null : "notifications")
-            }
-              onMouseEnter={() => setOpenMenu("notifications")}>
-              <IoMdNotificationsOutline
-                className=" text-xl"
-
-              />
+          <li
+            ref={notificationsRef}
+            className="grid place-items-center relative"
+          >
+            <div
+              className="grid place-items-center w-full h-full max-md:text-xs text-gray-200 cursor-pointer p-4 max-md:p-2 hover:bg-gray-800"
+              onClick={() =>
+                setOpenMenu(
+                  openMenu === "notifications" ? null : "notifications"
+                )
+              }
+              onMouseEnter={() => setOpenMenu("notifications")}
+            >
+              <IoMdNotificationsOutline className=" text-xl" />
             </div>
 
             {openMenu === "notifications" && (
@@ -65,7 +70,6 @@ export default function Navbar() {
                   </div>
                 </PopUps>
               </div>
-
             )}
           </li>
 
@@ -73,12 +77,18 @@ export default function Navbar() {
           <li ref={quickAddRef} className="flex items-center relative gap-1">
             <div
               className="flex items-center gap-2 w-full h-full text-gray-200 cursor-pointer p-4 max-md:p-2 hover:bg-gray-800"
-              onClick={() => setOpenMenu(openMenu === "quickAdd" ? null : "quickAdd")}
+              onClick={() =>
+                setOpenMenu(openMenu === "quickAdd" ? null : "quickAdd")
+              }
               onMouseEnter={() => setOpenMenu("quickAdd")}
             >
               <FaPlus />
               <span className=" max-md:hidden">Quick Add</span>
-              {openMenu === "quickAdd" ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
+              {openMenu === "quickAdd" ? (
+                <MdKeyboardArrowUp />
+              ) : (
+                <MdKeyboardArrowDown />
+              )}
             </div>
             {openMenu === "quickAdd" && (
               <div className=" absolute top-[64px] right-0 max-md:right-[-70px]">
@@ -110,14 +120,23 @@ export default function Navbar() {
           </li>
 
           {/* Admin Mail */}
-          <li ref={adminMailRef} className="flex items-center relative cursor-pointer gap-2 ">
+          <li
+            ref={adminMailRef}
+            className="flex items-center relative cursor-pointer gap-2 "
+          >
             <div
               className="flex items-center gap-2 w-full h-full text-gray-200 p-4 max-md:p-2 hover:bg-gray-800"
-              onClick={() => setOpenMenu(openMenu === "adminMail" ? null : "adminMail")}
+              onClick={() =>
+                setOpenMenu(openMenu === "adminMail" ? null : "adminMail")
+              }
               onMouseEnter={() => setOpenMenu("adminMail")}
             >
               <span className=" max-md:hidden">admin mail</span>
-              {openMenu === "adminMail" ? <MdKeyboardArrowUp /> : <MdKeyboardArrowDown />}
+              {openMenu === "adminMail" ? (
+                <MdKeyboardArrowUp />
+              ) : (
+                <MdKeyboardArrowDown />
+              )}
             </div>
             {openMenu === "adminMail" && (
               <div className=" absolute top-[64px] right-0 max-md:right-[-40px]">
@@ -132,8 +151,10 @@ export default function Navbar() {
                       <p>Change Password</p>
                     </div>
                     <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3">
-                      <CiLogout />
-                      <p>Logout</p>
+                      <Link href="/">
+                        <CiLogout />
+                        <p>Logout</p>
+                      </Link>
                     </div>
                   </div>
                 </PopUps>
@@ -143,7 +164,9 @@ export default function Navbar() {
 
           {/* Logout button */}
           <li className="grid place-items-center relative cursor-pointer text-xl p-4 max-md:px-2 hover:bg-gray-800">
-            <CiLogout />
+            <Link href="/">
+              <CiLogout />
+            </Link>
           </li>
         </ul>
       </nav>
