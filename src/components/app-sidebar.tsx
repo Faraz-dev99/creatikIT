@@ -1,68 +1,34 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { 
-  Home, 
-  User, 
-  ShoppingCart, 
-  Info, 
-  Edit2, 
-  Pointer, 
-  IndianRupee, 
-  Diamond, 
-  MessageSquare, 
-  ChartLine, 
-  ChartPie, 
-  Coins, 
-  Package,
-  Frame,
-  PieChart,
-  GalleryVerticalEnd,
-  AudioWaveform,
-  Command,
-  Plus,
+import * as React from "react";
+import {
+  Home,
+  User,
+  ShoppingCart,
+  Info,
+  Pointer,
+  IndianRupee,
+  Diamond,
+  MessageSquare,
   PlusSquare,
   PenSquareIcon,
   User2,
   LineChart,
-  LucideCoins
-} from 'lucide-react';
+  LucideCoins,
+} from "lucide-react";
 
-import { NavMain } from "../components/nav-main"
-import { TeamSwitcher } from "../components/team-switcher"
+import { NavMain } from "../components/nav-main";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { title } from "process";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Dashboard",
@@ -106,7 +72,7 @@ const data = {
     },
     {
       title: "Schedules",
-      url: "/schedules",
+      url: "#",
       icon: PenSquareIcon,
     },
     {
@@ -203,7 +169,6 @@ const data = {
           title: "Whatsapp Templates",
           url: "#",
         },
-
       ],
     },
     {
@@ -254,8 +219,8 @@ const data = {
         },
         {
           title: "Orders",
-          url: "/orders"
-        }
+          url: "/orders",
+        },
       ],
     },
     {
@@ -289,20 +254,19 @@ const data = {
       icon: LucideCoins,
     },
   ],
-  
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+      <SidebarHeader className="flex items-start justify-center ">
+        <img src="/logo.webp" alt="App Logo" className="h-10 w-40 " />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
-      
+
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

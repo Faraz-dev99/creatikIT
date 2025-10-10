@@ -9,6 +9,7 @@ import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { PlusSquare } from "lucide-react";
 export default function customerIndex() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -169,7 +170,11 @@ export default function customerIndex() {
                     <span>OWNER</span>
                 </h2>
 
-                <Link href={"/customer/add"} className=" py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">Add New</Link>
+                <Link href="/customer/add">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
+              <PlusSquare size={18} /> Add
+            </button>
+          </Link>
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white">
@@ -255,80 +260,75 @@ export default function customerIndex() {
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
                     </div>
                     <table className="table-auto w-full border-collapse text-sm">
-  <thead className="bg-[#1a2a4f] text-white">
-    <tr>
-      <th className="px-4 py-3 text-left">S.No.</th>
-      <th className="px-4 py-3 text-left">Campaign</th>
-      <th className="px-4 py-3 text-left">Type</th>
-      <th className="px-4 py-3 text-left">SubType</th>
-      <th className="px-4 py-3 text-left">Email</th>
-      <th className="px-4 py-3 text-left">City</th>
-      <th className="px-4 py-3 text-left">Location</th>
-      <th className="px-4 py-3 text-left">Contact no</th>
-      <th className="px-4 py-3 text-left">Assign To</th>
-      <th className="px-4 py-3 text-left">Date</th>
-      <th className="px-4 py-3 text-left">Actions</th>
-    </tr>
-  </thead>
+                        <thead className="bg-[#1a2a4f] text-white">
+                            <tr>
+                                <th className="px-4 py-3 text-left">S.No.</th>
+                                <th className="px-4 py-3 text-left">Campaign</th>
+                                <th className="px-4 py-3 text-left">Type</th>
+                                <th className="px-4 py-3 text-left">SubType</th>
+                                <th className="px-4 py-3 text-left">Email</th>
+                                <th className="px-4 py-3 text-left">City</th>
+                                <th className="px-4 py-3 text-left">Location</th>
+                                <th className="px-4 py-3 text-left">Contact no</th>
+                                <th className="px-4 py-3 text-left">Assign To</th>
+                                <th className="px-4 py-3 text-left">Date</th>
+                                <th className="px-4 py-3 text-left">Actions</th>
+                            </tr>
+                        </thead>
 
-  <tbody>
-    {currentRows.length > 0 ? (
-      currentRows.map((item, index) => (
-        <tr
-          key={index + item.email}
-          className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
-        >
-          <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
-          <td className="px-4 py-3">{item.campaign}</td>
-          <td className="px-4 py-3">{item.type}</td>
-          <td className="px-4 py-3">{item.subType}</td>
-          <td className="px-4 py-3">{item.email}</td>
-          <td className="px-4 py-3">{item.city}</td>
-          <td className="px-4 py-3">{item.location}</td>
-          <td className="px-4 py-3">{item.contact}</td>
-          <td className="px-4 py-3">{item.assignTo}</td>
-          <td className="px-4 py-3">{item.date}</td>
-          <td className="px-2 py-2">
-            <div className="flex gap-4 items-center">
-              {/* Edit Icon with Tooltip */}
-              <div className="relative group">
-                <button
-                  onClick={() => editCustomer(item.id)}
-                  className="flex items-center gap-2 text-[#1a2a4f] hover:text-blue-600 transition-all duration-300"
-                >
-                  <MdEdit
-                    size={16}
-                    className="stroke-current hover:fill-blue-600 hover:stroke-none transition-all duration-300"
-                  />
-                </button>
-                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-700 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  Edit
-                </span>
-              </div>
-
-              {/* Delete Icon with Tooltip */}
-              <div className="relative group cursor-pointer">
-                <MdDelete
-                  size={16}
-                  className="stroke-current hover:fill-red-600 hover:stroke-none transition-all duration-300"
-                />
-                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-600 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  Delete
-                </span>
-              </div>
-            </div>
-          </td>
-        </tr>
-      ))
-    ) : (
-      <tr>
-        <td colSpan={11} className="text-center py-4 text-gray-500">
-          No data available.
-        </td>
-      </tr>
-    )}
-  </tbody>
-</table>
+                        <tbody>
+                            {currentRows.length > 0 ? (
+                                currentRows.map((item, index) => (
+                                    <tr
+                                        key={index + item.email}
+                                        className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
+                                    >
+                                        <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
+                                        <td className="px-4 py-3">{item.campaign}</td>
+                                        <td className="px-4 py-3">{item.type}</td>
+                                        <td className="px-4 py-3">{item.subType}</td>
+                                        <td className="px-4 py-3">{item.email}</td>
+                                        <td className="px-4 py-3">{item.city}</td>
+                                        <td className="px-4 py-3">{item.location}</td>
+                                        <td className="px-4 py-3">{item.contact}</td>
+                                        <td className="px-4 py-3">{item.assignTo}</td>
+                                        <td className="px-4 py-3">{item.date}</td>
+                                        <td className="px-4 py-2 flex gap-2 items-center">
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#C8E6C9",
+                                                    color: "#2E7D32",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                                onClick={() => editCustomer(item.id)}
+                                            >
+                                                <MdEdit />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#F9D0C4",
+                                                    color: "#C62828",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                            >
+                                                <MdDelete />
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={11} className="text-center py-4 text-gray-500">
+                                        No data available.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
 
 
 

@@ -1,232 +1,118 @@
 'use client'
-import { useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { MdEdit, MdDelete } from "react-icons/md";
-import Button from '@mui/material/Button';
-import MultipleSelect from "@/app/component/MultipleSelect";
+
+import { useState, useCallback } from "react";
+import { ArrowLeft } from "lucide-react";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
-export default function followupAdd() {
-    const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
-    const [currentTablePage, setCurrentTablePage] = useState(1);
-    const rowsPerTablePage = 4;
-    const customerData = [
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-    ];
 
-    const totalTablePages = Math.ceil(customerData.length / rowsPerTablePage);
-    const indexOfLastRow = currentTablePage * rowsPerTablePage;
-    const indexOfFirstRow = indexOfLastRow - rowsPerTablePage;
-    const currentRows = customerData.slice(indexOfFirstRow, indexOfLastRow);
-    const nexttablePage = () => {
-        if (currentTablePage !== totalTablePages) {
-            setCurrentTablePage(currentTablePage + 1);
-        }
-    }
-    const prevtablePage = () => {
-        if (currentTablePage !== 1) {
-            setCurrentTablePage(currentTablePage - 1);
-        }
-    }
-    const handleSearchDropdown = () => {
+export default function FollowupAdd() {
+  const [followupData, setFollowupData] = useState({
+    StartDate: "",
+    StatusType: "",
+    NextFollowupDate: "",
+    Description: ""
+  });
 
-    }
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFollowupData((prev) => ({ ...prev, [name]: value }));
+    },
+    []
+  );
 
-    const statusAssign = [
-        'assigned',
-        'unassigned',
-    ];
-    const statusType=[
-        "Interested",
-        "Need Followup",
-        "Not Interested",
-        "To visit",
-        "Visited",
-        "Want Demo"
-    ]
+  const handleSelectChange = useCallback(
+    (label: string, selected: string) => {
+      setFollowupData((prev) => ({ ...prev, [label]: selected }));
+    },
+    []
+  );
 
-    const city = [
-        'jaiput',
-        'ajmer'
-    ]
-    const campaign = [
-        'Buyer',
-        'seller',
-        'Rent Out',
-        'Rent In',
-        'Hostel/PG',
-        'Agents',
-        'Services',
-        'Others',
-        'guest house',
-        'Happy Stay'
-    ]
+  const handleSubmit = () => {
+    console.log("FollowUp Data Submitted:", followupData);
+    alert("FollowUp added successfully!");
+    setFollowupData({
+      StartDate: "",
+      StatusType: "",
+      NextFollowupDate: "",
+      Description: ""
+    });
+  };
 
-    const handleSelectChange = (selected: string) => {
-        console.log("Selected items:", selected);
-    };
+  const statusType = [
+    "Interested",
+    "Need Followup",
+    "Not Interested",
+    "To visit",
+    "Visited",
+    "Want Demo"
+  ];
 
-    const owners = [
-        "john",
-        "Job Seeker",
-        "training",
-        "job provider"
-    ]
-    const addFollowup=()=>{
-        alert("Added Successfully")
-    }
-
-    return <div className="flex h-[calc(100vh-56px)] max-md:py-10 overflow-y-auto bg-gray-200">
-        <div className="p-4 max-md:p-3 w-full pb-10 overflow-y-auto">
-            <div className=" flex justify-between items-center gap-4 flex-wrap">
-                <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-[#1a2a4f]-600 ">Dashboard</span>/
-                    <span className=" text-[#1a2a4f]-600 ">FollowUps</span>/
-                    <span>Add New</span>
-                </h2>
-
-                <button className=" py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">Back</button>
-            </div>
-
-            <section className=" flex flex-col m-3  mt-6  p-6 max-md:p-4 mb bg-white rounded-lg shadow-sm">
-
-                <h2 className=" text-xl font-bold mb-4">
-                    <span className=" text-[#1a2a4f]">Add</span>
-                </h2>
-
-
-                <h1 className=" text-2xl mb-6">FollowUps</h1>
-                
-                
-                <div className="grid grid-cols-2 gap-3 max-lg:grid-cols-1">
-                    <div className="flex flex-col gap-3">
-
-                        <DateSelector label="Start Date" onChange={handleSelectChange} />
-
-
-
-                        <SingleSelect options={statusType} label="Status Type" onChange={handleSelectChange} />
-                        <DateSelector label="Followup Next Date" onChange={handleSelectChange} />
-                        <label className="relative block w-full">
-                            <textarea
-                                placeholder=" "
-                                className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500 min-h-[100px]"
-                            />
-                            <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
-        peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
-        peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500
-        peer-[&:not(:placeholder-shown)]:-top-2 peer-[&:not(:placeholder-shown)]:text-xs peer-[&:not(:placeholder-shown)]:text-gray-600">
-                                Description
-                            </p>
-                        </label>
-
-                        <div className=" w-full flex items-center justify-center mt-10 mb-10">
-                    <button className=" py-2 px-2 w-full max-w-[300px] border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer" onClick={addFollowup}>Add</button>
-                </div>
-
-
-                    </div>
-
-
-
-
-
-
-                </div>
-
-                
-
-
-            </section>
+  return (
+    <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
+      <div className="w-full max-w-[700px]">
+        {/* Back Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
+          >
+            <ArrowLeft size={18} /> Back
+          </button>
         </div>
 
+        {/* Form Card */}
+        <div className="bg-white/90 backdrop-blur-lg p-8 rounded-3xl shadow-2xl h-auto">
+          <h1 className="text-3xl font-extrabold text-gray-800 mb-6">
+            Add <span className="text-blue-600">FollowUp</span>
+          </h1>
+
+          <form onSubmit={(e) => e.preventDefault()} className="flex flex-col space-y-6">
+            <DateSelector label="Start Date" onChange={(val) => handleSelectChange("StartDate", val)} />
+
+            <SingleSelect options={statusType} label="Status Type" onChange={(val) => handleSelectChange("StatusType", val)} />
+
+            <DateSelector label="Next Followup Date" onChange={(val) => handleSelectChange("NextFollowupDate", val)} />
+
+            <TextareaField
+              label="Description"
+              name="Description"
+              value={followupData.Description}
+              onChange={handleInputChange}
+            />
+
+            <div className="flex justify-center mt-6">
+              <button
+                type="button"
+                onClick={handleSubmit}
+                className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-2 px-6 rounded-md font-semibold hover:scale-105 transition-all"
+              >
+                Add
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+  );
 }
+
+// TextareaField Component
+const TextareaField: React.FC<{
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+}> = ({ label, name, value, onChange }) => (
+  <label className="relative block w-full">
+    <textarea
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder=" "
+      className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500 min-h-[100px]"
+    />
+    <p className="absolute left-2 top-0 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+      peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400
+      peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500">{label}</p>
+  </label>
+);

@@ -9,6 +9,7 @@ import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { PlusSquare } from "lucide-react";
 export default function customerFollowups() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -80,7 +81,11 @@ export default function customerFollowups() {
                     <span>FollowUps</span>
                 </h2>
 
-                <Link href="/contact/add" className=" py-2 px-2 border border-[#1a2a4f] rounded-md text-[#1a2a4f]  hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer">Add New</Link>
+                <Link href="/contact/add">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
+              <PlusSquare size={18} /> Add
+            </button>
+          </Link>
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white rounded-lg shadow-sm">
@@ -187,31 +192,31 @@ export default function customerFollowups() {
                                     <td className="px-4 py-3">{item.ContactNo}</td>
                                     <td className="px-4 py-3">{item.User}</td>
                                     <td className="px-4 py-3">{item.Date}</td>
-                                    <td className="px-2 py-2">
-                                        <div className="flex gap-4 items-center">
-                                            <div className="relative group">
-                                                <button
-                                                    onClick={() => editCustomer(item.id)}
-                                                    className="flex items-center gap-2 text-[#1a2a4f] hover:text-blue-600 transition-all duration-300"
-                                                >
-                                                    <MdEdit size={16} className="stroke-current hover:fill-blue-600 hover:stroke-none transition-all duration-300" />
-                                                </button>
-                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-700 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                                    Edit
-                                                </span>
-                                            </div>
-
-                                            <div className="relative group cursor-pointer">
-                                                <MdDelete
-                                                    size={16}
-                                                    className="stroke-current hover:fill-red-600 hover:stroke-none transition-all duration-300"
-                                                />
-                                                <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 text-green-600 text-xs px-2 py-1 bg-white font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                                    Delete
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </td>
+                                    <td className="px-4 py-2 flex gap-2 items-center">
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#C8E6C9",
+                                                    color: "#2E7D32",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                                onClick={() => editCustomer(item.id)}
+                                            >
+                                                <MdEdit />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#F9D0C4",
+                                                    color: "#C62828",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                            >
+                                                <MdDelete />
+                                            </Button>
+                                        </td>
 
                                 </tr>
                             ))}
