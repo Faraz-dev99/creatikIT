@@ -4,38 +4,44 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import TextField from "@mui/material/TextField";
 import FormControl from "@mui/material/FormControl";
+import dayjs from "dayjs";
 
 interface DateSelectorProps {
   label: string;
+  value?: string; // optional initial value
   onChange?: (selected: string) => void;
 }
 
-export default function DateSelector({ label, onChange }: DateSelectorProps) {
-  const [value, setValue] = React.useState<any>(null);
+export default function DateSelector({ label, value, onChange }: DateSelectorProps) {
+  const [selectedDate, setSelectedDate] = React.useState<any>(value ? dayjs(value) : null);
 
   const handleChange = (newValue: any) => {
-    setValue(newValue);
-    if (onChange) onChange(newValue ? newValue.format("YYYY-MM-DD") : null);
+    setSelectedDate(newValue);
+    if (onChange) onChange(newValue ? newValue.format("YYYY-MM-DD") : "");
   };
+
+  React.useEffect(() => {
+    if (value) setSelectedDate(dayjs(value));
+  }, [value]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <FormControl
         sx={{
-            width: {
-                xs: '100%',   // mobile
-                sm: '100%',      // small screens
-                md: '100%',      // medium screens 
-            },
-            minWidth:{
-                md:200,
-                lg:300
-            },
+          width: {
+            xs: "100%",
+            sm: "100%",
+            md: "100%",
+          },
+          minWidth: {
+            md: 200,
+            lg: 300,
+          },
         }}
       >
         <DatePicker
           label={label}
-          value={value}
+          value={selectedDate}
           onChange={handleChange}
           slotProps={{
             textField: {
@@ -43,7 +49,7 @@ export default function DateSelector({ label, onChange }: DateSelectorProps) {
               variant: "outlined",
               sx: {
                 "& .MuiInputBase-root": {
-                  borderRadius: "8px",                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                  borderRadius: "8px",
                 },
               },
             },

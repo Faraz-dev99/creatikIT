@@ -1,21 +1,21 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-export default function ProtectedRoute( {children}:{ children:React.ReactNode } ) {
+import { useAuth } from "@/context/AuthContext";
+
+export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { admin } = useAuth();
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const token =Cookies.get("token"); /* localStorage.getItem("token"); */
-    if (!token) {
-      router.push("/");
+    if (!admin) {
+      router.push("/"); // redirect if not logged in
     } else {
       setLoading(false);
     }
-  }, [router]);
+  }, [admin, router]);
 
-  if (loading) return null
-
+  if (loading) return null;
   return children;
 }

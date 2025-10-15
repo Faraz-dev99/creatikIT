@@ -11,12 +11,14 @@ import Link from "next/link";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "./ProtectedRoutes";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const [openMenu, setOpenMenu] = useState<
     "notifications" | "quickAdd" | "adminMail" | null
   >(null);
   const router=useRouter();
+   const { admin, logout } = useAuth();
 
   const notificationsRef = useRef<HTMLLIElement>(null);
   const quickAddRef = useRef<HTMLLIElement>(null);
@@ -40,11 +42,10 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const logoutDashboard=()=>{
-    Cookies.remove("token");
-    router.push("/");
+  const logoutDashboard=async ()=>{
+    await logout();
     console.log("working")
-
+     router.push("/"); 
   }
 
   return (
@@ -71,7 +72,7 @@ export default function Navbar() {
             </div>
 
             {openMenu === "notifications" && (
-              <div className=" absolute top-[64px] md:right-0 max-md:right-[-125px]">
+              <div className=" absolute top-[56px] md:right-0 max-md:right-[-125px]">
                 <PopUps>
                   <div className="flex flex-col w-[300px] max-md:w-[270px] min-h-[400px]">
                     <div className="flex justify-between items-center py-4 px-4 w-full text-lg bg-gray-300">
@@ -103,7 +104,7 @@ export default function Navbar() {
               )}
             </div>
             {openMenu === "quickAdd" && (
-              <div className=" absolute top-[64px] right-0 max-md:right-[-70px]">
+              <div className=" absolute top-[56px] right-0 max-md:right-[-70px]">
                 <PopUps>
                   <div className="flex flex-col">
                     {[
@@ -151,7 +152,7 @@ export default function Navbar() {
               )}
             </div>
             {openMenu === "adminMail" && (
-              <div className=" absolute top-[64px] right-0 max-md:right-[-40px]">
+              <div className=" absolute top-[56px] right-0 max-md:right-[-40px]">
                 <PopUps>
                   <div className="flex flex-col">
                     <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3">
@@ -163,10 +164,8 @@ export default function Navbar() {
                       <p>Change Password</p>
                     </div>
                     <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3">
-                      <Link href="/">
                         <CiLogout />
                         <p>Logout</p>
-                      </Link>
                     </div>
                   </div>
                 </PopUps>

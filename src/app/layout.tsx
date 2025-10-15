@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Separator } from "../components/ui/separator";
 import ProtectedRoute from "./component/ProtectedRoutes";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-background">
+        <AuthProvider>
         {isAdminPage ? (
           // 🟢 Admin page — no sidebar or navbar
           <main className="min-h-screen bg-gray-200">{children}</main>
@@ -55,12 +57,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     className="mr-2 data-[orientation=vertical]:h-4"
                   />
                 </div>
-                <div className="bg-gray-200 max-md:pt-10">{children}</div>
+                <div className="bg-gray-200 max-md:pt-2">{children}</div>
               </main>
             </SidebarInset>
           </SidebarProvider>
           </ProtectedRoute>
         )}
+        </AuthProvider>
       </body>
     </html>
   );

@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { BookDownIcon, Pencil, PlusSquare, Trash } from "lucide-react";
+import { BookDownIcon, PlusSquare } from "lucide-react";
 import Link from "next/link";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast, Toaster } from "react-hot-toast";
 import { MdDelete, MdEdit } from "react-icons/md";
 import Button from '@mui/material/Button';
+import { useRouter } from "next/navigation";
+import PopupMenu from "../component/popups/PopupMenu"; // Reuse your popup
 
 interface ScheduleType {
   _id?: string; // MongoDB id
@@ -16,11 +17,20 @@ interface ScheduleType {
   User: string;
 }
 
+interface DeleteDialogDataInterface {
+  id: string;
+  description: string;
+  date: string;
+}
+
 export default function SchedulePage() {
   const [schedules, setSchedules] = useState<ScheduleType[]>([]);
   const [keyword, setKeyword] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState<DeleteDialogDataInterface | null>(null);
 
+  const router = useRouter();
   const API_URL = "https://live-project-backend-viiy.onrender.com/api/sch";
 
   // ✅ Fetch schedules from API
@@ -60,15 +70,16 @@ export default function SchedulePage() {
   }, [schedules, keyword, selectedUser]);
 
   // ✅ Delete schedule via API
-  const handleDelete = async (id?: string) => {
-    if (!id) return;
-    if (!confirm("Are you sure you want to delete this schedule?")) return;
+  const deleteSchedule = async (data: DeleteDialogDataInterface | null) => {
+    if (!data) return;
 
     try {
-      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      const res = await fetch(`${API_URL}/${data.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete schedule");
 
       toast.success("Schedule deleted successfully!");
+      setIsDeleteDialogOpen(false);
+      setDeleteDialogData(null);
       fetchSchedules(); // refresh list
     } catch (error) {
       console.error(error);
@@ -77,9 +88,8 @@ export default function SchedulePage() {
   };
 
   // ✅ Edit redirect
-  const handleEdit = (id?: string) => {
-    if (!id) return;
-    window.location.href = `schedules/edit?id=${id}`; // pass ID as query
+  const editCustomer = (id?: string) => {
+    router.push(`schedules/edit?id=${id}`);
   };
 
   const handleClear = () => {
@@ -89,7 +99,7 @@ export default function SchedulePage() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
+      <Toaster position="top-right" />
       <div className="min-h-screen bg-slate-100 p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
@@ -97,6 +107,35 @@ export default function SchedulePage() {
             Dashboard <span className="text-gray-500 text-sm">/ Schedule</span>
           </h1>
         </div>
+
+        {/* DELETE POPUP */}
+        {isDeleteDialogOpen && deleteDialogData && (
+          <PopupMenu onClose={() => { setIsDeleteDialogOpen(false); setDeleteDialogData(null); }}>
+            <div className="flex flex-col gap-10 m-2">
+              <h2 className="font-bold">
+                Are you sure you want to delete this schedule?
+              </h2>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">Description: {deleteDialogData.description}</div>
+                <div className="flex items-center gap-2">Date: <p className="text-gray-500 text-sm">{deleteDialogData.date}</p></div>
+              </div>
+              <div className="flex justify-between items-center">
+                <button
+                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
+                  onClick={() => deleteSchedule(deleteDialogData)}
+                >
+                  Yes, delete
+                </button>
+                <button
+                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
+                  onClick={() => { setIsDeleteDialogOpen(false); setDeleteDialogData(null); }}
+                >
+                  No
+                </button>
+              </div>
+            </div>
+          </PopupMenu>
+        )}
 
         {/* Card Container */}
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 relative">
@@ -144,24 +183,6 @@ export default function SchedulePage() {
               />
             </div>
 
-            {/* Limit (optional, not used yet) */}
-            <div className="flex flex-col w-40">
-              <label htmlFor="limit" className="text-lg font-medium text-[#1a2a4f] pl-1">
-                Limit
-              </label>
-              <select
-                id="limit"
-                className="h-10 border border-gray-300 rounded-md px-3 py-2 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
-                defaultValue="100"
-              >
-                <option value="0">0</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="500">500</option>
-                <option value="1000">1000</option>
-              </select>
-            </div>
-
             {/* Clear & Export */}
             <div className="flex gap-3 ml-auto">
               <button
@@ -171,30 +192,16 @@ export default function SchedulePage() {
               >
                 Clear Search
               </button>
-
-              <div className="relative inline-block group">
-                <button
-                  type="button"
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-3 py-2 rounded-md shadow-md hover:from-[#2c3d69] hover:to-[#1a2a4f] transition-all duration-300"
-                >
-                  <BookDownIcon size={20} />
-                </button>
-                {/* Tooltip */}
-                <span className="absolute right-0 -top-12 text-green-600 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 group-hover:-translate-y-1 transition-all duration-300 shadow-lg pointer-events-none">
-                  Export File
-                  <span className="absolute bottom-[-5px] right-6 w-2 h-2 bg-[#1a2a4f] rotate-45"></span>
-                </span>
-              </div>
             </div>
           </form>
 
           {/* Table */}
-          <div className=" border border-gray-400 rounded-md m-2 overflow-auto">
-            <div className=" flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
-              <button type="button" className=" hover:text-gray-950 cursor-pointer">Delete All</button>
-              <button type="button" className=" hover:text-gray-950 cursor-pointer">SMS All</button>
-              <button type="button" className=" hover:text-gray-950 cursor-pointer">Email All</button>
-              <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
+          <div className="border border-gray-400 rounded-md m-2 overflow-auto">
+            <div className="flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
+              <button type="button" className="hover:text-gray-950 cursor-pointer">Delete All</button>
+              <button type="button" className="hover:text-gray-950 cursor-pointer">SMS All</button>
+              <button type="button" className="hover:text-gray-950 cursor-pointer">Email All</button>
+              <button type="button" className="hover:text-gray-950 cursor-pointer">Mass Update</button>
             </div>
             <table className="table-auto w-full border-collapse text-sm">
               <thead className="bg-[#1a2a4f] text-white">
@@ -217,30 +224,38 @@ export default function SchedulePage() {
                       <td className="px-4 py-3">{s.date}</td>
                       <td className="px-4 py-3">{s.Time}</td>
                       <td className="px-4 py-2 flex gap-2 items-center">
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#C8E6C9",
-                                                    color: "#2E7D32",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                                /* onClick={() => editCustomer(item.id)} */
-                                            >
-                                                <MdEdit />
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#F9D0C4",
-                                                    color: "#C62828",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                            >
-                                                <MdDelete />
-                                            </Button>
-                                        </td>
+                        <Button
+                          sx={{
+                            backgroundColor: "#C8E6C9",
+                            color: "#2E7D32",
+                            minWidth: "32px",
+                            height: "32px",
+                            borderRadius: "8px",
+                          }}
+                          onClick={() => editCustomer(s._id || String(i))}
+                        >
+                          <MdEdit />
+                        </Button>
+                        <Button
+                          sx={{
+                            backgroundColor: "#F9D0C4",
+                            color: "#C62828",
+                            minWidth: "32px",
+                            height: "32px",
+                            borderRadius: "8px",
+                          }}
+                          onClick={() => {
+                            setIsDeleteDialogOpen(true);
+                            setDeleteDialogData({
+                              id: s._id || String(i),
+                              description: s.Description,
+                              date: s.date,
+                            });
+                          }}
+                        >
+                          <MdDelete />
+                        </Button>
+                      </td>
                     </tr>
                   ))
                 ) : (
