@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ArrowLeft } from "lucide-react";
 import { useSearchParams, useRouter } from "next/navigation"; // ✅ Correct hook for App Router
+import { addSchedules } from "@/store/schedules";
+import {toast, Toaster } from "react-hot-toast";
 
 interface ScheduleType {
   date: string;
@@ -37,21 +38,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
   const id = searchParams.get("id");
   const API_URL = "https://live-project-backend-viiy.onrender.com/api/sch";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        try {
-          const res = await fetch(`${API_URL}/${id}`);
-          const data = await res.json();
-          setFormData(data);
-        } catch (error) {
-          console.error("Failed to fetch schedule for edit:", error);
-          toast.error("Failed to fetch schedule data!");
-        }
-      }
-    };
-    fetchData();
-  }, [id]);
+
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -63,34 +50,23 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
 
   const handleSave = useCallback(async () => {
     if (!formData.date || !formData.Time || !formData.Description || !formData.User) {
-      alert("⚠️ Please fill all fields before saving!");
+      toast.error("Please fill all fields before saving!");
       return;
     }
 
-    try {
-      const res = await fetch(id ? `${API_URL}/${id}` : API_URL, {
-        method: id ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await res.json();
-      console.log("✅ API Response:", data);
-
-      if (!res.ok) throw new Error("Failed to save schedule");
-
-      alert(id ? "✅ Schedule updated successfully!" : "✅ Schedule added successfully!");
-      setFormData({ date: "", Time: "", Description: "", User: "" });
-
-      router.push("/schedules"); // ✅ Redirect after alert
-    } catch (error) {
-      console.error("❌ Error saving schedule:", error);
-      alert("⚠️ Something went wrong. Try again.");
-    }
-  }, [formData, id, router]);
+    const data = await addSchedules(formData);
+        if (data) {
+          toast.success("Schedule Added Successfully!");
+          setFormData({ date: "", Time: "", Description: "", User: "" });
+          router.push("/schedules");
+          return;
+        }
+        toast.error("Something went wrong. Try again.");
+  }, [formData, router]);
 
   return (
     <div className="bg-slate-200 min-h-screen p-6">
+      <Toaster position="top-right" />
       {/* Back Button */}
       <div className="flex justify-end mb-4">
         <Link
@@ -169,7 +145,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                   onClick={handleSave}
                   className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
                 >
-                  {id ? "Update" : "Save"}
+                  save
                 </button>
               </div>
             </div>

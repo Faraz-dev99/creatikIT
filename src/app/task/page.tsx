@@ -8,15 +8,15 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import Button from '@mui/material/Button';
 import { useRouter } from "next/navigation";
 import PopupMenu from "../component/popups/PopupMenu"; // Reuse your popup
-import { ScheduleType, DeleteDialogDataInterface } from "../../store/schedules.interface";
-import { deleteSchedules, getSchedules } from "@/store/schedules";
+import { deleteTask,getTask } from "@/store/task";
+import { TaskType,DeleteDialogDataInterface } from "@/store/task.interface";
 
 
 
 
 
-export default function SchedulePage() {
-  const [schedules, setSchedules] = useState<ScheduleType[]>([]);
+export default function TaskPage() {
+  const [task, setTask] = useState<TaskType[]>([]);
   const [keyword, setKeyword] = useState("");
   const [selectedUser, setSelectedUser] = useState("");
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -25,25 +25,25 @@ export default function SchedulePage() {
   const router = useRouter();
   const API_URL = "https://live-project-backend-viiy.onrender.com/api/sch";
 
-  // Fetch schedules from API
-  const fetchSchedules = async () => {
-    const data = await getSchedules();
-    if (data) setSchedules(data);
+  // Fetch Task from API
+  const fetchTask = async () => {
+    const data = await getTask();
+    if (data) setTask(data);
   };
 
   useEffect(() => {
-    fetchSchedules();
+    fetchTask();
   }, []);
 
   // Unique users for filter
   const uniqueUsers = useMemo(() => {
-    const users = schedules.map((s) => s.User).filter(Boolean);
+    const users = task.map((s) => s.User).filter(Boolean);
     return Array.from(new Set(users));
-  }, [schedules]);
+  }, [task]);
 
-  // Filtered schedules
-  const filteredSchedules = useMemo(() => {
-    return schedules.filter((s) => {
+  // Filtered task
+  const filteredTask = useMemo(() => {
+    return task.filter((s) => {
       const matchesUser =
         selectedUser === "" || s.User.toLowerCase().includes(selectedUser.toLowerCase());
       const matchesKeyword =
@@ -53,26 +53,26 @@ export default function SchedulePage() {
         s.Time.includes(keyword);
       return matchesUser && matchesKeyword;
     });
-  }, [schedules, keyword, selectedUser]);
+  }, [task, keyword, selectedUser]);
 
-  // Delete schedule via API
-  const deleteSchedule = async (data: DeleteDialogDataInterface | null) => {
+  // Delete task via API
+  const deleteTaskFunc = async (data: DeleteDialogDataInterface | null) => {
     if (!data) return;
 
-    const res = await deleteSchedules(data.id);
+    const res = await deleteTask(data.id);
     if (res) {
-      toast.success("Schedule deleted successfully!");
+      toast.success("task deleted successfully!");
       setIsDeleteDialogOpen(false);
       setDeleteDialogData(null);
-      fetchSchedules();
+      fetchTask();
       return;
     }
-    toast.error("Failed to delete schedule.");
+    toast.error("Failed to delete task.");
   };
 
   //Edit redirect
   const editCustomer = (id?: string) => {
-    router.push(`schedules/edit?id=${id}`);
+    router.push(`task/edit?id=${id}`);
   };
 
   const handleClear = () => {
@@ -87,7 +87,7 @@ export default function SchedulePage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-[#1a2a4f] tracking-wide">
-            Dashboard <span className="text-gray-500 text-sm">/ Schedule</span>
+            Dashboard <span className="text-gray-500 text-sm">/ Task</span>
           </h1>
         </div>
 
@@ -96,7 +96,7 @@ export default function SchedulePage() {
           <PopupMenu onClose={() => { setIsDeleteDialogOpen(false); setDeleteDialogData(null); }}>
             <div className="flex flex-col gap-10 m-2">
               <h2 className="font-bold">
-                Are you sure you want to delete this schedule?
+                Are you sure you want to delete this task?
               </h2>
               <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-2">Description: {deleteDialogData.description}</div>
@@ -105,7 +105,7 @@ export default function SchedulePage() {
               <div className="flex justify-between items-center">
                 <button
                   className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
-                  onClick={() => deleteSchedule(deleteDialogData)}
+                  onClick={() => deleteTaskFunc(deleteDialogData)}
                 >
                   Yes, delete
                 </button>
@@ -123,7 +123,7 @@ export default function SchedulePage() {
         {/* Card Container */}
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 relative">
           {/* Add Button */}
-          <Link href="/schedules/add">
+          <Link href="/task/add">
             <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md absolute right-4 top-4 hover:cursor-pointer font-semibold">
               <PlusSquare size={18} /> Add
             </button>
@@ -190,22 +190,23 @@ export default function SchedulePage() {
               <thead className="bg-[#1a2a4f] text-white">
                 <tr>
                   <th className="px-4 py-3 text-left">S.No.</th>
-                  <th className="px-4 py-3 text-left">User</th>
-                  <th className="px-4 py-3 text-left">Description</th>
                   <th className="px-4 py-3 text-left">Date</th>
                   <th className="px-4 py-3 text-left">Time</th>
+                  <th className="px-4 py-3 text-left">Description</th>
+                  <th className="px-4 py-3 text-left">User</th>
                   <th className="px-4 py-3 text-left">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {filteredSchedules.length > 0 ? (
-                  filteredSchedules.map((s, i) => (
+                {filteredTask.length > 0 ? (
+                  filteredTask.map((s, i) => (
                     <tr key={s._id || i} className="border-t hover:bg-[#f7f6f3] transition-all duration-200">
                       <td className="px-4 py-3">{i + 1}</td>
-                      <td className="px-4 py-3">{s.User}</td>
-                      <td className="px-4 py-3">{s.Description}</td>
                       <td className="px-4 py-3">{s.date}</td>
                       <td className="px-4 py-3">{s.Time}</td>
+                      <td className="px-4 py-3">{s.Description}</td>
+                      <td className="px-4 py-3">{s.User}</td>
+                      
                       <td className="px-4 py-2 flex gap-2 items-center">
                         <Button
                           sx={{
@@ -244,7 +245,7 @@ export default function SchedulePage() {
                 ) : (
                   <tr>
                     <td colSpan={6} className="text-center py-4 text-gray-500">
-                      No schedules match your search.
+                      No task match your search.
                     </td>
                   </tr>
                 )}

@@ -4,14 +4,13 @@ import React, { useEffect, useState, useCallback, Suspense } from "react";
 import Link from "next/link";
 import "react-toastify/dist/ReactToastify.css";
 import { ArrowLeft } from "lucide-react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { ScheduleType } from "@/store/schedules.interface";
-import { getSchedulesById, updateSchedules } from "@/store/schedules";
-import { toast, Toaster } from "react-hot-toast";
+import { useSearchParams, useRouter } from "next/navigation"; 
+import {toast, Toaster } from "react-hot-toast";
+import { TaskType } from "@/store/task.interface";
+import { addTask } from "@/store/task";
 
 
 
-// Main component wraps inner logic with Suspense
 const AddPage: React.FC = () => {
   const router = useRouter();
 
@@ -22,32 +21,20 @@ const AddPage: React.FC = () => {
   );
 };
 
-// Inner component uses useSearchParams safely
+// Inner component uses useSearchParams
 const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
-  const [formData, setFormData] = useState<ScheduleType>({
+  const [formData, setFormData] = useState<TaskType>({
     date: "",
     Time: "",
     Description: "",
     User: "",
   });
 
-  const searchParams = useSearchParams(); // ✅ Safe inside Suspense
+  const searchParams = useSearchParams(); // ✅ Safe now
   const id = searchParams.get("id");
   const API_URL = "https://live-project-backend-viiy.onrender.com/api/sch";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (id) {
-        const data = await getSchedulesById(id);
-        if (data) {
-          setFormData(data);
-          return;
-        }
-        toast.error("Failed to fetch schedule data!");
-      }
-    };
-    fetchData();
-  }, [id]);
+
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -62,17 +49,16 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
       toast.error("Please fill all fields before saving!");
       return;
     }
-    const data = await updateSchedules(id as string, formData);
-    if (data) {
-      toast.success("Schedule Updated Successfully!");
-      setFormData({ date: "", Time: "", Description: "", User: "" });
 
-      router.push("/schedules");
-
-      return;
-    }
-    toast.error("Something went wrong. Try again.");
-  }, [formData, id, router]);
+    const data = await addTask(formData);
+        if (data) {
+          toast.success("Task Added Successfully!");
+          setFormData({ date: "", Time: "", Description: "", User: "" });
+          router.push("/task");
+          return;
+        }
+        toast.error("Something went wrong. Try again.");
+  }, [formData, router]);
 
   return (
     <div className="bg-slate-200 min-h-screen p-6">
@@ -80,7 +66,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
       {/* Back Button */}
       <div className="flex justify-end mb-4">
         <Link
-          href="/schedules"
+          href="/task"
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
         >
           <ArrowLeft size={18} /> Back
@@ -93,7 +79,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                {id ? "Edit" : "Add"} <span className="text-blue-600">Schedule</span>
+                {id ? "Edit" : "Add"} <span className="text-blue-600">Task</span>
               </h1>
             </div>
 
@@ -101,7 +87,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
               {/* Date and Time */}
               <div className="flex flex-col md:flex-row md:space-x-6 space-y-4 md:space-y-0">
                 <div className="flex flex-col flex-1">
-                  <label className="mb-1 font-semibold text-gray-700">Schedule Date</label>
+                  <label className="mb-1 font-semibold text-gray-700">Task Date</label>
                   <input
                     type="date"
                     name="date"
@@ -111,7 +97,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                   />
                 </div>
                 <div className="flex flex-col flex-1">
-                  <label className="mb-1 font-semibold text-gray-700">Time</label>
+                  <label className="mb-1 font-semibold text-gray-700">Tast Time</label>
                   <input
                     type="time"
                     name="Time"
@@ -155,7 +141,7 @@ const AddPageInner: React.FC<{ router: any }> = ({ router }) => {
                   onClick={handleSave}
                   className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
                 >
-                  Update
+                 save
                 </button>
               </div>
             </div>
