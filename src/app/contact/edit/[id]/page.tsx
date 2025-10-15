@@ -35,8 +35,7 @@ export default function ContactEdit() {
         ContactFunctionalArea: "",
         ReferenceId: "",
         Notes: "",
-        date: "",
-        AssignTo:""
+        date: ""
     });
 
     const [errors, setErrors] = useState<ErrorInterface>({});

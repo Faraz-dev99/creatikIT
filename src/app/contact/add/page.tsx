@@ -31,8 +31,7 @@ export default function ContactAdd() {
     ContactFunctionalArea: "",
     ReferenceId: "",
     Notes: "",
-    date: "",
-    AssignTo:""
+    date: ""
   });
 
   // 👇 error state
@@ -104,8 +103,7 @@ export default function ContactAdd() {
       ContactFunctionalArea: "",
       ReferenceId: "",
       Notes: "",
-      date: "",
-      AssignTo:""
+      date: ""
     });
     setErrors({});
     router.push("/contact");
@@ -181,7 +179,6 @@ export default function ContactAdd() {
                   <SingleSelect options={contactIndustry} label="Contact Industry" onChange={(selected) => handleSelectChange("ContactIndustry", selected)} />
                   <SingleSelect options={contactFunctionalArea} label="Contact Functional Area" onChange={(selected) => handleSelectChange("ContactFunctionalArea", selected)} />
                   <SingleSelect options={referenceId} label="Reference Id" onChange={(selected) => handleSelectChange("ReferenceId", selected)} />
-                    <SingleSelect options={referenceId} label="AssignTo" onChange={(selected) => handleSelectChange("ReferenceId", selected)} />
                   <TextareaField label="Notes" name="Notes" value={contactData.Notes} onChange={handleInputChange} />
                 </div>
               </div>

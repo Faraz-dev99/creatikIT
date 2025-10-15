@@ -14,8 +14,7 @@ export interface contactAllDataInterface {
     ContactFunctionalArea: string;
     ReferenceId: string;
     Notes: string,
-    date: string,
-    AssignTo:string,
+    date: string
 }
 
 export interface contactGetDataInterface {
