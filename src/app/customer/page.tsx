@@ -1,8 +1,8 @@
 'use client'
 import { useState } from "react";
-import { CiSearch } from "react-icons/ci";
+import { CiHeart, CiSearch } from "react-icons/ci";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { MdEdit, MdDelete } from "react-icons/md";
+import { MdEdit, MdDelete, MdOutlineAlternateEmail } from "react-icons/md";
 import Button from '@mui/material/Button';
 import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusSquare } from "lucide-react";
 import ProtectedRoute from "../component/ProtectedRoutes";
+import { IoCall, IoCloseSharp, IoPersonSharp } from "react-icons/io5";
+import { FaMobileAlt } from "react-icons/fa";
 export default function customerIndex() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -168,12 +170,12 @@ export default function customerIndex() {
         <div className=" p-4 max-md:p-3 w-full">
             <div className=" flex justify-between items-center">
                 <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-[#1a2a4f]-600 text-2xl">Dashboard</span>/
+                    <span className=" text-gray-900-600 text-2xl">Dashboard</span>/
                     <span>OWNER</span>
                 </h2>
 
                 <Link href="/customer/add">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
               <PlusSquare size={18} /> Add
             </button>
           </Link>
@@ -242,7 +244,7 @@ export default function customerIndex() {
                                 <input type='text' placeholder="type text here.." className=" border border-gray-300 rounded-md px-3 py-2 outline-none w-full" />
                             </div>
                             <div className=" flex flex-wrap justify-center items-center">
-                                <button type="submit" className=" border border-[#1a2a4f] text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
+                                <button type="submit" className=" border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
                                 <button type="reset" className=" text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">clear Search</button>
                             </div>
                         </form>
@@ -251,7 +253,7 @@ export default function customerIndex() {
 
 
                 <h2 className=" text-xl p-3 font-bold">
-                    <span className=" text-[#1a2a4f]">Customers</span>
+                    <span className=" text-gray-900">Customers</span>
                 </h2>
 
                 <div className=" border border-gray-300 rounded-md m-2 overflow-auto">
@@ -262,7 +264,7 @@ export default function customerIndex() {
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
                     </div>
                     <table className="table-auto w-full border-collapse text-sm">
-                        <thead className="bg-[#1a2a4f] text-white">
+                        <thead className="bg-gray-900 text-white">
                             <tr>
                                 <th className="px-4 py-3 text-left">S.No.</th>
                                 <th className="px-4 py-3 text-left">Campaign</th>
@@ -292,10 +294,50 @@ export default function customerIndex() {
                                         <td className="px-4 py-3">{item.email}</td>
                                         <td className="px-4 py-3">{item.city}</td>
                                         <td className="px-4 py-3">{item.location}</td>
-                                        <td className="px-4 py-3">{item.contact}</td>
+                                        <td className="py-3 flex flex-col items-center justify-center gap-1">{item.contact}
+                                            {
+                                                item.contact&&<div className=" grid grid-cols-3 gap-1 place-items-center">
+                                                    <Button
+                                                sx={{
+                                                    backgroundColor: "#C8E6C9",
+                                                    color: "#2E7D32",
+                                                    minWidth: "24px",
+                                                    height: "24px",
+                                                    borderRadius: "6px",
+                                                }}
+                                                onClick={() => editCustomer(item.id)}
+                                            >
+                                                <FaMobileAlt />
+                                                
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#F9D0C4",
+                                                    color: "#C62828",
+                                                    minWidth: "24px",
+                                                    height: "24px",
+                                                    borderRadius: "6px",
+                                                }}
+                                            >
+                                                <IoCall />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#F9D0C4",
+                                                    color: "#C62828",
+                                                    minWidth: "24px",
+                                                    height: "24px",
+                                                    borderRadius: "6px",
+                                                }}
+                                            >
+                                                <MdOutlineAlternateEmail />
+                                            </Button>
+                                                </div>
+                                            }
+                                        </td>
                                         <td className="px-4 py-3">{item.assignTo}</td>
                                         <td className="px-4 py-3">{item.date}</td>
-                                        <td className="px-4 py-2 flex gap-2 items-center">
+                                        <td className="px-4 grid grid-cols-2 gap-2 py-2 place-items-center">
                                             <Button
                                                 sx={{
                                                     backgroundColor: "#C8E6C9",
@@ -310,6 +352,19 @@ export default function customerIndex() {
                                             </Button>
                                             <Button
                                                 sx={{
+                                                    backgroundColor: "#C8E6C9",
+                                                    color: "#2E7D32",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                                onClick={() => editCustomer(item.id)}
+                                            >
+                                                <IoPersonSharp />
+                                                
+                                            </Button>
+                                            <Button
+                                                sx={{
                                                     backgroundColor: "#F9D0C4",
                                                     color: "#C62828",
                                                     minWidth: "32px",
@@ -317,7 +372,18 @@ export default function customerIndex() {
                                                     borderRadius: "8px",
                                                 }}
                                             >
-                                                <MdDelete />
+                                                <IoCloseSharp />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#F9D0C4",
+                                                    color: "#C62828",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
+                                            >
+                                                <CiHeart />
                                             </Button>
                                         </td>
                                     </tr>

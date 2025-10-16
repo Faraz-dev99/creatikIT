@@ -57,17 +57,17 @@ const data = {
     },
     {
       title: "Company Project",
-      url: "/company-projects",
+      url: "/company_project",
       icon: User,
     },
     {
       title: "Company Project Enquiry",
-      url: "#",
+      url: "/company_project/enquiry",
       icon: Info,
     },
     {
       title: "Customer Enquiry",
-      url: "#",
+      url: "/customer/enquiry",
       icon: Info,
     },
     {
@@ -178,17 +178,17 @@ const data = {
       items: [
         {
           title: "Income Marketings",
-          url: "#",
+          url: "/financial/income_marketings",
         },
         {
           title: "Expense Marketings",
-          url: "#",
+          url: "/financial/expense_marketings",
         },
       ],
     },
     {
-      title: "Requirments",
-      url: "#",
+      title: "Requirements",
+      url: "/requirements",
       icon: Home,
     },
     {
@@ -230,27 +230,27 @@ const data = {
     },
     {
       title: "Customer Import",
-      url: "/customer",
+      url: "/imports/customer",
       icon: MessageSquare,
     },
     {
       title: "Contact Import",
-      url: "/contact",
+      url: "/imports/contact",
       icon: MessageSquare,
     },
     {
       title: "Customer Report",
-      url: "/customer",
+      url: "/reports/customer",
       icon: LineChart,
     },
     {
       title: "Contact Report",
-      url: "/contact-report",
+      url: "/reports/contact",
       icon: LineChart,
     },
     {
       title: "Database Manager",
-      url: "#",
+      url: "/database_manager",
       icon: LucideCoins,
     },
   ],

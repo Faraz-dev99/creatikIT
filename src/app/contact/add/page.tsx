@@ -11,7 +11,7 @@ import { addContact } from "@/store/contact";
 import { contactAllDataInterface } from "@/store/contact.interface";
 
 interface ErrorInterface {
-  [key: string]: string; // 👈 dynamic key type for any field
+  [key: string]: string; // dynamic key type for any field
 }
 
 export default function ContactAdd() {
@@ -34,7 +34,6 @@ export default function ContactAdd() {
     date: ""
   });
 
-  // 👇 error state
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
 
@@ -42,8 +41,6 @@ export default function ContactAdd() {
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
       setContactData((prev) => ({ ...prev, [name]: value }));
-
-      // 👇 clear error for that field on typing
       setErrors((prev) => ({ ...prev, [name]: "" }));
     },
     []
@@ -57,60 +54,52 @@ export default function ContactAdd() {
     []
   );
 
-  //form validation logic
   const validateForm = () => {
     const newErrors: ErrorInterface = {};
 
-    if (!contactData.Name.trim()) {
-      newErrors.Name = "Name is required";
-    }
-
-    if (!contactData.Email.trim()) {
-      newErrors.Email = "Email is required";
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(contactData.Email)) {
-      newErrors.Email = "Invalid email format";
-    }
+    if (!contactData.Name.trim()) newErrors.Name = "Name is required";
+    if (!contactData.Email.trim()) newErrors.Email = "Email is required";
+    else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(contactData.Email)) newErrors.Email = "Invalid email format";
 
     return newErrors;
   };
 
   const handleSubmit = async () => {
     const validationErrors = validateForm();
-
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // stop submit if any error
+      return;
     }
-    const payload = { ...contactData };
-    if (contactData.date == "") delete (payload as any).date;
 
-    const data = await addContact(payload)
+    const payload = { ...contactData };
+    if (contactData.date === "") delete (payload as any).date;
+
+    const data = await addContact(payload);
     if (data) {
-      toast.success("Contact updated successfully!");
+      toast.success("Contact added successfully!");
       setContactData({
-      Campaign: "",
-      Name: "",
-      City: "",
-      ContactType: "",
-      ContactNo: "",
-      Location: "",
-      Email: "",
-      CompanyName: "",
-      Website: "",
-      Status: "",
-      Address: "",
-      ContactIndustry: "",
-      ContactFunctionalArea: "",
-      ReferenceId: "",
-      Notes: "",
-      date: ""
-    });
-    setErrors({});
-    router.push("/contact");
+        Campaign: "",
+        Name: "",
+        City: "",
+        ContactType: "",
+        ContactNo: "",
+        Location: "",
+        Email: "",
+        CompanyName: "",
+        Website: "",
+        Status: "",
+        Address: "",
+        ContactIndustry: "",
+        ContactFunctionalArea: "",
+        ReferenceId: "",
+        Notes: "",
+        date: ""
+      });
+      setErrors({});
+      router.push("/contact");
       return;
     }
     toast.error("Failed to add contact");
-
   };
 
   // Dropdown data
@@ -128,10 +117,7 @@ export default function ContactAdd() {
       <Toaster position="top-right" />
       <div className="w-full max-w-[900px]">
         <div className="flex justify-end mb-4">
-          <Link
-            href="/contact"
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
-          >
+          <Link href="/contact" className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all">
             <ArrowLeft size={18} /> Back
           </Link>
         </div>
@@ -147,17 +133,15 @@ export default function ContactAdd() {
             <div className="flex flex-col space-y-6">
               <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
                 <div className="flex flex-col gap-4">
-                  <SingleSelect options={campaign} label="Campaign" onChange={(selected) => handleSelectChange("Campaign", selected)} />
-                  {/* Pass error prop */}
+                  <SingleSelect options={campaign} label="Campaign" value={contactData.Campaign} onChange={(s) => handleSelectChange("Campaign", s)} />
                   <InputField label="Contact Name" name="Name" value={contactData.Name} onChange={handleInputChange} error={errors.Name} />
-                  <SingleSelect options={city} label="City" onChange={(selected) => handleSelectChange("City", selected)} />
-                  <SingleSelect options={contactType} label="Contact Type" onChange={(selected) => handleSelectChange("ContactType", selected)} />
+                  <SingleSelect options={city} label="City" value={contactData.City} onChange={(s) => handleSelectChange("City", s)} />
+                  <SingleSelect options={contactType} label="Contact Type" value={contactData.ContactType} onChange={(s) => handleSelectChange("ContactType", s)} />
                 </div>
 
                 <div className="flex flex-col gap-4">
                   <InputField label="Contact No" name="ContactNo" value={contactData.ContactNo} onChange={handleInputChange} />
-                  <SingleSelect options={location} label="Location" onChange={(selected) => handleSelectChange("Location", selected)} />
-                  {/* Email with error */}
+                  <SingleSelect options={location} label="Location" value={contactData.Location} onChange={(s) => handleSelectChange("Location", s)} />
                   <InputField label="Email" name="Email" value={contactData.Email} onChange={handleInputChange} error={errors.Email} />
                   <InputField label="Company Name" name="CompanyName" value={contactData.CompanyName} onChange={handleInputChange} />
                 </div>
@@ -166,28 +150,21 @@ export default function ContactAdd() {
               <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
                 <div className="flex flex-col gap-4">
                   <InputField label="Website" name="Website" value={contactData.Website} onChange={handleInputChange} />
-                  <SingleSelect options={status} label="Status" onChange={(selected) => handleSelectChange("Status", selected)} />
+                  <SingleSelect options={status} label="Status" value={contactData.Status} onChange={(s) => handleSelectChange("Status", s)} />
                   <InputField label="Address" name="Address" value={contactData.Address} onChange={handleInputChange} />
-                  <DateSelector
-                    label="Date"
-                    value={contactData.date} // pass current state
-                    onChange={(val) => handleSelectChange("date", val)} // update state on change
-                  />
+                  <DateSelector label="Date" value={contactData.date} onChange={(val) => handleSelectChange("date", val)} />
                 </div>
 
                 <div className="flex flex-col gap-4">
-                  <SingleSelect options={contactIndustry} label="Contact Industry" onChange={(selected) => handleSelectChange("ContactIndustry", selected)} />
-                  <SingleSelect options={contactFunctionalArea} label="Contact Functional Area" onChange={(selected) => handleSelectChange("ContactFunctionalArea", selected)} />
-                  <SingleSelect options={referenceId} label="Reference Id" onChange={(selected) => handleSelectChange("ReferenceId", selected)} />
+                  <SingleSelect options={contactIndustry} label="Contact Industry" value={contactData.ContactIndustry} onChange={(s) => handleSelectChange("ContactIndustry", s)} />
+                  <SingleSelect options={contactFunctionalArea} label="Contact Functional Area" value={contactData.ContactFunctionalArea} onChange={(s) => handleSelectChange("ContactFunctionalArea", s)} />
+                  <SingleSelect options={referenceId} label="Reference Id" value={contactData.ReferenceId} onChange={(s) => handleSelectChange("ReferenceId", s)} />
                   <TextareaField label="Notes" name="Notes" value={contactData.Notes} onChange={handleInputChange} />
                 </div>
               </div>
 
               <div className="flex justify-end mt-4">
-                <button
-                  onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
-                >
+                <button onClick={handleSubmit} className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all">
                   Save
                 </button>
               </div>

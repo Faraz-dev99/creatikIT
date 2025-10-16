@@ -13,37 +13,10 @@ import PopupMenu from "../component/popups/PopupMenu";
 import toast, { Toaster } from "react-hot-toast";
 import DateSelector from "@/app/component/DateSelector";
 import { getContact, deleteContact, getFilteredContact } from "@/store/contact";
+import { ContactAdvInterface, contactGetDataInterface, DeleteDialogDataInterface } from "@/store/contact.interface";
 
 export default function Contacts() {
-  interface Contact {
-    _id: string;
-    Name: string;
-    Email: string;
-    Campaign: string;
-    Qualifications: string;
-    Location: string;
-    ContactNo: string;
-    AssignTo: string;
-    date: string
-  }
 
-  interface ContactAdvInterface {
-    _id: string[];
-    StatusAssign: string[];
-    Campaign: string[];
-    ContactType: string[];
-    City: string[];
-    Location: string[];
-    User: string[];
-    Keyword: string;
-    Limit: string[];
-  }
-
-  interface DeleteDialogDataInterface {
-    id: string;
-    contactName: string;
-    contactEmail: string;
-  }
 
   const router = useRouter();
 
@@ -64,7 +37,7 @@ export default function Contacts() {
     Limit: [] as string[]
   });
 
-  const [contactData, setContactData] = useState<Contact[]>([]);
+  const [contactData, setContactData] = useState<contactGetDataInterface[]>([]);
   const [contactAdv, setContactAdv] = useState<ContactAdvInterface[]>([]);
 
   useEffect(() => {
@@ -203,12 +176,12 @@ const clearFilter = async () => {
         <div className="p-4 max-md:p-3 w-full">
           <div className="flex justify-between items-center">
             <h2 className="flex gap-2 items-center font-light">
-              <span className="text-[#1a2a4f]-600 text-2xl">Dashboard</span>/
+              <span className="text-gray-900-600 text-2xl">Dashboard</span>/
               <span>Contact</span>
             </h2>
 
             <Link href="/contact/add">
-              <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md hover:cursor-pointer font-semibold">
+              <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md hover:cursor-pointer font-semibold">
                 <PlusSquare size={18} /> Add
               </button>
             </Link>
@@ -287,7 +260,7 @@ const clearFilter = async () => {
                   <div className="flex flex-wrap justify-center items-center">
                     <button
                       type="submit"
-                      className="border border-[#1a2a4f] text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md"
+                      className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md"
                     >
                       Explore
                     </button>
@@ -311,7 +284,7 @@ const clearFilter = async () => {
               </div>
 
               <table className="table-auto w-full border-collapse text-sm">
-                <thead className="bg-[#1a2a4f] text-white">
+                <thead className="bg-gray-900 text-white">
                   <tr>
                     <th className="px-4 py-3 text-left">S.No.</th>
                     <th className="px-4 py-3 text-left">Campaign</th>

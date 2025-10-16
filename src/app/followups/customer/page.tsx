@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdOutlineAlternateEmail } from "react-icons/md";
 import Button from '@mui/material/Button';
 import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
@@ -10,6 +10,7 @@ import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusSquare } from "lucide-react";
+import { FaMobileAlt } from "react-icons/fa";
 export default function customerFollowups() {
     const router = useRouter();
     const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
@@ -43,8 +44,11 @@ export default function customerFollowups() {
 
     }
 
-    const editCustomer = (id: string | number) => {
+    const editCustomer = (id: string) => {
         router.push(`/followups/customer/edit/${id}`)
+    }
+    const addCustomer = (id:string) =>{
+        router.push(`/followups/customer/add/${id}`)
     }
 
     const statusAssign = [
@@ -77,15 +81,15 @@ export default function customerFollowups() {
         <div className=" p-4 max-md:p-3 w-full">
             <div className=" flex justify-between items-center">
                 <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-[#1a2a4f] text-2xl">Dashboard</span>/
+                    <span className=" text-gray-900 text-2xl">Dashboard</span>/
                     <span>FollowUps</span>
                 </h2>
 
-                <Link href="/customer/add">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
-              <PlusSquare size={18} /> Add
-            </button>
-          </Link>
+               {/*  <Link href="/customer/add">
+                    <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
+                        <PlusSquare size={18} /> Add
+                    </button>
+                </Link> */}
             </div>
 
             <section className=" flex flex-col mt-6 p-2 bg-white rounded-lg shadow-sm">
@@ -150,7 +154,7 @@ export default function customerFollowups() {
                                 <input type='text' placeholder="type text here.." className=" border border-gray-400 rounded-md px-3 py-2 outline-none w-full" />
                             </div>
                             <div className=" flex flex-wrap justify-center items-center">
-                                <button type="submit" className=" border border-[#1a2a4f] text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
+                                <button type="submit" className=" border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
                                 <button type="reset" className=" text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">clear Search</button>
                             </div>
                         </form>
@@ -159,7 +163,7 @@ export default function customerFollowups() {
 
 
                 <h2 className=" text-xl mt-5 p-3 font-bold">
-                    <span className=" text-[#1a2a4f]">Customer Followups</span>
+                    <span className=" text-gray-900">Customer Followups</span>
                 </h2>
 
                 <div className=" border border-gray-400 rounded-md m-2 overflow-auto">
@@ -170,7 +174,7 @@ export default function customerFollowups() {
                         <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
                     </div>
                     <table className="table-auto w-full border-collapse text-sm">
-                        <thead className="bg-[#1a2a4f] text-white">
+                        <thead className="bg-gray-900 text-white">
                             <tr>
                                 <th className="px-4 py-3 text-left">S.No.</th>
                                 <th className="px-4 py-3 text-left">Name</th>
@@ -203,6 +207,18 @@ export default function customerFollowups() {
                                                     height: "32px",
                                                     borderRadius: "8px",
                                                 }}
+                                                onClick={() => addCustomer(item.id)}
+                                            >
+                                                <MdAdd />
+                                            </Button>
+                                            <Button
+                                                sx={{
+                                                    backgroundColor: "#C8E6C9",
+                                                    color: "#2E7D32",
+                                                    minWidth: "32px",
+                                                    height: "32px",
+                                                    borderRadius: "8px",
+                                                }}
                                                 onClick={() => editCustomer(item.id)}
                                             >
                                                 <MdEdit />
@@ -218,6 +234,37 @@ export default function customerFollowups() {
                                             >
                                                 <MdDelete />
                                             </Button>
+                                        </td>
+                                        <td className="px-4 py-2 ">
+                                            <div className=" flex gap-1 items-center">
+                                                <Button
+                                                    sx={{
+                                                        backgroundColor: "#C8E6C9",
+                                                        color: "#2E7D32",
+                                                        minWidth: "32px",
+                                                        height: "32px",
+                                                        borderRadius: "8px",
+                                                    }}
+                                                    onClick={() => editCustomer(item.id)}
+                                                >
+                                                    <FaMobileAlt />
+
+                                                </Button>
+
+                                                <Button
+                                                    sx={{
+                                                        backgroundColor: "#F9D0C4",
+                                                        color: "#C62828",
+                                                        minWidth: "32px",
+                                                        height: "32px",
+                                                        borderRadius: "8px",
+                                                    }}
+                                                >
+                                                    <MdOutlineAlternateEmail />
+                                                </Button>
+                                            </div>
+
+
                                         </td>
 
                                     </tr>

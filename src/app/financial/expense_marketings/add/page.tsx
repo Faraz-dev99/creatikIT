@@ -12,12 +12,16 @@ interface ErrorInterface {
   [key: string]: string;
 }
 
-export default function CustomerFollowupAdd() {
-  const [followupData, setFollowupData] = useState({
-    StartDate: "",
-    StatusType: "",
-    FollowupNextDate: "",
-    Description: "",
+export default function ExpenseMarketingAdd() {
+  const [expenseData, setExpenseData] = useState({
+    User: "",
+    PartyName: "",
+    Date: "",
+    Expense: "",
+    PaymentMethod: "",
+    Amount: "",
+    DueAmount: "",
+    Status: "",
   });
 
   const [errors, setErrors] = useState<ErrorInterface>({});
@@ -26,7 +30,7 @@ export default function CustomerFollowupAdd() {
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
-      setFollowupData((prev) => ({ ...prev, [name]: value }));
+      setExpenseData((prev) => ({ ...prev, [name]: value }));
       setErrors((prev) => ({ ...prev, [name]: "" }));
     },
     []
@@ -34,7 +38,7 @@ export default function CustomerFollowupAdd() {
 
   const handleSelectChange = useCallback(
     (label: string, selected: string) => {
-      setFollowupData((prev) => ({ ...prev, [label]: selected }));
+      setExpenseData((prev) => ({ ...prev, [label]: selected }));
       setErrors((prev) => ({ ...prev, [label]: "" }));
     },
     []
@@ -42,10 +46,12 @@ export default function CustomerFollowupAdd() {
 
   const validateForm = () => {
     const newErrors: ErrorInterface = {};
-    if (!followupData.StartDate.trim()) newErrors.StartDate = "Start Date is required";
-    if (!followupData.StatusType.trim()) newErrors.StatusType = "Status Type is required";
-    if (!followupData.FollowupNextDate.trim()) newErrors.FollowupNextDate = "Followup Next Date is required";
-    if (!followupData.Description.trim()) newErrors.Description = "Description is required";
+    if (!expenseData.User.trim()) newErrors.User = "User is required";
+    if (!expenseData.PartyName.trim()) newErrors.PartyName = "Party Name is required";
+    if (!expenseData.Expense.trim()) newErrors.Expense = "Expense is required";
+    if (!expenseData.PaymentMethod.trim()) newErrors.PaymentMethod = "Payment Method is required";
+    if (!expenseData.Amount.trim()) newErrors.Amount = "Amount is required";
+    if (!expenseData.Status.trim()) newErrors.Status = "Status is required";
     return newErrors;
   };
 
@@ -56,18 +62,25 @@ export default function CustomerFollowupAdd() {
       return;
     }
 
-    toast.success("Customer Followup added successfully!");
-    setFollowupData({
-      StartDate: "",
-      StatusType: "",
-      FollowupNextDate: "",
-      Description: "",
+    toast.success("Expense Marketing added successfully!");
+    setExpenseData({
+      User: "",
+      PartyName: "",
+      Date: "",
+      Expense: "",
+      PaymentMethod: "",
+      Amount: "",
+      DueAmount: "",
+      Status: "",
     });
     setErrors({});
-    router.push("/customer-followup");
+    router.push("/expense-marketing");
   };
 
-  const statusOptions = ["Pending", "Completed", "In Progress"];
+  // Dropdown data
+  const users = ["Admin", "Seller", "Visitor"];
+  const paymentMethods = ["Cash", "UPI", "Bank Transfer"];
+  const statusOptions = ["Paid", "Unpaid", "Partial"];
 
   return (
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
@@ -75,7 +88,7 @@ export default function CustomerFollowupAdd() {
       <div className="w-full max-w-[900px]">
         <div className="flex justify-end mb-4">
           <Link
-            href="/followups/customer"
+            href="/financial/expense_marketings"
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
           >
             <ArrowLeft size={18} /> Back
@@ -86,42 +99,73 @@ export default function CustomerFollowupAdd() {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                Add <span className="text-blue-600">Customer Followup</span>
+                Add <span className="text-blue-600">Expense Marketing</span>
               </h1>
             </div>
 
             <div className="flex flex-col space-y-10">
 
-              {/* Customer Followup */}
+              {/* ExpenseMarketing Information */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">Followup Information</h2>
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">Expense Marketing Information</h2>
                 <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
 
+                  <SingleSelect
+                    options={users}
+                    label="User"
+                    value={expenseData.User}
+                    onChange={(selected) => handleSelectChange("User", selected)}
+                  />
+
+                  <InputField
+                    label="Party Name"
+                    name="PartyName"
+                    value={expenseData.PartyName}
+                    onChange={handleInputChange}
+                    error={errors.PartyName}
+                  />
+
                   <DateSelector
-                    label="Start Date"
-                    value={followupData.StartDate}
-                    onChange={(val) => handleSelectChange("StartDate", val)}
+                    label="Date"
+                    value={expenseData.Date}
+                    onChange={(val) => handleSelectChange("Date", val)}
+                  />
+
+                  <InputField
+                    label="Expense"
+                    name="Expense"
+                    value={expenseData.Expense}
+                    onChange={handleInputChange}
+                    error={errors.Expense}
+                  />
+
+                  <SingleSelect
+                    options={paymentMethods}
+                    label="Payment Method"
+                    value={expenseData.PaymentMethod}
+                    onChange={(selected) => handleSelectChange("PaymentMethod", selected)}
+                  />
+
+                  <InputField
+                    label="Amount"
+                    name="Amount"
+                    value={expenseData.Amount}
+                    onChange={handleInputChange}
+                    error={errors.Amount}
+                  />
+
+                  <InputField
+                    label="Due Amount"
+                    name="DueAmount"
+                    value={expenseData.DueAmount}
+                    onChange={handleInputChange}
                   />
 
                   <SingleSelect
                     options={statusOptions}
-                    label="Status Type"
-                    value={followupData.StatusType}
-                    onChange={(selected) => handleSelectChange("StatusType", selected)}
-                  />
-
-                  <DateSelector
-                    label="Followup Next Date"
-                    value={followupData.FollowupNextDate}
-                    onChange={(val) => handleSelectChange("FollowupNextDate", val)}
-                  />
-
-                  <TextAreaField
-                    label="Description"
-                    name="Description"
-                    value={followupData.Description}
-                    onChange={handleInputChange}
-                    error={errors.Description}
+                    label="Status"
+                    value={expenseData.Status}
+                    onChange={(selected) => handleSelectChange("Status", selected)}
                   />
 
                 </div>
@@ -144,21 +188,21 @@ export default function CustomerFollowupAdd() {
   );
 }
 
-const TextAreaField: React.FC<{
+const InputField: React.FC<{
   label: string;
   name: string;
   value: string;
   error?: string;
-  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }> = ({ label, name, value, onChange, error }) => (
   <label className="relative block w-full">
-    <textarea
+    <input
+      type="text"
       name={name}
       value={value}
       onChange={onChange}
       placeholder=" "
-      rows={4}
-      className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none resize-none 
+      className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
         ${error ? "border-red-500 focus:border-red-500" : "border-gray-400 focus:border-blue-500"}`}
     />
     <p

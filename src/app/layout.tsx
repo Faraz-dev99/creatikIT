@@ -35,7 +35,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <AppSidebar />
 
             <SidebarInset>
-              <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-950 text-white px-4 shadow-sm">
+              <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-900 text-white px-4 shadow-sm">
                 <div className="flex items-center gap-2 max-md:hidden">
                   <SidebarTrigger className="-ml-1" />
                   <Separator

@@ -50,7 +50,7 @@ export default function Navbar() {
 
   return (
     <ProtectedRoute>
-    <div className="flex justify-end items-end bg-gray-950 text-gray-300">
+    <div className="flex justify-end items-end bg-gray-900 text-gray-300">
       <div className=" max-md:hidden" />
       <nav className="px-2 " style={{ zIndex: 1000 }}>
         <ul className="flex">

@@ -86,7 +86,7 @@ export default function TaskPage() {
       <div className="min-h-screen bg-slate-100 p-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-semibold text-[#1a2a4f] tracking-wide">
+          <h1 className="text-2xl font-semibold text-gray-900 tracking-wide">
             Dashboard <span className="text-gray-500 text-sm">/ Task</span>
           </h1>
         </div>
@@ -124,7 +124,7 @@ export default function TaskPage() {
         <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-200 relative">
           {/* Add Button */}
           <Link href="/task/add">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md absolute right-4 top-4 hover:cursor-pointer font-semibold">
+            <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md absolute right-4 top-4 hover:cursor-pointer font-semibold">
               <PlusSquare size={18} /> Add
             </button>
           </Link>
@@ -133,7 +133,7 @@ export default function TaskPage() {
           <form className="w-full flex flex-wrap gap-6 items-end mb-6 mt-16">
             {/* User Filter */}
             <div className="flex flex-col w-60">
-              <label htmlFor="user" className="text-lg font-medium text-[#1a2a4f] pl-1">
+              <label htmlFor="user" className="text-lg font-medium text-gray-900 pl-1">
                 User
               </label>
               <select
@@ -153,7 +153,7 @@ export default function TaskPage() {
 
             {/* Keyword Filter */}
             <div className="flex flex-col flex-1 w-60">
-              <label htmlFor="keyword" className="text-lg font-medium text-[#1a2a4f] pl-1">
+              <label htmlFor="keyword" className="text-lg font-medium text-gray-900 pl-1">
                 Keyword
               </label>
               <input
@@ -162,7 +162,7 @@ export default function TaskPage() {
                 placeholder="Search description, date, or time..."
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#d4af37]"
+                className="w-full border outline-none border-gray-300 rounded-md px-3 py-2 bg-white text-gray-800"
               />
             </div>
 
@@ -187,7 +187,7 @@ export default function TaskPage() {
               <button type="button" className="hover:text-gray-950 cursor-pointer">Mass Update</button>
             </div>
             <table className="table-auto w-full border-collapse text-sm">
-              <thead className="bg-[#1a2a4f] text-white">
+              <thead className="bg-gray-900 text-white">
                 <tr>
                   <th className="px-4 py-3 text-left">S.No.</th>
                   <th className="px-4 py-3 text-left">Date</th>

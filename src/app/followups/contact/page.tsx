@@ -163,11 +163,11 @@ export default function ContactFollowups() {
                 <div className="p-4 max-md:p-3 w-full">
                     <div className="flex justify-between items-center">
                         <h2 className="flex gap-2 items-center font-light">
-                            <span className="text-[#1a2a4f]-600 text-2xl">Dashboard</span> / <span>FollowUps</span>
+                            <span className="text-gray-900-600 text-2xl">Dashboard</span> / <span>FollowUps</span>
                         </h2>
 
                         <Link href="/followups/contact/add">
-                            <button className="flex items-center gap-2 bg-gradient-to-r from-[#1a2a4f] to-[#4e6787] text-white px-4 py-2 rounded-md hover:cursor-pointer font-semibold">
+                            <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md hover:cursor-pointer font-semibold">
                                 <PlusSquare size={18} /> Add
                             </button>
                         </Link>
@@ -211,7 +211,7 @@ export default function ContactFollowups() {
                                         />
                                     </div>
                                     <div className="flex flex-wrap justify-center items-center">
-                                        <button type="submit" className="border border-[#1a2a4f] text-[#1a2a4f] hover:bg-[#1a2a4f] hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
+                                        <button type="submit" className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
                                             Explore
                                         </button>
                                         <button type="reset" className="text-red-500 cursor-pointer hover:bg-gray-300 text-sm px-5 py-2 mt-6 rounded-md ml-3"
@@ -233,7 +233,7 @@ export default function ContactFollowups() {
                             </div>
 
                             <table className="table-auto w-full border-collapse text-sm">
-                                <thead className="bg-[#1a2a4f] text-white">
+                                <thead className="bg-gray-900 text-white">
                                     <tr>
                                         <th className="px-4 py-3 text-left">S.No.</th>
                                         <th className="px-4 py-3 text-left">Name</th>

@@ -119,3 +119,14 @@
   }
 }
 
+/* Tailwind 4 - Remove autofill highlight properly for all themes */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px var(--color-input) inset !important; /* use theme variable */
+  -webkit-text-fill-color: var(--foreground) !important; /* use theme variable */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+
+
