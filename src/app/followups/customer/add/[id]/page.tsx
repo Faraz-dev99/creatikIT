@@ -5,20 +5,24 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import DateSelector from "@/app/component/DateSelector";
+import { addCustomerFollowup } from "@/store/customerFollowups";
+import { customerFollowupAllDataInterface } from "@/store/customerFollowups.interface";
 
 interface ErrorInterface {
   [key: string]: string;
 }
 
 export default function CustomerFollowupAdd() {
-  const [followupData, setFollowupData] = useState({
+  const [followupData, setFollowupData] = useState<customerFollowupAllDataInterface>({
+    customer:"",
     StartDate: "",
     StatusType: "",
     FollowupNextDate: "",
     Description: "",
   });
+  const { id } = useParams();
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
@@ -56,15 +60,29 @@ export default function CustomerFollowupAdd() {
       return;
     }
 
-    toast.success("Customer Followup added successfully!");
-    setFollowupData({
-      StartDate: "",
-      StatusType: "",
-      FollowupNextDate: "",
-      Description: "",
-    });
-    setErrors({});
-    router.push("/customer-followup");
+    const payload = { ...followupData };
+    if (followupData.StartDate === "") delete (payload as any).StartDate;
+
+    const data = await addCustomerFollowup(id as string, payload)
+
+    if (data) {
+      toast.success("Customer Followup added successfully!");
+      setFollowupData({
+        customer:"",
+        StartDate: "",
+        StatusType: "",
+        FollowupNextDate: "",
+        Description: "",
+      });
+      setErrors({});
+      router.push("/followups/customer");
+      return;
+    }
+
+    toast.error("failed to add Followup!");
+
+
+
   };
 
   const statusOptions = ["Pending", "Completed", "In Progress"];
@@ -164,8 +182,8 @@ const TextAreaField: React.FC<{
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
       ${value || error
-        ? "-top-2 text-xs text-blue-500"
-        : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}
+          ? "-top-2 text-xs text-blue-500"
+          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}
     >
       {label}
     </p>

@@ -1,272 +1,276 @@
-'use client'
+'use client';
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
+import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import DateSelector from "@/app/component/DateSelector";
+import SingleSelect from "@/app/component/SingleSelect";
+import { companyprojectAllDataInterface } from "@/store/companyproject/companyproject.interface";
+import { addCompanyProjects } from "@/store/companyproject/companyproject";
+
 
 interface ErrorInterface {
-    [key: string]: string;
+  [key: string]: string;
 }
-
-interface CustomerImage {
-    title: string;
-    file: File | null;
-}
-
-interface ProjectData {
-    ProjectName: string;
-    ProjectType: string;
-    ProjectStatus: string;
-    City: string;
-    Location: string;
-    Area: string;
-    Address: string;
-    Range: string;
-    Amenities: string;
-    Facilities: string;
-    Description: string;
-    Video: string;
-    GoogleMap: string;
-    CustomerImages: CustomerImage[];
-    SitePlan: File | null;
-}
-
-
-
 
 export default function CompanyProjectAdd() {
-    const [projectData, setProjectData] = useState<ProjectData>({
-        ProjectName: "",
-        ProjectType: "",
-        ProjectStatus: "",
-        City: "",
-        Location: "",
-        Area: "",
-        Address: "",
-        Range: "",
-        Amenities: "",
-        Facilities: "",
-        Description: "",
-        Video: "",
-        GoogleMap: "",
-        CustomerImages: Array(6).fill({ title: "", file: null }),
-        SitePlan: null,
-    });
+  const [projectData, setProjectData] = useState<companyprojectAllDataInterface>({
+    ProjectName: "",
+    ProjectType: "",
+    ProjectStatus: "",
+    City: "",
+    Location: "",
+    Area: "",
+    Range: "",
+    Adderess: "",
+    Facillities: "",
+    Amenities: "",
+    Description: "",
+    Video: "",
+    GoogleMap: "",
+    CustomerImage: [],
+    SitePlan: {} as File
+  });
 
-    const [errors, setErrors] = useState<ErrorInterface>({});
-    const router = useRouter();
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [sitePlanPreview, setSitePlanPreview] = useState<string>("");
+  const [errors, setErrors] = useState<ErrorInterface>({});
+  const router = useRouter();
 
-    const handleInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            const { name, value } = e.target;
-            setProjectData((prev) => ({ ...prev, [name]: value }));
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        },
-        []
-    );
+  // Input change
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setProjectData(prev => ({ ...prev, [name]: value }));
+      setErrors(prev => ({ ...prev, [name]: "" }));
+    },
+    []
+  );
 
-    const handleSelectChange = useCallback(
-        (label: string, selected: string) => {
-            setProjectData((prev) => ({ ...prev, [label]: selected }));
-            setErrors((prev) => ({ ...prev, [label]: "" }));
-        },
-        []
-    );
+  const handleSelectChange = useCallback((label: string, value: string) => {
+    setProjectData(prev => ({ ...prev, [label]: value }));
+    setErrors(prev => ({ ...prev, [label]: "" }));
+  }, []);
 
-    const handleCustomerImageChange = (index: number, field: "title" | "file", value: string | File | null) => {
-        const updatedImages = [...projectData.CustomerImages];
-        updatedImages[index] = { ...updatedImages[index], [field]: value };
-        setProjectData((prev) => ({ ...prev, CustomerImages: updatedImages }));
-    };
+  // File change
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, field: string) => {
+    const files = e.target.files;
+    if (!files) return;
 
+    if (field === "CustomerImage") {
+      const newFiles = Array.from(files);
+      const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+      setProjectData(prev => ({ ...prev, CustomerImage: [...prev.CustomerImage, ...newFiles] }));
+      setImagePreviews(prev => [...prev, ...newPreviews]);
+    } else if (field === "SitePlan") {
+      const file = files[0];
+      setProjectData(prev => ({ ...prev, SitePlan: file }));
+      setSitePlanPreview(URL.createObjectURL(file));
+    }
+  };
 
-    const handleSitePlanChange = (file: File | null) => {
-        setProjectData((prev) => ({ ...prev, SitePlan: file }));
-    };
+  const handleRemoveImage = (index: number) => {
+    setProjectData(prev => ({
+      ...prev,
+      CustomerImage: prev.CustomerImage.filter((_, i) => i !== index)
+    }));
+    setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
 
-    const validateForm = () => {
-        const newErrors: ErrorInterface = {};
-        if (!projectData.ProjectName.trim()) newErrors.ProjectName = "Project Name is required";
-        if (!projectData.ProjectType.trim()) newErrors.ProjectType = "Project Type is required";
-        if (!projectData.ProjectStatus.trim()) newErrors.ProjectStatus = "Project Status is required";
-        if (!projectData.City.trim()) newErrors.City = "City is required";
-        if (!projectData.Location.trim()) newErrors.Location = "Location is required";
-        return newErrors;
-    };
+  const handleRemoveSitePlan = () => {
+    setProjectData(prev => ({ ...prev, SitePlan: {} as File }));
+    setSitePlanPreview("");
+  };
 
-    const handleSubmit = async () => {
-        const validationErrors = validateForm();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
+  // Validation
+  const validateForm = () => {
+    const newErrors: ErrorInterface = {};
+    if (!projectData.ProjectName.trim()) newErrors.ProjectName = "Project Name is required";
+    if (!projectData.ProjectType.trim()) newErrors.ProjectType = "Project Type is required";
+    if (!projectData.ProjectStatus.trim()) newErrors.ProjectStatus = "Project Status is required";
+    return newErrors;
+  };
+
+  // Submit
+  const handleSubmit = async () => {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      Object.entries(projectData).forEach(([key, value]) => {
+        if (key === "CustomerImage" && Array.isArray(value)) {
+          value.forEach(file => formData.append("CustomerImage", file));
+        } else if (key === "SitePlan" && (value as File)?.name) {
+          formData.append("SitePlan", value as File);
+        } else if (value) {
+          formData.append(key, value as string);
         }
+      });
 
-        toast.success("Project added successfully!");
-        setProjectData({
-            ProjectName: "",
-            ProjectType: "",
-            ProjectStatus: "",
-            City: "",
-            Location: "",
-            Area: "",
-            Address: "",
-            Range: "",
-            Amenities: "",
-            Facilities: "",
-            Description: "",
-            Video: "",
-            GoogleMap: "",
-            CustomerImages: [
-                { title: "", file: null },
-                { title: "", file: null },
-                { title: "", file: null },
-                { title: "", file: null },
-                { title: "", file: null },
-                { title: "", file: null },
-            ],
-            SitePlan: null,
-        });
-        setErrors({});
-        router.push("/company-projects");
-    };
+      const result = await addCompanyProjects(formData);
+      if (result) {
+        toast.success("Company project added successfully!");
+        router.push("/company_project");
+      } else {
+        toast.error("Failed to add company project");
+      }
+    } catch (error) {
+      toast.error("Error adding company project");
+      console.error("Add Error:", error);
+    }
+  };
 
-    // Example options for selects
-    const projectTypes = ["Residential", "Commercial", "Industrial"];
-    const projectStatuses = ["Ongoing", "Completed", "Planned"];
+  const dropdownOptions = ["Residential", "Commercial", "Industrial"];
 
-    return (
-        <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
-            <Toaster position="top-right" />
-            <div className="w-full max-w-[900px]">
-                <div className="flex justify-end mb-4">
-                    <Link
-                        href="/company_project"
-                        className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
-                    >
-                        <ArrowLeft size={18} /> Back
-                    </Link>
-                </div>
-
-                <div className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl h-auto">
-                    <form onSubmit={(e) => e.preventDefault()}>
-                        <div className="mb-8 text-left border-b pb-4 border-gray-200">
-                            <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                                Add <span className="text-blue-600">Company Project</span>
-                            </h1>
-                        </div>
-
-                        <div className="flex flex-col space-y-10">
-
-                            {/* Project Information */}
-                            <div>
-                                <h2 className="text-xl font-semibold text-gray-700 mb-4">Project Information</h2>
-                                <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
-
-                                    <InputField label="Project Name" name="ProjectName" value={projectData.ProjectName} onChange={handleInputChange} error={errors.ProjectName} />
-
-                                    <SingleSelect options={projectTypes} label="Project Type" value={projectData.ProjectType} onChange={(val) => handleSelectChange("ProjectType", val)} />
-
-                                    <SingleSelect options={projectStatuses} label="Project Status" value={projectData.ProjectStatus} onChange={(val) => handleSelectChange("ProjectStatus", val)} />
-
-                                    <InputField label="City" name="City" value={projectData.City} onChange={handleInputChange} error={errors.City} />
-
-                                    <InputField label="Location" name="Location" value={projectData.Location} onChange={handleInputChange} error={errors.Location} />
-
-                                    <InputField label="Area" name="Area" value={projectData.Area} onChange={handleInputChange} />
-
-                                    <InputField label="Address" name="Address" value={projectData.Address} onChange={handleInputChange} />
-
-                                    <InputField label="Range" name="Range" value={projectData.Range} onChange={handleInputChange} />
-
-                                    <InputField label="Amenities" name="Amenities" value={projectData.Amenities} onChange={handleInputChange} />
-
-                                    <InputField label="Facilities" name="Facilities" value={projectData.Facilities} onChange={handleInputChange} />
-
-                                    <TextAreaField label="Description" name="Description" value={projectData.Description} onChange={handleInputChange} />
-
-                                    <InputField label="Video" name="Video" value={projectData.Video} onChange={handleInputChange} />
-
-                                    <InputField label="Google Map" name="GoogleMap" value={projectData.GoogleMap} onChange={handleInputChange} />
-
-                                    {/* Customer Images */}
-                                    {projectData.CustomerImages.map((img, idx) => (
-                                        <div key={idx} className="flex gap-2 items-center">
-                                            <InputField label={`Customer Image Title ${idx + 1}`} name={`CustomerTitle${idx}`} value={img.title} onChange={(e) => handleCustomerImageChange(idx, "title", e.target.value)} />
-                                            <input type="file" onChange={(e) => handleCustomerImageChange(idx, "file", e.target.files?.[0] || null)} className="border p-2 rounded w-full" />
-                                        </div>
-                                    ))}
-
-                                    {/* Site Plan */}
-                                    <div>
-                                        <label className="block mb-2 text-sm font-medium text-gray-900">Site Plan</label>
-                                        <input type="file" onChange={(e) => handleSitePlanChange(e.target.files?.[0] || null)} className="border p-2 rounded w-full" />
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-end mt-6">
-                                <button
-                                    onClick={handleSubmit}
-                                    className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
-                                >
-                                    Save
-                                </button>
-                            </div>
-
-                        </div>
-                    </form>
-                </div>
-            </div>
+  return (
+    <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
+      <Toaster position="top-right" />
+      <div className="w-full">
+        <div className="flex justify-end mb-4">
+          <Link
+            href="/company_project"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
+          >
+            <ArrowLeft size={18} /> Back
+          </Link>
         </div>
-    );
+
+        <div className="bg-white/90 backdrop-blur-lg p-10 w-full rounded-3xl shadow-2xl h-auto">
+          <form onSubmit={e => e.preventDefault()} className="w-full">
+            <div className="mb-8 text-left border-b pb-4 border-gray-200">
+              <h1 className="text-3xl font-extrabold text-gray-800">
+                Add <span className="text-blue-600">Company Project</span>
+              </h1>
+            </div>
+
+            <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+              <InputField label="Project Name" name="ProjectName" value={projectData.ProjectName} onChange={handleInputChange} error={errors.ProjectName} />
+              <SingleSelect options={dropdownOptions} label="Project Type" value={projectData.ProjectType} onChange={v => handleSelectChange("ProjectType", v)} error={errors.ProjectType} />
+              <SingleSelect options={["Planned", "Ongoing", "Completed"]} label="Project Status" value={projectData.ProjectStatus} onChange={v => handleSelectChange("ProjectStatus", v)} error={errors.ProjectStatus} />
+
+              <InputField label="City" name="City" value={projectData.City} onChange={handleInputChange} />
+              <InputField label="Location" name="Location" value={projectData.Location} onChange={handleInputChange} />
+              <InputField label="Area" name="Area" value={projectData.Area} onChange={handleInputChange} />
+
+              <InputField label="Range" name="Range" value={projectData.Range} onChange={handleInputChange} />
+              <InputField label="Address" name="Adderess" value={projectData.Adderess} onChange={handleInputChange} />
+              <InputField label="Facilities" name="Facillities" value={projectData.Facillities} onChange={handleInputChange} />
+
+              <InputField label="Amenities" name="Amenities" value={projectData.Amenities} onChange={handleInputChange} />
+              <TextareaField label="Description" name="Description" value={projectData.Description} onChange={handleInputChange} />
+              <InputField label="Video URL" name="Video" value={projectData.Video} onChange={handleInputChange} />
+              <InputField label="Google Map URL" name="GoogleMap" value={projectData.GoogleMap} onChange={handleInputChange} />
+
+              <FileUpload label="Project Images" multiple previews={imagePreviews} onChange={e => handleFileChange(e, "CustomerImage")} onRemove={handleRemoveImage} />
+              <FileUpload label="Site Plan" previews={sitePlanPreview ? [sitePlanPreview] : []} onChange={e => handleFileChange(e, "SitePlan")} onRemove={handleRemoveSitePlan} />
+            </div>
+
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={handleSubmit}
+                className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 const InputField: React.FC<{
-    label: string;
-    name: string;
-    value: string;
-    error?: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  label: string;
+  name: string;
+  value: string;
+  error?: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }> = ({ label, name, value, onChange, error }) => (
-    <label className="relative block w-full">
-        <input
-            type="text"
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder=" "
-            className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
+  <label className="relative block w-full">
+    <input
+      type="text"
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder=" "
+      className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
         ${error ? "border-red-500 focus:border-red-500" : "border-gray-400 focus:border-blue-500"}`}
-        />
-        <p className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+    />
+    <p className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
       ${value || error ? "-top-2 text-xs text-blue-500" : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}>
-            {label}
-        </p>
-        {error && <span className="text-red-500 text-sm mt-1 block">{error}</span>}
-    </label>
+      {label}
+    </p>
+    {error && <span className="text-red-500 text-sm mt-1 block">{error}</span>}
+  </label>
 );
 
-const TextAreaField: React.FC<{
-    label: string;
-    name: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+// Textarea field
+const TextareaField: React.FC<{
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 }> = ({ label, name, value, onChange }) => (
-    <label className="relative block w-full">
-        <textarea
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder=" "
-            className="peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none h-24"
-        />
-        <p className="absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
-      peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500">
-            {label}
-        </p>
-    </label>
+  <label className="relative block w-full">
+    <textarea
+      name={name}
+      value={value}
+      onChange={onChange}
+      placeholder=" "
+      className="peer w-full border rounded-sm border-gray-400 bg-transparent py-3 px-4 outline-none focus:border-blue-500 min-h-[100px]"
+    ></textarea>
+    <p className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
+      ${value ? "-top-2 text-xs text-blue-500" : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}>
+      {label}
+    </p>
+  </label>
 );
+
+// File upload with preview and remove
+const FileUpload: React.FC<{
+  label: string;
+  multiple?: boolean;
+  previews?: string[];
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove?: (index: number) => void;
+}> = ({ label, multiple, previews = [], onChange, onRemove }) => (
+  <div className="flex flex-col">
+    <label className="font-semibold text-gray-700 mb-2">{label}</label>
+    <input
+      type="file"
+      multiple={multiple}
+      onChange={onChange}
+      className="border border-gray-300 rounded-md p-2"
+    />
+    {previews.length > 0 && (
+      <div className="flex flex-wrap gap-3 mt-3">
+        {previews.map((src, index) => (
+          <div key={index} className="relative">
+            <img
+              src={src}
+              alt={`preview-${index}`}
+              className="w-24 h-24 object-cover rounded-md border"
+            />
+            {onRemove && (
+              <button
+                type="button"
+                onClick={() => onRemove(index)}
+                className="absolute top-[-8px] right-[-8px] bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+

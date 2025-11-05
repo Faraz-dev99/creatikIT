@@ -17,6 +17,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar"
 
 export function NavMain({
@@ -33,6 +34,7 @@ export function NavMain({
     }[]
   }[]
 }) {
+  const {state}=useSidebar();
   return (
     <SidebarGroup className="bg-gray-900 text-gray-50">
       <SidebarMenu>
@@ -43,7 +45,7 @@ export function NavMain({
             defaultOpen={item.isActive}
             className="group/collapsible"
           >
-            <SidebarMenuItem>
+            <SidebarMenuItem className={`${state==="collapsed"?"flex flex-col justify-center items-center ":""}`}>
               <CollapsibleTrigger asChild>
                 <Link href={item.url}>
                   <SidebarMenuButton tooltip={item.title} className=" cursor-pointer text-[16px]">

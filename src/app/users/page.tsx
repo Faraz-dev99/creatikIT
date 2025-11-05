@@ -152,7 +152,7 @@ export default function UsersPage() {
             <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
               Search Filters
             </h3>
-            <div className="flex flex-wrap gap-5">
+            <div className=" grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-5">
               <SingleSelect
                 options={roles}
                 label="Role"

@@ -100,44 +100,44 @@ export default function Contacts() {
 
   const handleSelectChange = async (field: keyof typeof filters, selected: string | string[]) => {
     const updatedFilters = {
-            ...filters,
-            [field]: Array.isArray(selected) ? selected : selected ? [selected] : [], //always array
-        };
+      ...filters,
+      [field]: Array.isArray(selected) ? selected : selected ? [selected] : [], //always array
+    };
     setFilters(updatedFilters);
 
- 
-      const queryParams = new URLSearchParams();
-      Object.entries(updatedFilters).forEach(([key, value]) => {
-        if (Array.isArray(value) && value.length > 0) {
-          value.forEach(v => queryParams.append(key, v));
-        } else if (typeof value === "string" && value) {
-          queryParams.append(key, value);
-        }
-      });
 
-      const data=await getFilteredContact(queryParams.toString());
-      if(data){
-        setContactData(data);
-        return;
+    const queryParams = new URLSearchParams();
+    Object.entries(updatedFilters).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        value.forEach(v => queryParams.append(key, v));
+      } else if (typeof value === "string" && value) {
+        queryParams.append(key, value);
       }
-      
-    
-  };
-const clearFilter = async () => {
-        setFilters({
-            StatusAssign: [],
-            Campaign: [],
-            ContactType: [],
-            City: [],
-            Location: [],
-            User: [],
-            Keyword: "",
-            Limit: [],
-        });
+    });
 
-        // Fetch all contact
-        await getContacts();
-    };
+    const data = await getFilteredContact(queryParams.toString());
+    if (data) {
+      setContactData(data);
+      return;
+    }
+
+
+  };
+  const clearFilter = async () => {
+    setFilters({
+      StatusAssign: [],
+      Campaign: [],
+      ContactType: [],
+      City: [],
+      Location: [],
+      User: [],
+      Keyword: "",
+      Limit: [],
+    });
+
+    // Fetch all contact
+    await getContacts();
+  };
 
   return (
     <ProtectedRoute>
@@ -190,8 +190,8 @@ const clearFilter = async () => {
 
 
           {/* TABLE */}
-          <section className="flex flex-col mt-6 p-2 bg-white">
-            {/* ✅ Advance Search Section */}
+          <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
+            {/* Advance Search Section */}
             <div className="m-5 relative">
               <div className="flex justify-between items-center py-1 px-2 border border-gray-800 rounded-md">
                 <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
@@ -213,23 +213,23 @@ const clearFilter = async () => {
                     </div>
                     <div>
 
-                      <SingleSelect options={campaign} label="Campaign" onChange={(val) => handleSelectChange("Campaign", val)} />
+                      <SingleSelect options={campaign} value={filters.Campaign[0]} label="Campaign" onChange={(val) => handleSelectChange("Campaign", val)} />
                     </div>
                     <div>
 
-                      <SingleSelect options={customerTypes} label="Contact Type" onChange={(val) => handleSelectChange("ContactType", val)} />
+                      <SingleSelect options={customerTypes} value={filters.ContactType[0]} label="Contact Type" onChange={(val) => handleSelectChange("ContactType", val)} />
                     </div>
                     <div>
 
-                      <SingleSelect options={cities} label="City" onChange={(val) => handleSelectChange("City", val)} />
+                      <SingleSelect options={cities} value={filters.City[0]} label="City" onChange={(val) => handleSelectChange("City", val)} />
                     </div>
                     <div>
 
-                      <SingleSelect options={locations} label="Location" onChange={(val) => handleSelectChange("Location", val)} />
+                      <SingleSelect options={locations} value={filters.Location[0]} label="Location" onChange={(val) => handleSelectChange("Location", val)} />
                     </div>
                     <div>
 
-                      <SingleSelect options={users} label="User" onChange={(val) => handleSelectChange("User", val)} />
+                      <SingleSelect options={users} value={filters.User[0]} label="User" onChange={(val) => handleSelectChange("User", val)} />
                     </div>
                     {/* <div>
 
@@ -241,12 +241,12 @@ const clearFilter = async () => {
                     </div> */}
                     <div>
 
-                      <SingleSelect options={["10", "25", "50", "100"]} label="Limit" onChange={(val) => handleSelectChange("Limit", val)} />
+                      <SingleSelect options={["10", "25", "50", "100"]} value={filters.Limit[0]} label="Limit" onChange={(val) => handleSelectChange("Limit", val)} />
                     </div>
                   </div>
                 </div>
 
-                <form className="flex max-md:flex-col justify-between items-center mb-5">
+                <form className="flex flex-wrap max-md:flex-col justify-between items-center mb-5">
                   <div className="min-w-[80%]">
                     <label className="block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
                     <input
@@ -257,7 +257,7 @@ const clearFilter = async () => {
                       onChange={(e) => handleSelectChange("Keyword", e.target.value)}
                     />
                   </div>
-                  <div className="flex flex-wrap justify-center items-center">
+                  <div className="flex justify-center items-center">
                     <button
                       type="submit"
                       className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md"
@@ -267,7 +267,7 @@ const clearFilter = async () => {
                     <button
                       type="reset"
                       onClick={clearFilter}
-                      className="text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3"
+                      className="text-red-500 text-sm cursor-pointer px-5 py-2 mt-6 rounded-md ml-3"
                     >
                       Clear Search
                     </button>
@@ -305,7 +305,7 @@ const clearFilter = async () => {
                         <td className="px-4 py-3">{item.Qualifications}</td>
                         <td className="px-4 py-3">{item.Location}</td>
                         <td className="px-4 py-3">{item.ContactNo}</td>
-                        <td className="px-4 py-3">{item.AssignTo}</td>
+                        <td className="px-4 py-3">{/* {item?.AssignTo} */}N/A</td>
                         <td className="px-4 py-3">{item.date}</td>
                         <td className="px-4 py-2 flex gap-2 items-center">
                           <Button

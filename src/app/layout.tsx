@@ -1,4 +1,3 @@
-
 "use client";
 
 import "./globals.css";
@@ -17,52 +16,57 @@ import { AuthProvider } from "@/context/AuthContext";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-
-  // Check if the current route is /admin
   const isAdminPage = pathname === "/";
 
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-background">
+    <html lang="en" className="min-h-screen w-full overflow-x-hidden">
+      <body className="min-h-screen w-full bg-gray-200 overflow-x-hidden">
         <AuthProvider>
-        {isAdminPage ? (
-          // 🟢 Admin page — no sidebar or navbar
-          <main className="min-h-screen bg-gray-200">{children}</main>
-        ) : (
-          // 🟣 All other pages — show sidebar and navbar
-          <ProtectedRoute>
-          <SidebarProvider>
-            <AppSidebar />
+          {isAdminPage ? (
+            <main className="min-h-screen bg-gray-200">{children}</main>
+          ) : (
+            <ProtectedRoute>
+              <SidebarProvider>
+                <div className="flex min-h-screen w-full overflow-hidden">
+                  {/* Sidebar */}
+                  <AppSidebar />
 
-            <SidebarInset>
-              <header className="flex shrink-0 items-center gap-2 transition-[width] ease-linear bg-gray-900 text-white px-4 shadow-sm">
-                <div className="flex items-center gap-2 max-md:hidden">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator
-                    orientation="vertical"
-                    className="mr-2 data-[orientation=vertical]:h-4"
-                  />
-                </div>
+                  {/* Main Area */}
+                  <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden">
+                    {/* Navbar */}
+                    <header className="flex items-center gap-2 shrink-0 bg-gray-900 text-white px-4 py-2 shadow-sm z-10">
+                      <div className="flex items-center gap-2 max-md:hidden">
+                        <SidebarTrigger className="-ml-1 cursor-pointer" />
+                        <Separator
+                          orientation="vertical"
+                          className="mr-2 data-[orientation=vertical]:h-4"
+                        />
+                      </div>
 
-                <div className="ml-auto w-full">
-                  <Navbar />
-                </div>
-              </header>
+                      <div className="ml-auto w-full">
+                        <Navbar />
+                      </div>
+                    </header>
 
-              <main className="flex flex-1 flex-col gap-4 pt-0">
-                <div className="flex items-center absolute top-[70px] left-2 gap-2 max-w-[100px] md:hidden">
-                  <SidebarTrigger className="-ml-1" />
-                  <Separator
-                    orientation="vertical"
-                    className="mr-2 data-[orientation=vertical]:h-4"
-                  />
+                    {/* Page Content */}
+                    <main className="flex-1 overflow-y-auto bg-gray-200">
+                      {/* Mobile Sidebar Trigger */}
+                      <div className="flex items-center gap-2 max-w-[100px] md:hidden mt-4 ml-2">
+                        <SidebarTrigger className="-ml-1" />
+                        <Separator
+                          orientation="vertical"
+                          className="mr-2 data-[orientation=vertical]:h-4"
+                        />
+                      </div>
+
+                      {/* Actual Page */}
+                      <div className="p-4">{children}</div>
+                    </main>
+                  </SidebarInset>
                 </div>
-                <div className="bg-gray-200 max-md:pt-2">{children}</div>
-              </main>
-            </SidebarInset>
-          </SidebarProvider>
-          </ProtectedRoute>
-        )}
+              </SidebarProvider>
+            </ProtectedRoute>
+          )}
         </AuthProvider>
       </body>
     </html>

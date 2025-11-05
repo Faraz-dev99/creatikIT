@@ -1,440 +1,317 @@
 'use client'
-import { useState } from "react";
-import { CiHeart, CiSearch } from "react-icons/ci";
+import { useEffect, useState } from "react";
+import { CiSearch } from "react-icons/ci";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { MdEdit, MdDelete, MdOutlineAlternateEmail } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd, MdFavorite, MdFavoriteBorder } from "react-icons/md";
 import Button from '@mui/material/Button';
-import MultipleSelect from "@/app/component/MultipleSelect";
 import SingleSelect from "@/app/component/SingleSelect";
-import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { PlusSquare } from "lucide-react";
 import ProtectedRoute from "../component/ProtectedRoutes";
-import { IoCall, IoCloseSharp, IoPersonSharp } from "react-icons/io5";
-import { FaMobileAlt } from "react-icons/fa";
-export default function customerIndex() {
-    const router = useRouter();
-    const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
-    const [currentTablePage, setCurrentTablePage] = useState(1);
-    const rowsPerTablePage = 4;
-    const customerData = [
-        {
-            id: "123",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "345",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "343",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "532",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "464",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "342",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "466",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-        {
-            id: "453",
-            campaign: 'Summer Sale',
-            type: 'Promotional',
-            subType: 'Email Blast',
-            email: 'example@mail.com',
-            city: 'New York',
-            location: 'Downtown',
-            contact: '123-456-7890',
-            assignTo: 'John Doe',
-            date: '2025-10-04',
-        },
-    ];
+import toast, { Toaster } from "react-hot-toast";
+import { getCustomer, deleteCustomer, getFilteredCustomer, updateCustomer } from "@/store/customer";
+import { CustomerAdvInterface, customerGetDataInterface, DeleteDialogDataInterface } from "@/store/customer.interface";
+import DeleteDialog from "../component/popups/DeleteDialog";
 
-    const editCustomer = (id: string | number) => {
-        router.push(`/customer/edit/${id}`)
+export default function Customer() {
+  const router = useRouter();
+
+  const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
+  const [currentTablePage, setCurrentTablePage] = useState(1);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isFavouriteDialogOpen, setIsFavouriteDialogOpen] = useState(false);
+  const [dialogData, setDialogData] = useState<DeleteDialogDataInterface | null>(null);
+  const [dialogType, setDialogType] = useState<"delete" | "favourite" | null>(null);
+
+  const rowsPerTablePage = 10;
+  const [filters, setFilters] = useState({
+    StatusAssign: [] as string[],
+    Campaign: [] as string[],
+    CustomerType: [] as string[],
+    CustomerSubtype: [] as string[],
+    City: [] as string[],
+    Location: [] as string[],
+    User: [] as string[],
+    Keyword: "" as string,
+    Limit: [] as string[],
+  });
+
+  const [customerData, setCustomerData] = useState<customerGetDataInterface[]>([]);
+  const [customerAdv, setCustomerAdv] = useState<CustomerAdvInterface[]>([]);
+
+  useEffect(() => {
+    getCustomers();
+  }, []);
+
+  const getCustomers = async () => {
+    const data = await getCustomer();
+    if (data) {
+      setCustomerData(
+        data.map((item: any) => ({
+          _id: item._id,
+          Campaign: item.Campaign,
+          Type: item.Type,
+          SubType: item.SubType,
+          Name: item.customerName,
+          Email: item.Email,
+          City: item.City,
+          Location: item.Location,
+          ContactNumber: item.ContactNumber,
+          AssignTo: item.AssignTo,
+          isFavourite: item.isFavourite,
+          Date: item.Date,
+        }))
+      );
+      setCustomerAdv(
+        data.map((item: any) => ({
+          _id: item._id,
+          Campaign: item.Campaign || [],
+          CustomerType: item.CustomerType || [],
+          CustomerSubtype: item.CustomerSubtype || [],
+          City: item.City || [],
+          Location: item.Location || [],
+          User: item.User || [],
+          Limit: item.Limit || [],
+        }))
+      );
     }
+  };
 
-    const totalTablePages = Math.ceil(customerData.length / rowsPerTablePage);
-    const indexOfLastRow = currentTablePage * rowsPerTablePage;
-    const indexOfFirstRow = indexOfLastRow - rowsPerTablePage;
-    const currentRows = customerData.slice(indexOfFirstRow, indexOfLastRow);
-    const nexttablePage = () => {
-        if (currentTablePage !== totalTablePages) {
-            setCurrentTablePage(currentTablePage + 1);
-        }
+  const handleDelete = async (data: DeleteDialogDataInterface | null) => {
+    if (!data) return;
+    const response = await deleteCustomer(data.id);
+    if (response) {
+      toast.success(`Customer deleted successfully`);
+      setIsDeleteDialogOpen(false);
+      setDialogData(null);
+      await getCustomers();
     }
-    const prevtablePage = () => {
-        if (currentTablePage !== 1) {
-            setCurrentTablePage(currentTablePage - 1);
-        }
+  };
+
+  const handleFavourite = async (data: DeleteDialogDataInterface | null) => {
+    if (!data) return;
+    const formData = new FormData();
+    const current = customerData.find(c => c._id === data.id);
+    const newFav = !current?.isFavourite;
+    formData.append("isFavourite", newFav.toString());
+
+    const res = await updateCustomer(data.id, formData);
+    if (res) {
+      toast.success("Favourite updated successfully");
+      setIsFavouriteDialogOpen(false);
+      setDialogData(null);
+      await getCustomers();
+    } else {
+      toast.error("Failed to update favourite");
     }
-    const handleSearchDropdown = () => {
+  };
 
-    }
+  const handleFavouriteToggle = (id: string, name: string, number: string) => {
+    setDialogType("favourite");
+    setIsFavouriteDialogOpen(true);
+    setDialogData({
+      id,
+      customerName: name,
+      ContactNumber: number,
+    });
+  };
 
-    const statusAssign = [
-        'assigned',
-        'unassigned',
-    ];
+  const totalTablePages = Math.ceil(customerData.length / rowsPerTablePage);
+  const indexOfLastRow = currentTablePage * rowsPerTablePage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerTablePage;
+  const currentRows = customerData.slice(indexOfFirstRow, indexOfLastRow);
 
-    const city = [
-        'jaiput',
-        'ajmer'
-    ]
-    const campaign = [
-        'Buyer',
-        'seller',
-        'Rent Out',
-        'Rent In',
-        'Hostel/PG',
-        'Agents',
-        'Services',
-        'Others',
-        'guest house',
-        'Happy Stay'
-    ]
+  const nexttablePage = () => {
+    if (currentTablePage !== totalTablePages)
+      setCurrentTablePage(currentTablePage + 1);
+  };
+  const prevtablePage = () => {
+    if (currentTablePage !== 1) setCurrentTablePage(currentTablePage - 1);
+  };
 
-    const handleSelectChange = (selected: string) => {
-        console.log("Selected items:", selected);
-    };
+  return (
+    <ProtectedRoute>
+      <div className="flex min-h-[calc(100vh-56px)] overflow-auto bg-gray-200 max-md:py-10">
+        <Toaster position="top-right" />
 
-    return <ProtectedRoute>
-    <div className=" flex min-h-[calc(100vh-56px)] max-md:py-10 overflow-auto bg-gray-200">
-        <div className=" p-4 max-md:p-3 w-full">
-            <div className=" flex justify-between items-center">
-                <h2 className=" flex gap-2 items-center font-light">
-                    <span className=" text-gray-900-600 text-2xl">Dashboard</span>/
-                    <span>OWNER</span>
-                </h2>
+        {/* Delete Dialog */}
+        <DeleteDialog<DeleteDialogDataInterface>
+          isOpen={isDeleteDialogOpen}
+          title="Are you sure you want to delete this customer?"
+          data={dialogData}
+          onClose={() => {
+            setIsDeleteDialogOpen(false);
+            setDialogData(null);
+          }}
+          onDelete={handleDelete}
+        />
 
-                <Link href="/customer/add">
-            <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md  hover:cursor-pointer font-semibold">
-              <PlusSquare size={18} /> Add
-            </button>
-          </Link>
+        {/* Favourite Dialog */}
+        <DeleteDialog<DeleteDialogDataInterface>
+          isOpen={isFavouriteDialogOpen}
+          title="Are you sure you want to favourite this customer?"
+          data={dialogData}
+          onClose={() => {
+            setIsFavouriteDialogOpen(false);
+            setDialogData(null);
+          }}
+          onDelete={handleFavourite}
+        />
+
+        <div className="p-4 max-md:p-3 w-full">
+          <div className="flex justify-between items-center">
+            <h2 className="flex gap-2 items-center font-light">
+              <span className="text-gray-900 text-2xl">Dashboard</span>/
+              <span>Customer</span>
+            </h2>
+
+            <Link href="/customer/add">
+              <button className="flex items-center gap-2 bg-gradient-to-r from-gray-900 to-[#4e6787] text-white px-4 py-2 rounded-md font-semibold">
+                <PlusSquare size={18} /> Add
+              </button>
+            </Link>
+          </div>
+
+          {/* Table */}
+          <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
+            <div className="border border-gray-300 rounded-md m-2 overflow-auto">
+              <table className="table-auto w-full border-collapse text-sm">
+                <thead className="bg-gray-900 text-white">
+                  <tr>
+                    <th className="px-4 py-3 text-left">S.No.</th>
+                    <th className="px-4 py-3 text-left">Campaign</th>
+                    <th className="px-4 py-3 text-left">Customer Type</th>
+                    <th className="px-4 py-3 text-left">Customer Subtype</th>
+                    <th className="px-4 py-3 text-left">Location</th>
+                    <th className="px-4 py-3 text-left">Contact No</th>
+                    <th className="px-4 py-3 text-left">Assign To</th>
+                    <th className="px-4 py-3 text-left">Date</th>
+                    <th className="px-4 py-3 text-left">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentRows.length > 0 ? (
+                    currentRows.map((item, index) => (
+                      <tr
+                        key={item._id}
+                        className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
+                      >
+                        <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
+                        <td className="px-4 py-3">{item.Campaign}</td>
+                        <td className="px-4 py-3">{item.Type}</td>
+                        <td className="px-4 py-3">{item.SubType}</td>
+                        <td className="px-4 py-3">{item.Location}</td>
+                        <td className="px-4 py-3">{item.ContactNumber}</td>
+                        <td className="px-4 py-3">{item.AssignTo}</td>
+                        <td className="px-4 py-3">{item.Date}</td>
+                        <td className="px-4 py-2 flex gap-2 items-center">
+                          <Button
+                            sx={{
+                              backgroundColor: "#E8F5E9",
+                              color: "#2E7D32",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() => router.push(`/followups/customer/add/${item._id}`)}
+                          >
+                            <MdAdd />
+                          </Button>
+                          <Button
+                            sx={{
+                              backgroundColor: "#E8F5E9",
+                              color: "#2E7D32",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() => router.push(`/customer/edit/${item._id}`)}
+                          >
+                            <MdEdit />
+                          </Button>
+                          <Button
+                            sx={{
+                              backgroundColor: "#FDECEA",
+                              color: "#C62828",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() => {
+                              setIsDeleteDialogOpen(true);
+                              setDialogType("delete");
+                              setDialogData({
+                                id: item._id,
+                                customerName: item.Name,
+                                ContactNumber: item.ContactNumber,
+                              });
+                            }}
+                          >
+                            <MdDelete />
+                          </Button>
+                          <Button
+                            sx={{
+                              backgroundColor: "#FFF0F5",
+                              color: item.isFavourite ? "#E91E63" : "#C62828",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() =>
+                              handleFavouriteToggle(
+                                item._id,
+                                item.Name,
+                                item.ContactNumber
+                              )
+                            }
+                          >
+                            {item.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={9} className="text-center py-4 text-gray-500">
+                        No data available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              {/* Pagination */}
+              <div className="flex justify-between items-center mt-3 py-3 px-5">
+                <p className="text-sm">
+                  Page {currentTablePage} of {totalTablePages}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={prevtablePage}
+                    disabled={currentTablePage === 1}
+                    className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nexttablePage}
+                    disabled={
+                      currentTablePage === totalTablePages ||
+                      currentRows.length <= 0
+                    }
+                    className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
             </div>
-
-            <section className=" flex flex-col mt-6 p-2 bg-white">
-
-
-                <div className=" m-5 relative ">
-                    <div className=" flex justify-between items-center  py-1 px-2 border border-gray-800 rounded-md">
-                        <h3 className=" flex items-center gap-1"><CiSearch />Advance Search</h3>
-                        <button type="button" onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)} className=" p-2 hover:bg-gray-200 rounded-md cursor-pointer">{toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}</button>
-                    </div>
-                    <div className={` overflow-hidden ${toggleSearchDropdown ? ' max-h-[2000px] ' : ' max-h-0 '} transition-all duration-500 ease-in-out px-5`}>
-                        <div className=" flex flex-col  gap-5 my-5 ">
-                            <div className=" flex flex-wrap  gap-5 max-lg:flex-col">
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Status Assign</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Campaign</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Customer type</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Customer Subtype</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">City</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Location</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">User</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Start Date</label>
-                                    {<DateSelector label="Start Date" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">End Date</label>
-                                    {<DateSelector label="End Date" onChange={handleSelectChange} />}
-                                </div>
-                                <div>
-                                    <label className=" block mb-2 text-sm font-medium text-gray-900">Limit</label>
-                                    {<SingleSelect options={statusAssign} label="Status Assign" onChange={handleSelectChange} />}
-                                </div>
-
-
-                            </div>
-
-
-                        </div>
-                        <form className=" flex max-md:flex-col justify-between items-center mb-5">
-                            <div className=" min-w-[80%]">
-                                <label className=" block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
-                                <input type='text' placeholder="type text here.." className=" border border-gray-300 rounded-md px-3 py-2 outline-none w-full" />
-                            </div>
-                            <div className=" flex flex-wrap justify-center items-center">
-                                <button type="submit" className=" border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">Explore</button>
-                                <button type="reset" className=" text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">clear Search</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-
-                <h2 className=" text-xl p-3 font-bold">
-                    <span className=" text-gray-900">Customers</span>
-                </h2>
-
-                <div className=" border border-gray-300 rounded-md m-2 overflow-auto">
-                    <div className=" flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
-                        <button type="button" className=" hover:text-gray-950 cursor-pointer">Delete All</button>
-                        <button type="button" className=" hover:text-gray-950 cursor-pointer">SMS All</button>
-                        <button type="button" className=" hover:text-gray-950 cursor-pointer">Email All</button>
-                        <button type="button" className=" hover:text-gray-950 cursor-pointer">Mass Update</button>
-                    </div>
-                    <table className="table-auto w-full border-collapse text-sm">
-                        <thead className="bg-gray-900 text-white">
-                            <tr>
-                                <th className="px-4 py-3 text-left">S.No.</th>
-                                <th className="px-4 py-3 text-left">Campaign</th>
-                                <th className="px-4 py-3 text-left">Type</th>
-                                <th className="px-4 py-3 text-left">SubType</th>
-                                <th className="px-4 py-3 text-left">Email</th>
-                                <th className="px-4 py-3 text-left">City</th>
-                                <th className="px-4 py-3 text-left">Location</th>
-                                <th className="px-4 py-3 text-left">Contact no</th>
-                                <th className="px-4 py-3 text-left">Assign To</th>
-                                <th className="px-4 py-3 text-left">Date</th>
-                                <th className="px-4 py-3 text-left">Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            {currentRows.length > 0 ? (
-                                currentRows.map((item, index) => (
-                                    <tr
-                                        key={index + item.email}
-                                        className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
-                                    >
-                                        <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
-                                        <td className="px-4 py-3">{item.campaign}</td>
-                                        <td className="px-4 py-3">{item.type}</td>
-                                        <td className="px-4 py-3">{item.subType}</td>
-                                        <td className="px-4 py-3">{item.email}</td>
-                                        <td className="px-4 py-3">{item.city}</td>
-                                        <td className="px-4 py-3">{item.location}</td>
-                                        <td className="py-3 flex flex-col items-center justify-center gap-1">{item.contact}
-                                            {
-                                                item.contact&&<div className=" grid grid-cols-3 gap-1 place-items-center">
-                                                    <Button
-                                                sx={{
-                                                    backgroundColor: "#C8E6C9",
-                                                    color: "#2E7D32",
-                                                    minWidth: "24px",
-                                                    height: "24px",
-                                                    borderRadius: "6px",
-                                                }}
-                                                onClick={() => editCustomer(item.id)}
-                                            >
-                                                <FaMobileAlt />
-                                                
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#F9D0C4",
-                                                    color: "#C62828",
-                                                    minWidth: "24px",
-                                                    height: "24px",
-                                                    borderRadius: "6px",
-                                                }}
-                                            >
-                                                <IoCall />
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#F9D0C4",
-                                                    color: "#C62828",
-                                                    minWidth: "24px",
-                                                    height: "24px",
-                                                    borderRadius: "6px",
-                                                }}
-                                            >
-                                                <MdOutlineAlternateEmail />
-                                            </Button>
-                                                </div>
-                                            }
-                                        </td>
-                                        <td className="px-4 py-3">{item.assignTo}</td>
-                                        <td className="px-4 py-3">{item.date}</td>
-                                        <td className="px-4 grid grid-cols-2 gap-2 py-2 place-items-center">
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#C8E6C9",
-                                                    color: "#2E7D32",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                                onClick={() => editCustomer(item.id)}
-                                            >
-                                                <MdEdit />
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#C8E6C9",
-                                                    color: "#2E7D32",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                                onClick={() => editCustomer(item.id)}
-                                            >
-                                                <IoPersonSharp />
-                                                
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#F9D0C4",
-                                                    color: "#C62828",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                            >
-                                                <IoCloseSharp />
-                                            </Button>
-                                            <Button
-                                                sx={{
-                                                    backgroundColor: "#F9D0C4",
-                                                    color: "#C62828",
-                                                    minWidth: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "8px",
-                                                }}
-                                            >
-                                                <CiHeart />
-                                            </Button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan={11} className="text-center py-4 text-gray-500">
-                                        No data available.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-
-
-
-                    <div className="flex justify-between items-center mt-3 py-3 px-5">
-
-
-                        <p className="text-sm">
-                            Page {currentTablePage} of {totalTablePages}
-                        </p>
-
-                        <div className=" flex gap-3">
-
-                            <button
-                                type="button"
-                                onClick={prevtablePage}
-                                disabled={currentTablePage === 1}
-                                className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                            >
-                                Prev
-                            </button>
-
-                            <button
-                                type="button"
-                                onClick={nexttablePage}
-                                disabled={currentTablePage === totalTablePages}
-                                className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                            >
-                                Next
-                            </button>
-
-                        </div>
-
-
-                    </div>
-                </div>
-            </section>
+          </section>
         </div>
-
-    </div>
+      </div>
     </ProtectedRoute>
+  );
 }

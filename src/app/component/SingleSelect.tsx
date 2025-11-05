@@ -21,9 +21,10 @@ interface OptionProps {
   label: string;
   value?: string;
   onChange?: (selected: string) => void;
+  error?: string; // optional error prop
 }
 
-export default function SingleSelect({ options, label, value, onChange }: OptionProps) {
+export default function SingleSelect({ options, label, value, onChange, error }: OptionProps) {
   const handleChange = (event: SelectChangeEvent<string>) => {
     if (onChange) onChange(event.target.value);
   };
@@ -31,16 +32,11 @@ export default function SingleSelect({ options, label, value, onChange }: Option
   return (
     <FormControl
       sx={{
-        width: {
-          xs: "100%",
-          sm: "100%",
-          md: "100%",
-        },
-        minWidth: {
-          md: 200,
-          lg: 300,
-        },
+        width: { xs: "100%", sm: "100%", md: "100%" },
+        minWidth: { md: 200, lg: 300 },
+        mb: error ? 1 : 0, // add margin-bottom if error exists
       }}
+      error={!!error} // MUI styling for error
     >
       <InputLabel>{label}</InputLabel>
       <Select
@@ -55,6 +51,7 @@ export default function SingleSelect({ options, label, value, onChange }: Option
           </MenuItem>
         ))}
       </Select>
+      {error && <span className="text-red-500 text-sm mt-1 block">{error}</span>}
     </FormControl>
   );
 }

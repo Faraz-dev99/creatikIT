@@ -27,7 +27,8 @@ const PopupMenu: React.FC<PopupMenuProps> = ({ children, onClose, isOpen = true 
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="w-full border border-gray-300/30 max-w-[450px] bg-gray-100 text-gray-900 p-6 rounded-xl shadow-lg"
+          onClick={handleBackdropClick}
+            className="w-full flex justify-center items-center "
             initial={{ y: -50, opacity: 0, scale: 0.9 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 50, opacity: 0, scale: 0.9 }}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast, { Toaster } from "react-hot-toast";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
   const router = useRouter();
@@ -12,11 +13,17 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+    const togglePassword = () => {
+        setShowPassword(!showPassword)
+    };
 
    //Redirect if already logged in
    
    useEffect(() => {
-     if (admin) router.push("/dashboard");
+    console.log(admin)
+     if (admin) router.push("/dashboard")
+     else console.log("adming not found ",admin)
    }, [admin, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -27,6 +34,10 @@ const Login = () => {
     if (admin) router.push("/dashboard");
     setLoading(false);
   };
+
+  if(loading){
+    return null
+  }
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-[url('/bgimage.webp')] bg-center bg-cover p-2">
@@ -76,7 +87,7 @@ const Login = () => {
               <input
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
-                type="password"
+                type={showPassword ? "text" : "password"}
                 id="password"
                 required
                 className="peer w-full pl-10 pt-4 pb-2 border-b border-gray-300 text-gray-300 focus:border-purple-300 focus:outline-none transition bg-transparent"
@@ -91,12 +102,15 @@ const Login = () => {
               >
                 Password
               </label>
+              <button type="button" onClick={() => togglePassword()} className="text-sm cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-gray-500">
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 mt-2 text-white text-lg font-medium rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-500 hover:to-blue-700  transition disabled:opacity-60"
+              className="w-full cursor-pointer py-3 mt-2 text-white text-lg font-medium rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 hover:from-cyan-500 hover:to-blue-700  transition disabled:opacity-60"
             >
               {loading ? "Logging in..." : "Login"}
             </button>

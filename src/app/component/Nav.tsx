@@ -144,7 +144,7 @@ export default function Navbar() {
               }
               onMouseEnter={() => setOpenMenu("adminMail")}
             >
-              <span className=" max-md:hidden">admin mail</span>
+              <span className=" max-md:hidden">Admin mail</span>
               {openMenu === "adminMail" ? (
                 <MdKeyboardArrowUp />
               ) : (

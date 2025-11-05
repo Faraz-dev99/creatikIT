@@ -122,7 +122,7 @@ export default function ContactEdit() {
     return (
         <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
             <Toaster position="top-right" />
-            <div className="w-full max-w-[900px]">
+            <div className="w-full">
                 <div className="flex justify-end mb-4">
                     <Link
                         href="/contact"
@@ -141,25 +141,17 @@ export default function ContactEdit() {
                         </div>
 
                         <div className="flex flex-col space-y-6">
-                            <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
-                                <div className="flex flex-col gap-4">
+                            <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+                                
                                     <SingleSelect options={campaign} value={contactData.Campaign} label="Campaign" onChange={(val) => handleSelectChange("Campaign", val)} />
                                     <InputField label="Contact Name" name="Name" value={contactData.Name} onChange={handleInputChange} error={errors.Name} />
                                     <SingleSelect options={city} value={contactData.City} label="City" onChange={(val) => handleSelectChange("City", val)} />
                                     <SingleSelect options={contactType} value={contactData.ContactType} label="Contact Type" onChange={(val) => handleSelectChange("ContactType", val)} />
-                                </div>
-
-                                <div className="flex flex-col gap-4">
                                     <InputField label="Contact No" name="ContactNo" value={contactData.ContactNo} onChange={handleInputChange} />
                                     <SingleSelect options={location} value={contactData.Location} label="Location" onChange={(val) => handleSelectChange("Location", val)} />
                                     <InputField label="Email" name="Email" value={contactData.Email} onChange={handleInputChange} error={errors.Email} />
                                     <InputField label="Company Name" name="CompanyName" value={contactData.CompanyName} onChange={handleInputChange} />
-                                </div>
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
-                                <div className="flex flex-col gap-4">
-                                    <InputField label="Website" name="Website" value={contactData.Website} onChange={handleInputChange} />
+                                <InputField label="Website" name="Website" value={contactData.Website} onChange={handleInputChange} />
                                     <SingleSelect options={status} value={contactData.Status} label="Status" onChange={(val) => handleSelectChange("Status", val)} />
                                     <InputField label="Address" name="Address" value={contactData.Address} onChange={handleInputChange} />
                                     <DateSelector
@@ -167,15 +159,13 @@ export default function ContactEdit() {
                                         value={contactData.date} // pass current state
                                         onChange={(val) => handleSelectChange("date", val)} // update state on change
                                     />
-                                </div>
-
-                                <div className="flex flex-col gap-4">
-                                    <SingleSelect options={contactIndustry} value={contactData.ContactIndustry} label="Contact Industry" onChange={(val) => handleSelectChange("ContactIndustry", val)} />
+                                     <SingleSelect options={contactIndustry} value={contactData.ContactIndustry} label="Contact Industry" onChange={(val) => handleSelectChange("ContactIndustry", val)} />
                                     <SingleSelect options={contactFunctionalArea} value={contactData.ContactFunctionalArea} label="Contact Functional Area" onChange={(val) => handleSelectChange("ContactFunctionalArea", val)} />
                                     <SingleSelect options={referenceId} value={contactData.ReferenceId} label="Reference Id" onChange={(val) => handleSelectChange("ReferenceId", val)} />
                                     <TextareaField label="Notes" name="Notes" value={contactData.Notes} onChange={handleInputChange} />
-                                </div>
                             </div>
+
+                            
 
                             <div className="flex justify-end mt-4">
                                 <button

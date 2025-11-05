@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import { useEffect, useState } from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
@@ -8,38 +8,38 @@ import { Toaster } from "react-hot-toast";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-import ProtectedRoute from "../../component/ProtectedRoutes";
-import PopupMenu from "../../component/popups/PopupMenu";
+import ProtectedRoute from "@/app/component/ProtectedRoutes";
+import PopupMenu from "@/app/component/popups/PopupMenu";
 import SingleSelect from "@/app/component/SingleSelect";
-
-/* import { getFilteredExpense, getExpense, deleteExpense } from "@/store/expense";  */
 import toast from "react-hot-toast";
 
-interface ExpenseData {
-  _id: string;
-  date: string;
-  partyName: string;
-  user: string;
-  expense: string;
-  amount: number;
-  dueAmount: number;
-  paymentMethod: string;
-  status: string;
-}
+import {
+  ExpenseMarketingGetDataInterface,
+  ExpenseMarketingDialogDataInterface,
+} from "@/store/financial/expensemarketing/expensemarketing.interface";
+
+import {
+  deleteExpenseMarketing,
+  getFilteredExpenseMarketing,
+  getExpenseMarketing,
+} from "@/store/financial/expensemarketing/expensemarketing";
+
+import DeleteDialog from "@/app/component/popups/DeleteDialog";
 
 export default function FinanceExpense() {
   const router = useRouter();
 
-  const [expenseData, setExpenseData] = useState<ExpenseData[]>([]);
+  const [expenseData, setExpenseData] = useState<ExpenseMarketingGetDataInterface[]>([]);
   const [filters, setFilters] = useState({
     User: [] as string[],
     Expense: [] as string[],
-    PaymentMethod: [] as string[],
+    PaymentMethode: [] as string[],
     Keyword: "" as string,
     Limit: [] as string[],
   });
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState<ExpenseMarketingDialogDataInterface | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -49,8 +49,8 @@ export default function FinanceExpense() {
   }, []);
 
   const getExpenseList = async () => {
-   /*  const data = await getExpense();
-    if (data) setExpenseData(data); */
+    const data = await getExpenseMarketing();
+    if (data) setExpenseData(data);
   };
 
   const handleSelectChange = async (
@@ -76,15 +76,15 @@ export default function FinanceExpense() {
       }
     });
 
-   /*  const data = await getFilteredExpense(queryParams.toString());
-    if (data) setExpenseData(data); */
+    const data = await getFilteredExpenseMarketing(queryParams.toString());
+    if (data) setExpenseData(data);
   };
 
   const clearFilter = async () => {
     setFilters({
       User: [],
       Expense: [],
-      PaymentMethod: [],
+      PaymentMethode: [],
       Keyword: "",
       Limit: [],
     });
@@ -93,22 +93,26 @@ export default function FinanceExpense() {
 
   const handleDelete = async () => {
     if (!deleteId) return;
-   /*  const res = await deleteExpense(deleteId);
+    const res = await deleteExpenseMarketing(deleteId);
     if (res) {
       toast.success("Expense record deleted successfully");
       setIsDeleteDialogOpen(false);
+      setDeleteDialogData(null);
+      setDeleteId(null);
       getExpenseList();
-    } */
+    } else {
+      toast.error("Failed to delete expense record");
+    }
   };
 
   // Pagination logic
-  const totalPages = Math.ceil(expenseData.length / rowsPerPage);
+  const totalPages = Math.ceil(expenseData.length / rowsPerPage) || 1;
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentRows = expenseData.slice(startIndex, startIndex + rowsPerPage);
 
-  // Dummy dropdown options
+  // Dummy dropdown options (replace with dynamic adv API if available)
   const users = ["Admin", "Staff1", "Staff2"];
-  const expense = ["Sales", "Commission", "Investment"];
+  const expenses = ["Purchase", "Salary", "Utility"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];
   const limits = ["10", "25", "50", "100"];
 
@@ -118,29 +122,17 @@ export default function FinanceExpense() {
         <Toaster position="top-right" />
 
         {/* DELETE POPUP */}
-        {isDeleteDialogOpen && (
-          <PopupMenu onClose={() => setIsDeleteDialogOpen(false)}>
-            <div className="flex flex-col gap-8 m-2">
-              <h2 className="font-semibold text-lg text-gray-800">
-                Are you sure you want to delete this Expense record?
-              </h2>
-              <div className="flex justify-between items-center">
-                <button
-                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
-                  onClick={handleDelete}
-                >
-                  Yes, delete
-                </button>
-                <button
-                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
-                  onClick={() => setIsDeleteDialogOpen(false)}
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </PopupMenu>
-        )}
+        <DeleteDialog<ExpenseMarketingDialogDataInterface>
+          isOpen={isDeleteDialogOpen}
+          title="Are you sure you want to delete this expense?"
+          data={deleteDialogData}
+          onClose={() => {
+            setIsDeleteDialogOpen(false);
+            setDeleteDialogData(null);
+            setDeleteId(null);
+          }}
+          onDelete={handleDelete}
+        />
 
         <div className="p-4 w-full">
           {/* HEADER */}
@@ -162,7 +154,7 @@ export default function FinanceExpense() {
             <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
               Search Filters
             </h3>
-            <div className="flex flex-wrap gap-5">
+            <div className=" grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-5">
               <SingleSelect
                 options={users}
                 label="User"
@@ -170,7 +162,7 @@ export default function FinanceExpense() {
                 onChange={(val) => handleSelectChange("User", val)}
               />
               <SingleSelect
-                options={expense}
+                options={expenses}
                 label="Expense"
                 value={filters.Expense[0]}
                 onChange={(val) => handleSelectChange("Expense", val)}
@@ -178,8 +170,8 @@ export default function FinanceExpense() {
               <SingleSelect
                 options={paymentMethods}
                 label="Payment Method"
-                value={filters.PaymentMethod[0]}
-                onChange={(val) => handleSelectChange("PaymentMethod", val)}
+                value={filters.PaymentMethode[0]}
+                onChange={(val) => handleSelectChange("PaymentMethode", val)}
               />
               <SingleSelect
                 options={limits}
@@ -216,6 +208,7 @@ export default function FinanceExpense() {
 
           {/* TABLE */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md border">
+            <div className="border border-gray-300 rounded-md m-2 overflow-auto">
             <table className="table-auto w-full border-collapse text-sm">
               <thead className="bg-gray-900 text-white">
                 <tr>
@@ -238,17 +231,15 @@ export default function FinanceExpense() {
                       key={item._id}
                       className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
                     >
-                      <td className="px-4 py-3">
-                        {startIndex + index + 1}
-                      </td>
-                      <td className="px-4 py-3">{item.date}</td>
-                      <td className="px-4 py-3">{item.partyName}</td>
-                      <td className="px-4 py-3">{item.user}</td>
-                      <td className="px-4 py-3">{item.expense}</td>
-                      <td className="px-4 py-3">{item.amount}</td>
-                      <td className="px-4 py-3">{item.dueAmount}</td>
-                      <td className="px-4 py-3">{item.paymentMethod}</td>
-                      <td className="px-4 py-3">{item.status}</td>
+                      <td className="px-4 py-3">{startIndex + index + 1}</td>
+                      <td className="px-4 py-3">{item.Date}</td>
+                      <td className="px-4 py-3">{item.PartyName}</td>
+                      <td className="px-4 py-3">{item.User}</td>
+                      <td className="px-4 py-3">{item.Expense}</td>
+                      <td className="px-4 py-3">{item.Amount}</td>
+                      <td className="px-4 py-3">{item.DueAmount}</td>
+                      <td className="px-4 py-3">{item.PaymentMethode}</td>
+                      <td className="px-4 py-3">{item.Status}</td>
                       <td className="px-4 py-2 flex gap-2 items-center">
                         <Button
                           sx={{
@@ -259,7 +250,7 @@ export default function FinanceExpense() {
                             borderRadius: "8px",
                           }}
                           onClick={() =>
-                            router.push(`/finance-expense/edit/${item._id}`)
+                            router.push(`/financial/expense_marketings/edit/${item._id}`)
                           }
                         >
                           <MdEdit />
@@ -274,6 +265,11 @@ export default function FinanceExpense() {
                           }}
                           onClick={() => {
                             setIsDeleteDialogOpen(true);
+                            setDeleteDialogData({
+                              id: item._id,
+                              PartyName: item.PartyName,
+                              Amount: item.Amount,
+                            });
                             setDeleteId(item._id);
                           }}
                         >
@@ -284,10 +280,7 @@ export default function FinanceExpense() {
                   ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan={10}
-                      className="text-center py-4 text-gray-500"
-                    >
+                    <td colSpan={10} className="text-center py-4 text-gray-500">
                       No data available.
                     </td>
                   </tr>
@@ -302,9 +295,7 @@ export default function FinanceExpense() {
               </p>
               <div className="flex gap-3">
                 <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                   className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
                 >
@@ -312,9 +303,7 @@ export default function FinanceExpense() {
                 </button>
                 <button
                   onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev < totalPages ? prev + 1 : prev
-                    )
+                    setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev))
                   }
                   disabled={currentPage === totalPages}
                   className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
@@ -322,6 +311,7 @@ export default function FinanceExpense() {
                   Next
                 </button>
               </div>
+            </div>
             </div>
           </section>
         </div>

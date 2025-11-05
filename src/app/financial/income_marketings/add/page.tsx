@@ -1,34 +1,37 @@
-'use client'
+'use client';
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import DateSelector from "@/app/component/DateSelector";
+import { IncomeMarketingAllDataInterface } from "@/store/financial/incomemarketing/incomemarketing.interface";
+import { addIncomeMarketing } from "@/store/financial/incomemarketing/incomemarketing";
 
 interface ErrorInterface {
   [key: string]: string;
 }
 
 export default function IncomeMarketingAdd() {
-  const [incomeData, setIncomeData] = useState({
-    User: "",
-    PartyName: "",
+  const [incomeData, setIncomeData] = useState<IncomeMarketingAllDataInterface>({
     Date: "",
+    PartyName: "",
+    User: "",
     Income: "",
-    PaymentMethod: "",
     Amount: "",
     DueAmount: "",
+    PaymentMethode: "",
     Status: "",
   });
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
 
+  // Input change handler
   const handleInputChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    (e: React.ChangeEvent<HTMLInputElement>) => {
       const { name, value } = e.target;
       setIncomeData((prev) => ({ ...prev, [name]: value }));
       setErrors((prev) => ({ ...prev, [name]: "" }));
@@ -36,25 +39,26 @@ export default function IncomeMarketingAdd() {
     []
   );
 
-  const handleSelectChange = useCallback(
-    (label: string, selected: string) => {
-      setIncomeData((prev) => ({ ...prev, [label]: selected }));
-      setErrors((prev) => ({ ...prev, [label]: "" }));
-    },
-    []
-  );
+  // Dropdown/Date selector handler
+  const handleSelectChange = useCallback((label: string, selected: string) => {
+    setIncomeData((prev) => ({ ...prev, [label]: selected }));
+    setErrors((prev) => ({ ...prev, [label]: "" }));
+  }, []);
 
+  // Validation
   const validateForm = () => {
     const newErrors: ErrorInterface = {};
     if (!incomeData.User.trim()) newErrors.User = "User is required";
     if (!incomeData.PartyName.trim()) newErrors.PartyName = "Party Name is required";
     if (!incomeData.Income.trim()) newErrors.Income = "Income is required";
-    if (!incomeData.PaymentMethod.trim()) newErrors.PaymentMethod = "Payment Method is required";
-    if (!incomeData.Amount.trim()) newErrors.Amount = "Amount is required";
+    if (!incomeData.PaymentMethode.trim()) newErrors.PaymentMethod = "Payment Method is required";
+    if (!incomeData.Amount) newErrors.Amount = "Amount is required";
     if (!incomeData.Status.trim()) newErrors.Status = "Status is required";
+    if (!incomeData.Date.trim()) newErrors.Date = "Date is required";
     return newErrors;
   };
 
+  // Submit handler
   const handleSubmit = async () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -62,30 +66,31 @@ export default function IncomeMarketingAdd() {
       return;
     }
 
-    toast.success("Income Marketing added successfully!");
-    setIncomeData({
-      User: "",
-      PartyName: "",
-      Date: "",
-      Income: "",
-      PaymentMethod: "",
-      Amount: "",
-      DueAmount: "",
-      Status: "",
-    });
-    setErrors({});
-    router.push("/income-marketing");
+    try {
+      
+      /* console.log("Submitting Income Marketing Data:", incomeData); */ // Debug log
+      const result = await addIncomeMarketing(incomeData);
+
+      if (result) {
+        toast.success("Income Marketing added successfully!");
+       // router.push("/financial/income_marketings");
+      }
+    } catch (error) {
+      toast.error("Failed to add Income Marketing");
+      console.error("Income Marketing Add Error:", error);
+    }
   };
 
   // Dropdown data
   const users = ["Admin", "Seller", "Visitor"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];
-  const statusOptions = ["Paid", "Unpaid", "Partial"];
+  const statusOptions = ["Active", "Inactive"];
 
   return (
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
       <Toaster position="top-right" />
-      <div className="w-full max-w-[900px]">
+      <div className="w-full">
+        {/* Back Button */}
         <div className="flex justify-end mb-4">
           <Link
             href="/financial/income_marketings"
@@ -95,83 +100,88 @@ export default function IncomeMarketingAdd() {
           </Link>
         </div>
 
-        <div className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl h-auto">
-          <form onSubmit={(e) => e.preventDefault()}>
+        {/* Form Card */}
+        <div className="bg-white/90 backdrop-blur-lg p-10 w-full rounded-3xl shadow-2xl">
+          <form onSubmit={(e) => e.preventDefault()} className="w-full">
+            {/* Header */}
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
                 Add <span className="text-blue-600">Income Marketing</span>
               </h1>
             </div>
 
-            <div className="flex flex-col space-y-10">
+            {/* Form Fields */}
+            <div className="flex flex-col space-y-6">
+              <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
+                {/* User */}
+                <SingleSelect
+                  options={users}
+                  label="User"
+                  value={incomeData.User}
+                  onChange={(v) => handleSelectChange("User", v)}
+                />
 
-              {/* IncomeMarketing Information */}
-              <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">Income Marketing Information</h2>
-                <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
+                {/* Party Name */}
+                <InputField
+                  label="Party Name"
+                  name="PartyName"
+                  value={incomeData.PartyName}
+                  onChange={handleInputChange}
+                  error={errors.PartyName}
+                />
 
-                  <SingleSelect
-                    options={users}
-                    label="User"
-                    value={incomeData.User}
-                    onChange={(selected) => handleSelectChange("User", selected)}
-                  />
+                {/* Date */}
+                <DateSelector
+                  label="Date"
+                  value={incomeData.Date}
+                  onChange={(v) => handleSelectChange("Date", v)}
+                />
 
-                  <InputField
-                    label="Party Name"
-                    name="PartyName"
-                    value={incomeData.PartyName}
-                    onChange={handleInputChange}
-                    error={errors.PartyName}
-                  />
+                {/* Income */}
+                <InputField
+                  label="Income"
+                  name="Income"
+                  value={incomeData.Income}
+                  onChange={handleInputChange}
+                  error={errors.Income}
+                />
 
-                  <DateSelector
-                    label="Date"
-                    value={incomeData.Date}
-                    onChange={(val) => handleSelectChange("Date", val)}
-                  />
+                {/* Payment Method */}
+                <SingleSelect
+                  options={paymentMethods}
+                  label="Payment Method"
+                  value={incomeData.PaymentMethode}
+                  onChange={(v) => handleSelectChange("PaymentMethode", v)}
+                />
 
-                  <InputField
-                    label="Income"
-                    name="Income"
-                    value={incomeData.Income}
-                    onChange={handleInputChange}
-                    error={errors.Income}
-                  />
+                {/* Amount */}
+                <InputField
+                  label="Amount"
+                  name="Amount"
+                  value={incomeData.Amount.toString()}
+                  onChange={handleInputChange}
+                  error={errors.Amount}
+                />
 
-                  <SingleSelect
-                    options={paymentMethods}
-                    label="Payment Method"
-                    value={incomeData.PaymentMethod}
-                    onChange={(selected) => handleSelectChange("PaymentMethod", selected)}
-                  />
+                {/* Due Amount */}
+                <InputField
+                  label="Due Amount"
+                  name="DueAmount"
+                  value={incomeData.DueAmount.toString()}
+                  onChange={handleInputChange}
+                />
 
-                  <InputField
-                    label="Amount"
-                    name="Amount"
-                    value={incomeData.Amount}
-                    onChange={handleInputChange}
-                    error={errors.Amount}
-                  />
-
-                  <InputField
-                    label="Due Amount"
-                    name="DueAmount"
-                    value={incomeData.DueAmount}
-                    onChange={handleInputChange}
-                  />
-
-                  <SingleSelect
-                    options={statusOptions}
-                    label="Status"
-                    value={incomeData.Status}
-                    onChange={(selected) => handleSelectChange("Status", selected)}
-                  />
-
-                </div>
+                {/* Status */}
+                <SingleSelect
+                  options={statusOptions}
+                  label="Status"
+                  value={incomeData.Status}
+                  onChange={(v) => handleSelectChange("Status", v)}
+                />
               </div>
 
-              <div className="flex justify-end mt-6">
+              {/* Save Button */}
+              <div className="flex justify-end mt-4">
                 <button
                   onClick={handleSubmit}
                   className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
@@ -179,7 +189,6 @@ export default function IncomeMarketingAdd() {
                   Save
                 </button>
               </div>
-
             </div>
           </form>
         </div>
@@ -188,12 +197,13 @@ export default function IncomeMarketingAdd() {
   );
 }
 
+// 🟦 Reusable Input Field
 const InputField: React.FC<{
   label: string;
   name: string;
   value: string;
   error?: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }> = ({ label, name, value, onChange, error }) => (
   <label className="relative block w-full">
     <input
@@ -207,9 +217,11 @@ const InputField: React.FC<{
     />
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
-      ${value || error
-        ? "-top-2 text-xs text-blue-500"
-        : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}
+      ${
+        value || error
+          ? "-top-2 text-xs text-blue-500"
+          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"
+      }`}
     >
       {label}
     </p>

@@ -5,7 +5,12 @@ import { contactAllDataInterface } from "./contact.interface";
 
 export const getContact = async () => {
     try {
-        const response = await fetch(API_ROUTES.CONTACT.GET_ALL);
+        const response = await fetch(API_ROUTES.CONTACT.GET_ALL, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include"
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return data;
@@ -16,7 +21,7 @@ export const getContact = async () => {
     }
 }
 
-export const getContactById = async (id:string)=>{
+export const getContactById = async (id: string) => {
     try {
         const response = await fetch(API_ROUTES.CONTACT.GET_BY_ID(id));
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -29,8 +34,8 @@ export const getContactById = async (id:string)=>{
     }
 }
 
-export const getFilteredContact = async (params:string)=>{
-    try{
+export const getFilteredContact = async (params: string) => {
+    try {
         const response = await fetch(API_ROUTES.CONTACT.GET_BY_PARAMS(params));
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
@@ -52,7 +57,7 @@ export const addContact = async (data: contactAllDataInterface) => {
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        response =await response.json();
+        response = await response.json();
         return data;
     }
     catch (error) {
@@ -71,7 +76,7 @@ export const updateContact = async (id: string, data: contactAllDataInterface) =
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        response =await response.json();
+        response = await response.json();
         return data;
     }
     catch (error) {
@@ -89,7 +94,7 @@ export const deleteContact = async (id: string) => {
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        const data=await response.json();
+        const data = await response.json();
         return data;
 
     }

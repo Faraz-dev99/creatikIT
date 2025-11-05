@@ -20,17 +20,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = Cookies.get("token");
-      if (token) {
+     
+  
         const data = await checkAuthAdmin(); // backend verifies token
         if (data.success && data.admin) {
           /* console.log("getting admin,",data.admin) */
           setAdmin(data.admin);
         } else {
           console.log("check problem : ",data)
-          Cookies.remove("token"); 
         }
-      }
+      
       setIsLoading(false);
     };
     initAuth();
@@ -53,6 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await logoutAdmin();
     if (data.success) {
       setAdmin(null);
+      console.log(" done ")
       toast.success(data.message);
     } else {
       toast.error(data.message);

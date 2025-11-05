@@ -14,32 +14,26 @@ import SingleSelect from "@/app/component/SingleSelect";
 
 /* import { getFilteredIncome, getIncome, deleteIncome } from "@/store/income";  */
 import toast from "react-hot-toast";
+import { IncomeMarketingGetDataInterface, IncomeMarketingDialogDataInterface } from "@/store/financial/incomemarketing/incomemarketing.interface";
+import { deleteIncomeMarketing, getFilteredIncomeMarketing, getIncomeMarketing } from "@/store/financial/incomemarketing/incomemarketing";
+import DeleteDialog from "@/app/component/popups/DeleteDialog";
 
-interface IncomeData {
-  _id: string;
-  date: string;
-  partyName: string;
-  user: string;
-  income: string;
-  amount: number;
-  dueAmount: number;
-  paymentMethod: string;
-  status: string;
-}
+
 
 export default function FinanceIncome() {
   const router = useRouter();
 
-  const [incomeData, setIncomeData] = useState<IncomeData[]>([]);
+  const [incomeData, setIncomeData] = useState<IncomeMarketingGetDataInterface[]>([]);
   const [filters, setFilters] = useState({
     User: [] as string[],
     Income: [] as string[],
-    PaymentMethod: [] as string[],
+    PaymentMethode: [] as string[],
     Keyword: "" as string,
     Limit: [] as string[],
   });
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [deleteDialogData, setDeleteDialogData] = useState<IncomeMarketingDialogDataInterface | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
@@ -49,8 +43,8 @@ export default function FinanceIncome() {
   }, []);
 
   const getIncomeList = async () => {
-   /*  const data = await getIncome();
-    if (data) setIncomeData(data); */
+    const data = await getIncomeMarketing();
+    if (data) setIncomeData(data);
   };
 
   const handleSelectChange = async (
@@ -62,8 +56,8 @@ export default function FinanceIncome() {
       [field]: Array.isArray(selected)
         ? selected
         : selected
-        ? [selected]
-        : [],
+          ? [selected]
+          : [],
     };
     setFilters(updatedFilters);
 
@@ -76,15 +70,15 @@ export default function FinanceIncome() {
       }
     });
 
-   /*  const data = await getFilteredIncome(queryParams.toString());
-    if (data) setIncomeData(data); */
+    const data = await getFilteredIncomeMarketing(queryParams.toString());
+    if (data) setIncomeData(data);
   };
 
   const clearFilter = async () => {
     setFilters({
       User: [],
       Income: [],
-      PaymentMethod: [],
+      PaymentMethode: [],
       Keyword: "",
       Limit: [],
     });
@@ -93,12 +87,13 @@ export default function FinanceIncome() {
 
   const handleDelete = async () => {
     if (!deleteId) return;
-   /*  const res = await deleteIncome(deleteId);
+    const res = await deleteIncomeMarketing(deleteId);
     if (res) {
       toast.success("Income record deleted successfully");
       setIsDeleteDialogOpen(false);
+      setDeleteDialogData(null);
       getIncomeList();
-    } */
+    }
   };
 
   // Pagination logic
@@ -118,29 +113,17 @@ export default function FinanceIncome() {
         <Toaster position="top-right" />
 
         {/* DELETE POPUP */}
-        {isDeleteDialogOpen && (
-          <PopupMenu onClose={() => setIsDeleteDialogOpen(false)}>
-            <div className="flex flex-col gap-8 m-2">
-              <h2 className="font-semibold text-lg text-gray-800">
-                Are you sure you want to delete this income record?
-              </h2>
-              <div className="flex justify-between items-center">
-                <button
-                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
-                  onClick={handleDelete}
-                >
-                  Yes, delete
-                </button>
-                <button
-                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
-                  onClick={() => setIsDeleteDialogOpen(false)}
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </PopupMenu>
-        )}
+        <DeleteDialog<IncomeMarketingDialogDataInterface>
+          isOpen={isDeleteDialogOpen}
+          title="Are you sure you want to delete this followup?"
+          data={deleteDialogData}
+          onClose={() => {
+            setIsDeleteDialogOpen(false);
+            setDeleteDialogData(null);
+          }}
+          onDelete={handleDelete}
+        />
+
 
         <div className="p-4 w-full">
           {/* HEADER */}
@@ -162,7 +145,7 @@ export default function FinanceIncome() {
             <h3 className="font-semibold text-gray-700 mb-4 flex items-center gap-2">
               Search Filters
             </h3>
-            <div className="flex flex-wrap gap-5">
+            <div className=" grid grid-cols-3 max-lg:grid-cols-2 max-md:grid-cols-1 gap-5">
               <SingleSelect
                 options={users}
                 label="User"
@@ -178,8 +161,8 @@ export default function FinanceIncome() {
               <SingleSelect
                 options={paymentMethods}
                 label="Payment Method"
-                value={filters.PaymentMethod[0]}
-                onChange={(val) => handleSelectChange("PaymentMethod", val)}
+                value={filters.PaymentMethode[0]}
+                onChange={(val) => handleSelectChange("PaymentMethode", val)}
               />
               <SingleSelect
                 options={limits}
@@ -216,111 +199,119 @@ export default function FinanceIncome() {
 
           {/* TABLE */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md border">
-            <table className="table-auto w-full border-collapse text-sm">
-              <thead className="bg-gray-900 text-white">
-                <tr>
-                  <th className="px-4 py-3 text-left">S.No.</th>
-                  <th className="px-4 py-3 text-left">Date</th>
-                  <th className="px-4 py-3 text-left">Party Name</th>
-                  <th className="px-4 py-3 text-left">User</th>
-                  <th className="px-4 py-3 text-left">Income</th>
-                  <th className="px-4 py-3 text-left">Amount</th>
-                  <th className="px-4 py-3 text-left">Due Amount</th>
-                  <th className="px-4 py-3 text-left">Payment Method</th>
-                  <th className="px-4 py-3 text-left">Status</th>
-                  <th className="px-4 py-3 text-left">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentRows.length > 0 ? (
-                  currentRows.map((item, index) => (
-                    <tr
-                      key={item._id}
-                      className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
-                    >
-                      <td className="px-4 py-3">
-                        {startIndex + index + 1}
-                      </td>
-                      <td className="px-4 py-3">{item.date}</td>
-                      <td className="px-4 py-3">{item.partyName}</td>
-                      <td className="px-4 py-3">{item.user}</td>
-                      <td className="px-4 py-3">{item.income}</td>
-                      <td className="px-4 py-3">{item.amount}</td>
-                      <td className="px-4 py-3">{item.dueAmount}</td>
-                      <td className="px-4 py-3">{item.paymentMethod}</td>
-                      <td className="px-4 py-3">{item.status}</td>
-                      <td className="px-4 py-2 flex gap-2 items-center">
-                        <Button
-                          sx={{
-                            backgroundColor: "#E8F5E9",
-                            color: "#2E7D32",
-                            minWidth: "32px",
-                            height: "32px",
-                            borderRadius: "8px",
-                          }}
-                          onClick={() =>
-                            router.push(`/finance-income/edit/${item._id}`)
-                          }
-                        >
-                          <MdEdit />
-                        </Button>
-                        <Button
-                          sx={{
-                            backgroundColor: "#FDECEA",
-                            color: "#C62828",
-                            minWidth: "32px",
-                            height: "32px",
-                            borderRadius: "8px",
-                          }}
-                          onClick={() => {
-                            setIsDeleteDialogOpen(true);
-                            setDeleteId(item._id);
-                          }}
-                        >
-                          <MdDelete />
-                        </Button>
+            <div className="border border-gray-300 rounded-md m-2 overflow-auto">
+              <table className="table-auto w-full border-collapse text-sm">
+                <thead className="bg-gray-900 text-white">
+                  <tr>
+                    <th className="px-4 py-3 text-left">S.No.</th>
+                    <th className="px-4 py-3 text-left">Date</th>
+                    <th className="px-4 py-3 text-left">Party Name</th>
+                    <th className="px-4 py-3 text-left">User</th>
+                    <th className="px-4 py-3 text-left">Income</th>
+                    <th className="px-4 py-3 text-left">Amount</th>
+                    <th className="px-4 py-3 text-left">Due Amount</th>
+                    <th className="px-4 py-3 text-left">Payment Method</th>
+                    <th className="px-4 py-3 text-left">Status</th>
+                    <th className="px-4 py-3 text-left">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentRows.length > 0 ? (
+                    currentRows.map((item, index) => (
+                      <tr
+                        key={item._id}
+                        className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
+                      >
+                        <td className="px-4 py-3">
+                          {startIndex + index + 1}
+                        </td>
+                        <td className="px-4 py-3">{item.Date}</td>
+                        <td className="px-4 py-3">{item.PartyName}</td>
+                        <td className="px-4 py-3">{item.User}</td>
+                        <td className="px-4 py-3">{item.Income}</td>
+                        <td className="px-4 py-3">{item.Amount}</td>
+                        <td className="px-4 py-3">{item.DueAmount}</td>
+                        <td className="px-4 py-3">{item.PaymentMethode}</td>
+                        <td className="px-4 py-3">{item.Status}</td>
+                        <td className="px-4 py-2 flex gap-2 items-center">
+                          <Button
+                            sx={{
+                              backgroundColor: "#E8F5E9",
+                              color: "#2E7D32",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+                            onClick={() =>
+                              router.push(`/financial/income_marketings/edit/${item._id}`)
+                            }
+                          >
+                            <MdEdit />
+                          </Button>
+                          <Button
+                            sx={{
+                              backgroundColor: "#FDECEA",
+                              color: "#C62828",
+                              minWidth: "32px",
+                              height: "32px",
+                              borderRadius: "8px",
+                            }}
+
+                            onClick={() => {
+                              setIsDeleteDialogOpen(true);
+                              setDeleteDialogData({
+                                id: item._id,
+                                PartyName: item.PartyName,
+                                Amount: item.Amount,
+                              });
+                              setDeleteId(item._id);
+                            }}
+                          >
+                            <MdDelete />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={10}
+                        className="text-center py-4 text-gray-500"
+                      >
+                        No data available.
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={10}
-                      className="text-center py-4 text-gray-500"
-                    >
-                      No data available.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
 
-            {/* Pagination */}
-            <div className="flex justify-between items-center mt-3 py-3 px-5">
-              <p className="text-sm">
-                Page {currentPage} of {totalPages}
-              </p>
-              <div className="flex gap-3">
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
-                  className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                >
-                  Prev
-                </button>
-                <button
-                  onClick={() =>
-                    setCurrentPage((prev) =>
-                      prev < totalPages ? prev + 1 : prev
-                    )
-                  }
-                  disabled={currentPage === totalPages}
-                  className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
-                >
-                  Next
-                </button>
+              {/* Pagination */}
+              <div className="flex justify-between items-center mt-3 py-3 px-5">
+                <p className="text-sm">
+                  Page {currentPage} of {totalPages}
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
+                  >
+                    Prev
+                  </button>
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) =>
+                        prev < totalPages ? prev + 1 : prev
+                      )
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
+                  >
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           </section>

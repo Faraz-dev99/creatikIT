@@ -15,6 +15,7 @@ import {
   User2,
   LineChart,
   LucideCoins,
+  ShieldUser,
 } from "lucide-react";
 
 import { NavMain } from "../components/nav-main";
@@ -24,6 +25,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { title } from "process";
 
@@ -87,87 +89,87 @@ const data = {
       items: [
         {
           title: "Campaign",
-          url: "/login",
+          url: "/masters/campaign",
         },
         {
           title: "Types",
-          url: "#",
+          url: "/masters/customer-types",
         },
         {
           title: "Customer Subtype",
-          url: "#",
+          url: "/masters/customer-subtype",
         },
         {
           title: "City",
-          url: "#",
+          url: "/masters/city",
         },
         {
           title: "Locations",
-          url: "#",
+          url: "/masters/locations",
         },
         {
           title: "Facilities",
-          url: "#",
+          url: "/masters/facilities",
         },
         {
           title: "Amenities",
-          url: "#",
+          url: "/masters/amenities",
         },
         {
           title: "Builder Sliders",
-          url: "#",
+          url: "/masters/builder-sliders",
         },
         {
           title: "Fuctional Areas",
-          url: "#",
+          url: "/masters/functional-areas",
         },
         {
           title: "Industries",
-          url: "#",
+          url: "/masters/industries",
         },
         {
-          title: "ROles",
-          url: "#",
+          title: "Roles",
+          url: "/masters/roles",
         },
         {
           title: "Contact Campaign",
-          url: "#",
+          url: "/masters/contact-campaign",
         },
         {
           title: "Contact Type",
-          url: "#",
+          url: "/masters/contact-type",
         },
         {
           title: "References",
-          url: "#",
+          url: "/masters/references",
         },
         {
           title: "Expenses",
-          url: "#",
+          url: "/masters/expenses",
         },
         {
           title: "Incomes",
-          url: "#",
+          url: "/masters/incomes",
         },
         {
           title: "Status Type",
-          url: "#",
+          url: "/masters/status-type",
         },
         {
           title: "Payment Methods",
-          url: "#",
+          url: "/masters/payment-methods",
         },
         {
           title: "Sms Templates",
-          url: "#",
+          url: "/masters/sms-templates",
         },
         {
           title: "Mail Templates",
-          url: "#",
+          url: "/masters/mail-templates",
         },
         {
           title: "Whatsapp Templates",
-          url: "#",
+          url: "/masters/whatsapp-templates",
         },
       ],
     },
@@ -193,7 +195,7 @@ const data = {
     },
     {
       title: "Favourites",
-      url: "#",
+      url: "/favourites",
       icon: Home,
     },
     {
@@ -257,10 +259,20 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const {state}=useSidebar();
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="flex items-start justify-center ">
-        <img src="/logo.webp" alt="App Logo" className="h-10 w-40 " />
+    <Sidebar collapsible="icon" className="" {...props}>
+      <SidebarHeader className={`flex items-center py-1 justify-center ${state==="collapsed"?"bg-gray-900 py-4":"bg-gray-100"} text-white`}>
+        {/* <img src="/logo.webp" alt="App Logo" className="h-10 w-40 " /> */}
+        {state === "collapsed" ? (
+          <ShieldUser className="w-6 h-6" />
+        ) : (
+          <img
+            src="/logo.webp"
+            alt="App Logo"
+            className="h-12 w-40"
+          />
+        )}
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
