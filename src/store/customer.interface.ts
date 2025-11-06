@@ -18,7 +18,7 @@ export interface customerAllDataInterface {
     Description:string;
     Video:string;
     GoogleMap:string;
-    isFavourite:boolean;
+    isFavourite?:boolean;
     Verified:string;
     CustomerImage:File[];
     SitePlan:File
@@ -33,7 +33,7 @@ export interface customerGetDataInterface {
     Email: string;
     City: string;
     Location: string;
-    isFavourite:boolean;
+    isFavourite?:boolean;
     ContactNumber: string;
     AssignTo:string;
     Date:string;
@@ -57,4 +57,5 @@ export interface DeleteDialogDataInterface {
     id: string;
     customerName: string;
     ContactNumber: string;
+    isFavourite?:boolean;
   }

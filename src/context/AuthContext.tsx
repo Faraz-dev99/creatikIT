@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const data = await loginAdmin(credentials);
     if (data.success && data.adminData) {
       setAdmin(data.adminData);
-      Cookies.set("token", data.token as string, { expires: 7 });
+      /* Cookies.set("token", data.token as string, { expires: 7 }); */
       toast.success(data.message);
     } else {
       toast.error(data.message);

@@ -45,8 +45,8 @@ export default function SingleSelect({ options, label, value, onChange, error }:
         input={<OutlinedInput label={label} />}
         MenuProps={MenuProps}
       >
-        {options.map((name) => (
-          <MenuItem key={name} value={name}>
+        {options.map((name,i) => (
+          <MenuItem key={name+i} value={name}>
             {name}
           </MenuItem>
         ))}

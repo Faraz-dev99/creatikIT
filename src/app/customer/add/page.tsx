@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import SingleSelect from "@/app/component/SingleSelect";
 import DateSelector from "@/app/component/DateSelector";
@@ -9,6 +9,12 @@ import { ArrowLeft, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { addCustomer } from "@/store/customer";
 import { customerAllDataInterface } from "@/store/customer.interface";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getTypes } from "@/store/masters/types/types";
+import { getSubtype } from "@/store/masters/subtype/subtype";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -39,11 +45,16 @@ export default function CustomerAdd() {
     CustomerImage: [],
     SitePlan: {} as File
   });
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [sitePlanPreview, setSitePlanPreview] = useState<string>("");
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
+
+  useEffect(() => {
+    fetchFields();
+  }, [])
 
   // 🟩 Handle Input
   const handleInputChange = useCallback(
@@ -168,6 +179,24 @@ export default function CustomerAdd() {
 
   const dropdownOptions = ["Option1", "Option2", "Option3"];
 
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+        { key: "Campaign", fetchFn: getCampaign },
+        { key: "CustomerType", fetchFn: getTypes },
+        { key: "CustomerSubtype", fetchFn: getSubtype },
+        { key: "City", fetchFn: getCity },
+        { key: "Location", fetchFn: getLocation },
+        { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
+        { key: "Verified", staticData: ["yes", "no"] },
+      ],
+      setFieldOptions
+    );
+  }
+
+
+
   return (
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
       <Toaster position="top-right" />
@@ -190,26 +219,26 @@ export default function CustomerAdd() {
             </div>
 
             <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
-              <SingleSelect options={dropdownOptions} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} error={errors.Campaign} />
-              <SingleSelect options={dropdownOptions} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} />
-              <SingleSelect options={dropdownOptions} label="Customer Subtype" value={customerData.CustomerSubtype} onChange={(v) => handleSelectChange("CustomerSubtype", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} error={errors.Campaign} />
+              <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.CustomerSubType)?fieldOptions.CustomerSubType:[]} label="Customer Subtype" value={customerData.CustomerSubtype} onChange={(v) => handleSelectChange("CustomerSubtype", v)} />
               <InputField label="Customer Name" name="customerName" value={customerData.customerName} onChange={handleInputChange} error={errors.customerName} />
               <InputField label="Contact No" name="ContactNumber" value={customerData.ContactNumber} onChange={handleInputChange} error={errors.ContactNumber} />
-              <SingleSelect options={dropdownOptions} label="City" value={customerData.City} onChange={(v) => handleSelectChange("City", v)} />
-              <SingleSelect options={dropdownOptions} label="Location" value={customerData.Location} onChange={(v) => handleSelectChange("Location", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.City)?fieldOptions.City:[]} label="City" value={customerData.City} onChange={(v) => handleSelectChange("City", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Location)?fieldOptions.Location:[]} label="Location" value={customerData.Location} onChange={(v) => handleSelectChange("Location", v)} />
               <InputField label="Area" name="Area" value={customerData.Area} onChange={handleInputChange} />
               <InputField label="Address" name="Address" value={customerData.Address} onChange={handleInputChange} />
               <InputField label="Email" name="Email" value={customerData.Email} onChange={handleInputChange} error={errors.Email} />
-              <SingleSelect options={dropdownOptions} label="Facilities" value={customerData.Facilities} onChange={(v) => handleSelectChange("Facilities", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Facilities)?fieldOptions.Facilities:[]} label="Facilities" value={customerData.Facilities} onChange={(v) => handleSelectChange("Facilities", v)} />
               <InputField label="Reference ID" name="ReferenceId" value={customerData.ReferenceId} onChange={handleInputChange} />
               <InputField label="Customer ID" name="CustomerId" value={customerData.CustomerId} onChange={handleInputChange} />
-              <DateSelector label="Customer Date" value={customerData.CustomerDate} onChange={(val)=>handleSelectChange("CustomerDate",val)} />
+              <DateSelector label="Customer Date" value={customerData.CustomerDate} onChange={(val) => handleSelectChange("CustomerDate", val)} />
               <InputField label="Customer Year" name="CustomerYear" value={customerData.CustomerYear} onChange={handleInputChange} />
               <InputField label="Others" name="Others" value={customerData.Others} onChange={handleInputChange} />
               <InputField label="Description" name="Description" value={customerData.Description} onChange={handleInputChange} />
               <InputField label="Video" name="Video" value={customerData.Video} onChange={handleInputChange} />
               <InputField label="Google Map" name="GoogleMap" value={customerData.GoogleMap} onChange={handleInputChange} />
-              <SingleSelect options={dropdownOptions} label="Verified" value={customerData.Verified} onChange={(v) => handleSelectChange("Verified", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Verified)?fieldOptions.Verified:[]} label="Verified" value={customerData.Verified} onChange={(v) => handleSelectChange("Verified", v)} />
               <FileUpload label="Customer Images" multiple previews={imagePreviews} onChange={(e) => handleFileChange(e, "CustomerImage")} onRemove={handleRemoveImage} />
               <FileUpload label="Site Plan" previews={sitePlanPreview ? [sitePlanPreview] : []} onChange={(e) => handleFileChange(e, "SitePlan")} onRemove={handleRemoveSitePlan} />
 

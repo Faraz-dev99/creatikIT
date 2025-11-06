@@ -33,12 +33,12 @@ export const getFollowupByCustomerId = async (id: string): Promise<customerFollo
   }
 };
 
-export const getFollowupByFollowupId = async (id: string): Promise<customerFollowupAllDataInterface[] | null> => {
+export const getFollowupByFollowupId = async (id: string): Promise<customerFollowupAllDataInterface | null> => {
   try {
     const response = await fetch(API_ROUTES.FOLLOWUPS.CUSTOMER.GET_FOLLOWUP_By_ID(id));
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     const data = await response.json();
-    //console.log("naruto ",data)
+    console.log("naruto ",data.data)
     return data.data;
   } catch (error) {
     console.log("SERVER ERROR (getFollowupByCustomerId):", error);

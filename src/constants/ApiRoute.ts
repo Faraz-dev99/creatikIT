@@ -9,14 +9,6 @@ export const API_ROUTES = {
     UPDATE: (id: string) => `${BASE_URL}/contact/${id}`,
     DELETE: (id: string) => `${BASE_URL}/contact/${id}`,
   },
-  CONTACTFOLLOWUP: {
-    GET_ALL: `${BASE_URL}/con/followup`,
-    GET_BY_ID: (id: string) => `${BASE_URL}/con/followup/${id}`,
-    GET_BY_PARAMS: (params: string) => `${BASE_URL}/con/followup?${params}`,
-    ADD: `${BASE_URL}/con/followup`,
-    UPDATE: (id: string) => `${BASE_URL}/con/followup/${id}`,
-    DELETE: (id: string) => `${BASE_URL}/con/followup/${id}`,
-  },
   CUSTOMER: {
     GET_ALL: `${BASE_URL}/customer`,
     GET_FAVOURITES_CUSTOMER: `${BASE_URL}/customer/favouriteS/all`,
@@ -25,6 +17,7 @@ export const API_ROUTES = {
     ADD: `${BASE_URL}/customer`,
     UPDATE: (id: string) => `${BASE_URL}/customer/${id}`,
     DELETE: (id: string) => `${BASE_URL}/customer/${id}`,
+    CUSTOMERIMPORT:`${BASE_URL}/customer/import`,
   },
   COMPANYPROJECTS: {
     GET_ALL: `${BASE_URL}/com/pro`,
@@ -38,12 +31,22 @@ export const API_ROUTES = {
     CUSTOMER: {
       GET_ALL: `${BASE_URL}/cus/followup`,
       GET_CUSTOMER_FOLLOWUP: (id: string) => `${BASE_URL}/cus/followup/customer/${id}`,
-      GET_FOLLOWUP_By_ID: (id: string) => `${BASE_URL}/cus/followup/customer/${id}`,
+      GET_FOLLOWUP_By_ID: (id: string) => `${BASE_URL}/cus/followup/${id}`,
       GET_BY_PARAMS: (params: string) => `${BASE_URL}/customer?${params}`,
       ADD: (id: string) => `${BASE_URL}/cus/followup/${id}`,
       UPDATE: (id: string) => `${BASE_URL}/cus/followup/${id}`,
       CUSTOMER_FOLLOWUP_DELETE: (id: string) => `${BASE_URL}/cus/followup/${id}`,
       FOLLOWUP_DELETE: (id: string) => `${BASE_URL}/cus/followup/${id}`,
+    },
+    CONTACT: {
+      GET_ALL: `${BASE_URL}/con/follow/add`,
+      GET_CONTACT_FOLLOWUP: (id: string) => `${BASE_URL}/con/follow/add/contact/${id}`,
+      GET_FOLLOWUP_By_ID: (id: string) => `${BASE_URL}/con/follow/add/${id}`,
+      GET_BY_PARAMS: (params: string) => `${BASE_URL}/contact?${params}`,
+      ADD: (id: string) => `${BASE_URL}/con/follow/add/${id}`,
+      UPDATE: (id: string) => `${BASE_URL}/con/follow/add/${id}`,
+      CONTACT_FOLLOWUP_DELETE: (id: string) => `${BASE_URL}/con/follow/add/${id}`,
+      FOLLOWUP_DELETE: (id: string) => `${BASE_URL}/con/follow/add/${id}`,
     },
   },
   SHEDULES: {
@@ -252,10 +255,12 @@ export const API_ROUTES = {
     UPDATE: (id: string) => `${BASE_URL}/favourites/${id}`,
     DELETE: (id: string) => `${BASE_URL}/favourites/${id}`,
   },
+ 
 
   ADMIN: {
     LOGIN: `${BASE_URL}/admin/login`,
     LOGOUT: `${BASE_URL}/admin/logout`,
+    PASSWORDUPDATE: (id: string) => `${BASE_URL}/admin/${id}/password`,
     CHECK: `${BASE_URL}/admin/check`,
   },
 };

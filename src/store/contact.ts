@@ -23,7 +23,12 @@ export const getContact = async () => {
 
 export const getContactById = async (id: string) => {
     try {
-        const response = await fetch(API_ROUTES.CONTACT.GET_BY_ID(id));
+        const response = await fetch(API_ROUTES.CONTACT.GET_BY_ID(id),{
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include"
+        });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return data;
@@ -36,7 +41,7 @@ export const getContactById = async (id: string) => {
 
 export const getFilteredContact = async (params: string) => {
     try {
-        const response = await fetch(API_ROUTES.CONTACT.GET_BY_PARAMS(params));
+        const response = await fetch(API_ROUTES.CONTACT.GET_BY_PARAMS(params),{credentials: "include"});
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const data = await response.json();
         return data;
@@ -53,7 +58,8 @@ export const addContact = async (data: contactAllDataInterface) => {
             {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: "include"
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -72,7 +78,8 @@ export const updateContact = async (id: string, data: contactAllDataInterface) =
             {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+                body: JSON.stringify(data),
+                credentials: "include"
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -91,6 +98,7 @@ export const deleteContact = async (id: string) => {
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
+                credentials: "include"
             }
         );
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);

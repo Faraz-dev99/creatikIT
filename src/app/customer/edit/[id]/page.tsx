@@ -9,6 +9,13 @@ import DateSelector from "@/app/component/DateSelector";
 import toast, { Toaster } from "react-hot-toast";
 import { getCustomerById, updateCustomer } from "@/store/customer";
 import { customerAllDataInterface } from "@/store/customer.interface";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getTypes } from "@/store/masters/types/types";
+import { getSubtype } from "@/store/masters/subtype/subtype";
+import { getLocation } from "@/store/masters/location/location";
+import { getCity } from "@/store/masters/city/city";
+import { getFacilities } from "@/store/masters/facilities/facilities";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -47,6 +54,7 @@ export default function CustomerEdit() {
   const [sitePlanPreview, setSitePlanPreview] = useState<string>("");
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [loading, setLoading] = useState(true);
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   // ✅ Track deleted existing images separately
   const [removedCustomerImages, setRemovedCustomerImages] = useState<string[]>([]);
@@ -84,8 +92,14 @@ export default function CustomerEdit() {
     };
 
     if (id) fetchCustomer();
+    if (id) fetchFields();
+
+    
   }, [id]);
 
+  useEffect(()=>{
+console.log("filed optoins ", fieldOptions.Location,dropdownOptions)
+  },[fieldOptions])
 
   // Input change handlers
   const handleInputChange = useCallback(
@@ -169,6 +183,23 @@ export default function CustomerEdit() {
       newErrors.ContactNumber = "Contact No is required";
     return newErrors;
   };
+
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+        { key: "Campaign", fetchFn: getCampaign },
+        { key: "CustomerType", fetchFn: getTypes },
+        { key: "CustomerSubtype", fetchFn: getSubtype },
+        { key: "City", fetchFn: getCity },
+        { key: "Location", fetchFn: getLocation },
+        { key: "Facilities", fetchFn: getFacilities},
+        { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
+        { key: "Verified", staticData: ["yes", "no"] },
+      ],
+      setFieldOptions
+    );
+  }
 
   // ✅ Submit data correctly as FormData
   const handleSubmit = async () => {
@@ -267,16 +298,16 @@ export default function CustomerEdit() {
             </div>
 
             <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
-              <SingleSelect options={dropdownOptions} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} />
-              <SingleSelect options={dropdownOptions} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} />
               <InputField label="Customer Name" name="CustomerName" value={customerData.customerName} onChange={handleInputChange} error={errors.CustomerName} />
               <InputField label="Contact No" name="ContactNumber" value={customerData.ContactNumber} onChange={handleInputChange} error={errors.ContactNumber} />
-              <SingleSelect options={dropdownOptions} label="City" value={customerData.City} onChange={(v) => handleSelectChange("City", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.City)?fieldOptions.City:[]} label="City" value={customerData.City} onChange={(v) => handleSelectChange("City", v)} />
               <SingleSelect options={dropdownOptions} label="Location" value={customerData.Location} onChange={(v) => handleSelectChange("Location", v)} />
               <InputField label="Area" name="Area" value={customerData.Area} onChange={handleInputChange} />
               <InputField label="Address" name="Address" value={customerData.Address} onChange={handleInputChange} />
               <InputField label="Email" name="Email" value={customerData.Email} onChange={handleInputChange} error={errors.Email} />
-              <SingleSelect options={dropdownOptions} label="Facilities" value={customerData.Facilities} onChange={(v) => handleSelectChange("Facilities", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Facilities)?fieldOptions.Facilities:[]} label="Facilities" value={customerData.Facilities} onChange={(v) => handleSelectChange("Facilities", v)} />
               <InputField label="Reference ID" name="ReferenceId" value={customerData.ReferenceId} onChange={handleInputChange} />
               <InputField label="Customer ID" name="CustomerId" value={customerData.CustomerId} onChange={handleInputChange} />
               <DateSelector label="Customer Date" value={customerData.CustomerDate} onChange={(val) => handleSelectChange("CustomerDate", val)} />
@@ -285,7 +316,7 @@ export default function CustomerEdit() {
               <InputField label="Description" name="Description" value={customerData.Description} onChange={handleInputChange} />
               <InputField label="Video" name="Video" value={customerData.Video} onChange={handleInputChange} />
               <InputField label="Google Map" name="GoogleMap" value={customerData.GoogleMap} onChange={handleInputChange} />
-              <SingleSelect options={dropdownOptions} label="Verified" value={customerData.Verified} onChange={(v) => handleSelectChange("Verified", v)} />
+              <SingleSelect options={Array.isArray(fieldOptions?.Verified)?fieldOptions.Verified:[]} label="Verified" value={customerData.Verified} onChange={(v) => handleSelectChange("Verified", v)} />
               <FileUpload label="Customer Images" multiple onChange={(e) => handleFileChange(e, "CustomerImage")} previews={imagePreviews} onRemove={handleRemoveImage} />
               <FileUpload label="Site Plan" onChange={(e) => handleFileChange(e, "SitePlan")} previews={sitePlanPreview.length > 0 ? [sitePlanPreview] : []} onRemove={() => handleRemoveSitePlan()} />
             </div>

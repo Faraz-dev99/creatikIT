@@ -13,6 +13,12 @@ import toast, { Toaster } from "react-hot-toast";
 import { getCustomer, deleteCustomer, getFilteredCustomer, updateCustomer } from "@/store/customer";
 import { CustomerAdvInterface, customerGetDataInterface, DeleteDialogDataInterface } from "@/store/customer.interface";
 import DeleteDialog from "../component/popups/DeleteDialog";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getTypes } from "@/store/masters/types/types";
+import { getSubtype } from "@/store/masters/subtype/subtype";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
+import { handleFieldOptions } from "../utils/handleFieldOptions";
 
 export default function Customer() {
   const router = useRouter();
@@ -23,6 +29,8 @@ export default function Customer() {
   const [isFavouriteDialogOpen, setIsFavouriteDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<DeleteDialogDataInterface | null>(null);
   const [dialogType, setDialogType] = useState<"delete" | "favourite" | null>(null);
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
+  const [isFavrouteCustomer,setIsFavrouteCustomer]=useState<boolean>(false);
 
   const rowsPerTablePage = 10;
   const [filters, setFilters] = useState({
@@ -42,6 +50,7 @@ export default function Customer() {
 
   useEffect(() => {
     getCustomers();
+     fetchFields();
   }, []);
 
   const getCustomers = async () => {
@@ -107,14 +116,50 @@ export default function Customer() {
     }
   };
 
-  const handleFavouriteToggle = (id: string, name: string, number: string) => {
+  const handleFavouriteToggle = (id: string, name: string, number: string,isFavourite:boolean) => {
     setDialogType("favourite");
     setIsFavouriteDialogOpen(true);
     setDialogData({
       id,
       customerName: name,
-      ContactNumber: number,
+      ContactNumber: number
     });
+    setIsFavrouteCustomer(isFavourite);
+  };
+
+  const handleSelectChange = async (field: keyof typeof filters, selected: string | string[]) => {
+    const updatedFilters = {
+      ...filters,
+      [field]: Array.isArray(selected) ? selected : selected ? [selected] : [],
+    };
+    setFilters(updatedFilters);
+
+    const queryParams = new URLSearchParams();
+    Object.entries(updatedFilters).forEach(([key, value]) => {
+      if (Array.isArray(value) && value.length > 0) {
+        value.forEach(v => queryParams.append(key, v));
+      } else if (typeof value === "string" && value) {
+        queryParams.append(key, value);
+      }
+    });
+
+    const data = await getFilteredCustomer(queryParams.toString());
+    if (data) setCustomerData(data);
+  };
+
+  const clearFilter = async () => {
+    setFilters({
+      StatusAssign: [],
+      Campaign: [],
+      CustomerType: [],
+      CustomerSubtype: [],
+      City: [],
+      Location: [],
+      User: [],
+      Keyword: "",
+      Limit: [],
+    });
+    await getCustomers();
   };
 
   const totalTablePages = Math.ceil(customerData.length / rowsPerTablePage);
@@ -129,6 +174,34 @@ export default function Customer() {
   const prevtablePage = () => {
     if (currentTablePage !== 1) setCurrentTablePage(currentTablePage - 1);
   };
+  
+  const [filterOptions, setFilterOptions] = useState({
+    StatusAssign: [] as string[],
+    Campaign: [],
+    CustomerType: [],
+    CustomerSubtype: [],
+    City: [],
+    Location: [],
+    User: [] as string[],
+  });
+
+
+
+//fields dropdown options fetching
+  const fetchFields = async () => {
+     await handleFieldOptions(
+       [
+         { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+         { key: "Campaign", fetchFn: getCampaign },
+         { key: "CustomerType", fetchFn: getTypes },
+         { key: "CustomerSubtype", fetchFn: getSubtype },
+         { key: "City", fetchFn: getCity },
+         { key: "Location", fetchFn: getLocation },
+         { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
+       ],
+       setFieldOptions
+     );
+   }
 
   return (
     <ProtectedRoute>
@@ -150,7 +223,7 @@ export default function Customer() {
         {/* Favourite Dialog */}
         <DeleteDialog<DeleteDialogDataInterface>
           isOpen={isFavouriteDialogOpen}
-          title="Are you sure you want to favourite this customer?"
+          title={`Are you sure you want to ${isFavrouteCustomer?"unfavourite":"favourite"} this customer?`}
           data={dialogData}
           onClose={() => {
             setIsFavouriteDialogOpen(false);
@@ -173,8 +246,59 @@ export default function Customer() {
             </Link>
           </div>
 
-          {/* Table */}
+          {/* Table Section */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
+            {/* Advanced Search */}
+            <div className="m-5 relative">
+              <div className="flex justify-between items-center py-1 px-2 border border-gray-800 rounded-md">
+                <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
+                <button
+                  type="button"
+                  onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}
+                  className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                >
+                  {toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                </button>
+              </div>
+
+              <div className={`overflow-hidden ${toggleSearchDropdown ? 'max-h-[2000px]' : 'max-h-0'} transition-all duration-500 ease-in-out px-5`}>
+                <div className="grid grid-cols-3 max-md:grid-cols-1 max-lg:grid-cols-2 gap-5 my-5">
+                  
+                    <SingleSelect options={Array.isArray(fieldOptions?.StatusAssign)?fieldOptions.StatusAssign:[]} value={filters.StatusAssign[0]} label="Status Assign" onChange={(val) => handleSelectChange("StatusAssign", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} value={filters.Campaign[0]} label="Campaign" onChange={(val) => handleSelectChange("Campaign", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} value={filters.CustomerType[0]} label="Customer Type" onChange={(val) => handleSelectChange("CustomerType", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerSubType)?fieldOptions.CustomerSubType:[]} value={filters.CustomerSubtype[0]} label="Customer Subtype" onChange={(val) => handleSelectChange("CustomerSubtype", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.City)?fieldOptions.City:[]} value={filters.City[0]} label="City" onChange={(val) => handleSelectChange("City", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.Location)?fieldOptions.Location:[]} value={filters.Location[0]} label="Location" onChange={(val) => handleSelectChange("Location", val)} />
+                    <SingleSelect options={Array.isArray(fieldOptions?.User)?fieldOptions.User:[]} value={filters.User[0]} label="User" onChange={(val) => handleSelectChange("User", val)} />
+                    <SingleSelect options={["10", "25", "50", "100"]} value={filters.Limit[0]} label="Limit" onChange={(val) => handleSelectChange("Limit", val)} />
+                
+                </div>
+
+                <form className="flex flex-wrap max-md:flex-col justify-between items-center mb-5">
+                  <div className="min-w-[80%]">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
+                    <input
+                      type="text"
+                      placeholder="type text here.."
+                      className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full"
+                      value={filters.Keyword}
+                      onChange={(e) => handleSelectChange("Keyword", e.target.value)}
+                    />
+                  </div>
+                  <div className="flex justify-center items-center">
+                    <button type="submit" className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
+                      Explore
+                    </button>
+                    <button type="reset" onClick={clearFilter} className="text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">
+                      Clear Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            {/* TABLE */}
             <div className="border border-gray-300 rounded-md m-2 overflow-auto">
               <table className="table-auto w-full border-collapse text-sm">
                 <thead className="bg-gray-900 text-white">
@@ -193,10 +317,7 @@ export default function Customer() {
                 <tbody>
                   {currentRows.length > 0 ? (
                     currentRows.map((item, index) => (
-                      <tr
-                        key={item._id}
-                        className="border-t hover:bg-[#f7f6f3] transition-all duration-200"
-                      >
+                      <tr key={item._id} className="border-t hover:bg-[#f7f6f3] transition-all duration-200">
                         <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
                         <td className="px-4 py-3">{item.Campaign}</td>
                         <td className="px-4 py-3">{item.Type}</td>
@@ -207,37 +328,19 @@ export default function Customer() {
                         <td className="px-4 py-3">{item.Date}</td>
                         <td className="px-4 py-2 flex gap-2 items-center">
                           <Button
-                            sx={{
-                              backgroundColor: "#E8F5E9",
-                              color: "#2E7D32",
-                              minWidth: "32px",
-                              height: "32px",
-                              borderRadius: "8px",
-                            }}
+                            sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => router.push(`/followups/customer/add/${item._id}`)}
                           >
                             <MdAdd />
                           </Button>
                           <Button
-                            sx={{
-                              backgroundColor: "#E8F5E9",
-                              color: "#2E7D32",
-                              minWidth: "32px",
-                              height: "32px",
-                              borderRadius: "8px",
-                            }}
+                            sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => router.push(`/customer/edit/${item._id}`)}
                           >
                             <MdEdit />
                           </Button>
                           <Button
-                            sx={{
-                              backgroundColor: "#FDECEA",
-                              color: "#C62828",
-                              minWidth: "32px",
-                              height: "32px",
-                              borderRadius: "8px",
-                            }}
+                            sx={{ backgroundColor: "#FDECEA", color: "#C62828", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => {
                               setIsDeleteDialogOpen(true);
                               setDialogType("delete");
@@ -259,11 +362,7 @@ export default function Customer() {
                               borderRadius: "8px",
                             }}
                             onClick={() =>
-                              handleFavouriteToggle(
-                                item._id,
-                                item.Name,
-                                item.ContactNumber
-                              )
+                              handleFavouriteToggle(item._id, item.Name, item.ContactNumber,item.isFavourite??false)
                             }
                           >
                             {item.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
@@ -299,8 +398,7 @@ export default function Customer() {
                     type="button"
                     onClick={nexttablePage}
                     disabled={
-                      currentTablePage === totalTablePages ||
-                      currentRows.length <= 0
+                      currentTablePage === totalTablePages || currentRows.length <= 0
                     }
                     className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
                   >

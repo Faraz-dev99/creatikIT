@@ -24,10 +24,6 @@ export const loginAdmin = async (logindata: LoginCredentials): Promise<AuthApiRe
 
 export const logoutAdmin = async (): Promise<AuthApiResponse> => {
   try {
-    /* const token = Cookies.get("token");
-    if (!token) {
-      return { success: false, message: "No token found" };
-    } */
     const res = await fetch(API_ROUTES.ADMIN.LOGOUT, {
       method: "POST",
       headers: {
@@ -35,9 +31,6 @@ export const logoutAdmin = async (): Promise<AuthApiResponse> => {
       },
       credentials: "include"
     });
-
-
-
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     const data: AuthApiResponse = await res.json();
    

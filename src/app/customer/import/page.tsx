@@ -107,7 +107,7 @@ export default function CustomerImport() {
   };
 
   return (
-    <div className="bg-slate-200 min-h-screen p-6 max-md:p-0 flex justify-center">
+    <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
       <Toaster position="top-right" />
       <div className="w-full">
         <div className="flex justify-end mb-4">
@@ -120,8 +120,8 @@ export default function CustomerImport() {
         </div>
 
         <div className="bg-white/90 backdrop-blur-lg p-10 w-full rounded-3xl shadow-2xl h-auto">
-          <h1 className="text-2xl font-extrabold text-gray-800 mb-8 border-b pb-4">
-            Import <span className="text-blue-600">Customers</span>
+          <h1 className="text-3xl font-extrabold text-gray-800 mb-8 border-b pb-4">
+            Import <span className="text-blue-600">Customer Dataasdf</span>
           </h1>
 
           <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">

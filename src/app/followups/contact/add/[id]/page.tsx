@@ -1,58 +1,31 @@
-'use client'
+'use client';
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
 import { useParams, useRouter } from "next/navigation";
 import DateSelector from "@/app/component/DateSelector";
-import {
-  getFollowupByCustomerId,
-  getFollowupByFollowupId,
-  updateCustomerFollowup,
-} from "@/store/customerFollowups";
-import { customerFollowupAllDataInterface } from "@/store/customerFollowups.interface";
+import { addContactFollowup } from "@/store/contactFollowups";
+import { contactFollowupAllDataInterface } from "@/store/contactFollowups.interface";
 
 interface ErrorInterface {
   [key: string]: string;
 }
 
-export default function CustomerFollowupEdit() {
-  const { id } = useParams();
-  const router = useRouter();
-
-  const [followupData, setFollowupData] = useState<customerFollowupAllDataInterface>({
-    customer: "",
+export default function ContactFollowupAdd() {
+  const [followupData, setFollowupData] = useState<contactFollowupAllDataInterface>({
+    contact: "",
     StartDate: "",
     StatusType: "",
     FollowupNextDate: "",
     Description: "",
   });
-
+  const { id } = useParams();
+  const router = useRouter();
   const [errors, setErrors] = useState<ErrorInterface>({});
 
-  // Fetch existing followup data
-  useEffect(() => {
-    const fetchFollowup = async () => {
-      const data = await getFollowupByFollowupId(id as string);
-      console.log("something ", data)
-      if (data) {
-        setFollowupData({
-          customer: data.customer,
-          StartDate: data.StartDate,
-          StatusType: data.StatusType,
-          FollowupNextDate: data.FollowupNextDate,
-          Description: data.Description
-        });
-      } else {
-        toast.error("No followup found for this customer!");
-      }
-    };
-    if (id) fetchFollowup();
-  }, [id]);
-
-  // Handlers
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
@@ -70,19 +43,15 @@ export default function CustomerFollowupEdit() {
     []
   );
 
-  // Validation
   const validateForm = () => {
     const newErrors: ErrorInterface = {};
     if (!followupData.StartDate.trim()) newErrors.StartDate = "Start Date is required";
     if (!followupData.StatusType.trim()) newErrors.StatusType = "Status Type is required";
-    if (!followupData.FollowupNextDate.trim())
-      newErrors.FollowupNextDate = "Followup Next Date is required";
-    if (!followupData.Description.trim())
-      newErrors.Description = "Description is required";
+    if (!followupData.FollowupNextDate.trim()) newErrors.FollowupNextDate = "Followup Next Date is required";
+    if (!followupData.Description.trim()) newErrors.Description = "Description is required";
     return newErrors;
   };
 
-  // Submit
   const handleSubmit = async () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -93,14 +62,22 @@ export default function CustomerFollowupEdit() {
     const payload = { ...followupData };
     if (followupData.StartDate === "") delete (payload as any).StartDate;
 
-    const data = await updateCustomerFollowup(id as string, payload);
+    const data = await addContactFollowup(id as string, payload);
     if (data) {
-      toast.success("Customer Followup updated successfully!");
-      router.push("/followups/customer");
+      toast.success("Contact Followup added successfully!");
+      setFollowupData({
+        contact: "",
+        StartDate: "",
+        StatusType: "",
+        FollowupNextDate: "",
+        Description: "",
+      });
+      setErrors({});
+      router.push("/followups/contact");
       return;
     }
 
-    toast.error("Failed to update followup!");
+    toast.error("Failed to add Followup!");
   };
 
   const statusOptions = ["Pending", "Completed", "In Progress"];
@@ -109,33 +86,28 @@ export default function CustomerFollowupEdit() {
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">
       <Toaster position="top-right" />
       <div className="w-full max-w-[900px]">
-        {/* Back Button */}
         <div className="flex justify-end mb-4">
           <Link
-            href="/followups/customer"
+            href="/followups/contact"
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
           >
             <ArrowLeft size={18} /> Back
           </Link>
         </div>
 
-        {/* Form */}
         <div className="bg-white/90 backdrop-blur-lg p-10 rounded-3xl shadow-2xl h-auto">
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                Edit <span className="text-blue-600">Customer Followup</span>
+                Add <span className="text-blue-600">Contact Followup</span>
               </h1>
             </div>
 
             <div className="flex flex-col space-y-10">
-              {/* Customer Followup Section */}
               <div>
-                <h2 className="text-xl font-semibold text-gray-700 mb-4">
-                  Followup Information
-                </h2>
-
+                <h2 className="text-xl font-semibold text-gray-700 mb-4">Followup Information</h2>
                 <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
+
                   <DateSelector
                     label="Start Date"
                     value={followupData.StartDate}
@@ -168,9 +140,9 @@ export default function CustomerFollowupEdit() {
               <div className="flex justify-end mt-6">
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-36 rounded-md font-semibold hover:scale-105 transition-all"
+                  className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
                 >
-                  Save Changes
+                  Save
                 </button>
               </div>
             </div>
@@ -181,7 +153,6 @@ export default function CustomerFollowupEdit() {
   );
 }
 
-// TextAreaField
 const TextAreaField: React.FC<{
   label: string;
   name: string;
@@ -197,17 +168,13 @@ const TextAreaField: React.FC<{
       placeholder=" "
       rows={4}
       className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none resize-none 
-        ${error
-          ? "border-red-500 focus:border-red-500"
-          : "border-gray-400 focus:border-blue-500"
-        }`}
+        ${error ? "border-red-500 focus:border-red-500" : "border-gray-400 focus:border-blue-500"}`}
     />
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
       ${value || error
           ? "-top-2 text-xs text-blue-500"
-          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"
-        }`}
+          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"}`}
     >
       {label}
     </p>

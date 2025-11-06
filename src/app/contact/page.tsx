@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { IoIosArrowUp, IoIosArrowDown } from "react-icons/io";
-import { MdEdit, MdDelete } from "react-icons/md";
+import { MdEdit, MdDelete, MdAdd } from "react-icons/md";
 import Button from '@mui/material/Button';
 import SingleSelect from "@/app/component/SingleSelect";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import toast, { Toaster } from "react-hot-toast";
 import DateSelector from "@/app/component/DateSelector";
 import { getContact, deleteContact, getFilteredContact } from "@/store/contact";
 import { ContactAdvInterface, contactGetDataInterface, DeleteDialogDataInterface } from "@/store/contact.interface";
+import DeleteDialog from "../component/popups/DeleteDialog";
 
 export default function Contacts() {
 
@@ -145,33 +146,17 @@ export default function Contacts() {
         <Toaster position="top-right" />
 
         {/* DELETE POPUP */}
-        {isDeleteDialogOpen && deleteDialogData && (
-          <PopupMenu onClose={() => { setIsDeleteDialogOpen(false); setDeleteDialogData(null); }}>
-            <div className="flex flex-col gap-10 m-2">
-              <h2 className=" font-bold">
-                Are you sure you want to delete this contact?
-              </h2>
-              <div className=" flex flex-col gap-2">
-                <div className=" flex items-center gap-2">Name: {deleteDialogData.contactName}</div>
-                <div className=" flex items-center gap-2">Email: <p className="text-gray-500 text-sm">{deleteDialogData.contactEmail}</p></div>
-              </div>
-              <div className="flex justify-between items-center">
-                <button
-                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
-                  onClick={() => handleDelete(deleteDialogData)}
-                >
-                  Yes, delete
-                </button>
-                <button
-                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
-                  onClick={() => { setIsDeleteDialogOpen(false); setDeleteDialogData(null); }}
-                >
-                  No
-                </button>
-              </div>
-            </div>
-          </PopupMenu>
-        )}
+        <DeleteDialog<DeleteDialogDataInterface>
+          isOpen={isDeleteDialogOpen}
+          title="Are you sure you want to favourite this customer?"
+          data={deleteDialogData}
+          onClose={() => {
+            setIsDeleteDialogOpen(false);
+            setDeleteDialogData(null);
+          }}
+          onDelete={handleDelete}
+        />
+        
 
         <div className="p-4 max-md:p-3 w-full">
           <div className="flex justify-between items-center">
@@ -308,6 +293,12 @@ export default function Contacts() {
                         <td className="px-4 py-3">{/* {item?.AssignTo} */}N/A</td>
                         <td className="px-4 py-3">{item.date}</td>
                         <td className="px-4 py-2 flex gap-2 items-center">
+                          <Button
+                            sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
+                            onClick={() => router.push(`/followups/contact/add/${item._id}`)}
+                          >
+                            <MdAdd />
+                          </Button>
                           <Button
                             sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => editCustomer(item._id)}

@@ -16,13 +16,21 @@ import {
   getFavoutiteCustomer,
   updateCustomer,
 } from "@/store/customer";
- // your favourite API file
+
+interface FavouriteDialogDataInterface {
+  id: string;
+  name: string;
+  ContactNumber: string;
+  isFavourite?: boolean;
+}
 
 export default function FavouritePage() {
   const router = useRouter();
   const [favouriteData, setFavouriteData] = useState<customerGetDataInterface[]>([]);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isFavouriteDialogOpen, setIsFavouriteDialogOpen] = useState(false);
   const [deleteDialogData, setDeleteDialogData] = useState<DeleteDialogDataInterface | null>(null);
+  const [favouriteDialogData, setFavouriteDialogData] = useState<FavouriteDialogDataInterface | null>(null);
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const rowsPerTablePage = 10;
 
@@ -50,13 +58,15 @@ export default function FavouritePage() {
     router.push(`/customer/edit/${id}`);
   };
 
-  const handleFavouriteToggle = async (id: string,isFavourite:boolean) => {
-    const formData=new FormData();
-    isFavourite=!isFavourite
-    formData.append("isFavourite",isFavourite.toString());
-    const res = await updateCustomer(id,formData);
+  const handleFavouriteConfirm = async (data: FavouriteDialogDataInterface | null) => {
+    if (!data) return;
+    const formData = new FormData();
+    formData.append("isFavourite", (!data.isFavourite).toString());
+    const res = await updateCustomer(data.id, formData);
     if (res) {
-      toast.success("Favourite updated successfully");
+      toast.success("Favourite status updated successfully");
+      setIsFavouriteDialogOpen(false);
+      setFavouriteDialogData(null);
       getFavouriteData();
     } else {
       toast.error("Failed to update favourite");
@@ -79,6 +89,8 @@ export default function FavouritePage() {
     <ProtectedRoute>
       <div className="flex min-h-[calc(100vh-56px)] overflow-auto bg-gray-200 max-md:py-10">
         <Toaster position="top-right" />
+
+        {/* DELETE POPUP */}
         <DeleteDialog<DeleteDialogDataInterface>
           isOpen={isDeleteDialogOpen}
           title="Are you sure you want to delete this favourite?"
@@ -88,6 +100,18 @@ export default function FavouritePage() {
             setDeleteDialogData(null);
           }}
           onDelete={handleDelete}
+        />
+
+        {/* FAVOURITE CONFIRMATION POPUP */}
+        <DeleteDialog<FavouriteDialogDataInterface>
+          isOpen={isFavouriteDialogOpen}
+          title="Are you sure you want to favourite/unfavourite this customer?"
+          data={favouriteDialogData}
+          onClose={() => {
+            setIsFavouriteDialogOpen(false);
+            setFavouriteDialogData(null);
+          }}
+          onDelete={handleFavouriteConfirm}
         />
 
         <div className="p-4 max-md:p-3 w-full">
@@ -168,7 +192,15 @@ export default function FavouritePage() {
                               height: "32px",
                               borderRadius: "8px",
                             }}
-                            onClick={() => handleFavouriteToggle(item._id,item.isFavourite)}
+                            onClick={() => {
+                              setIsFavouriteDialogOpen(true);
+                              setFavouriteDialogData({
+                                id: item._id,
+                                name: item.Name,
+                                ContactNumber: item.ContactNumber,
+                                isFavourite: item.isFavourite,
+                              });
+                            }}
                           >
                             {item.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
                           </Button>
@@ -203,8 +235,7 @@ export default function FavouritePage() {
                     type="button"
                     onClick={nexttablePage}
                     disabled={
-                      currentTablePage === totalTablePages ||
-                      currentRows.length <= 0
+                      currentTablePage === totalTablePages || currentRows.length <= 0
                     }
                     className="px-3 py-1 bg-gray-200 border border-gray-300 rounded disabled:opacity-50"
                   >

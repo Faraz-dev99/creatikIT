@@ -85,6 +85,30 @@ export const addCustomer = async (formData:FormData) => {
   }
 };
 
+export const importCustomer = async (formData:FormData) => {
+  try {
+
+    /* for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    } */
+    const response = await fetch(API_ROUTES.CUSTOMER.CUSTOMERIMPORT, {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
 
 export const updateCustomer = async (id: string, formData: FormData) => {
   try {
