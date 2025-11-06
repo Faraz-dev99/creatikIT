@@ -14,11 +14,12 @@ interface ErrorInterface {
 }
 
 export default function CustomerTypeAdd() {
-  const [typeData, setTypeData] = useState<typesAllDataInterface>({
-  Campaign: "" as string,
-  Name: "" as string,
-  Status: "" as string,
-});
+  const [typeData, setTypeData] = useState<typesAllDataInterface>(() => ({
+  Campaign: "",
+  Name: "",
+  Status: "",
+}));
+
 
 
   const [errors, setErrors] = useState<ErrorInterface>({});

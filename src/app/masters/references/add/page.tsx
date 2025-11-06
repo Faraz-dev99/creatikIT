@@ -14,10 +14,10 @@ interface ErrorInterface {
 }
 
 export default function ReferenceAdd() {
-  const [referenceData, setReferenceData] = useState<referencesAllDataInterface>({
+  const [referenceData, setReferenceData] = useState<referencesAllDataInterface>(()=>({
     Name: "",
     Status: "",
-  });
+  }));
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();

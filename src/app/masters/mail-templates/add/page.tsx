@@ -14,12 +14,12 @@ interface ErrorInterface {
 }
 
 export default function MailAdd() {
-  const [mailData, setMailData] = useState<mailAllDataInterface>({
+  const [mailData, setMailData] = useState<mailAllDataInterface>(()=>({
     name: "",
     subject: "",
     body: "",
     status: "",
-  });
+  }));
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();

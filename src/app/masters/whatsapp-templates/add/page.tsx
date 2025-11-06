@@ -14,11 +14,11 @@ interface ErrorInterface {
 }
 
 export default function WhatsappAdd() {
-  const [whatsappData, setWhatsappData] = useState<whatsappAllDataInterface>({
+  const [whatsappData, setWhatsappData] = useState<whatsappAllDataInterface>(()=>({
     name: "",
     body: "",
     status: "",
-  });
+  }));
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();

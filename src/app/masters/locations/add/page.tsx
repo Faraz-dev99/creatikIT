@@ -14,11 +14,12 @@ interface ErrorInterface {
 }
 
 export default function LocationAdd() {
-  const [locationData, setLocationData] = useState<locationAllDataInterface>({
-    Name: "",
-    Status: "",
-    City: "",
-  });
+  const [locationData, setLocationData] = useState<locationAllDataInterface>(() => ({
+  Name: "" as string,
+  Status: "" as string,
+  City: "" as string,
+}));
+;
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();

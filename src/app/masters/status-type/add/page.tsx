@@ -14,10 +14,10 @@ interface ErrorInterface {
 }
 
 export default function StatusTypeAdd() {
-  const [statusTypeData, setStatusTypeData] = useState<statustypeAllDataInterface>({
+  const [statusTypeData, setStatusTypeData] = useState<statustypeAllDataInterface>(()=>({
     Name: "",
     Status: "",
-  });
+  }));
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();

@@ -14,10 +14,10 @@ interface ErrorInterface {
 }
 
 export default function PaymentMethodAdd() {
-  const [paymentData, setPaymentData] = useState<paymentsAllDataInterface>({
+  const [paymentData, setPaymentData] = useState<paymentsAllDataInterface>(()=>({
     Name: "",
     Status: "",
-  });
+  }));
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
 

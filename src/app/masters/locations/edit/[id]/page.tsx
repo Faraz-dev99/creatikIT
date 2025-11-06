@@ -17,11 +17,11 @@ export default function LocationEdit() {
   const { id } = useParams();
   const router = useRouter();
 
-  const [locationData, setLocationData] = useState<locationAllDataInterface>({
+  const [locationData, setLocationData] = useState<locationAllDataInterface>(() => ({
     Name: "",
     Status: "",
     City: "",
-  });
+  }));
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [loading, setLoading] = useState(true);
