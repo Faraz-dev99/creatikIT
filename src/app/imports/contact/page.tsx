@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 
 import { getCampaign } from "@/store/masters/campaign/campaign";
 import { getTypes } from "@/store/masters/types/types";           // ContactType
-import { getSubtype } from "@/store/masters/subtype/subtype";     // Range
+import { getSubtype } from "@/store/masters/subtype/subtypes";     // Range
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 import { importContact } from "@/store/contact";   // ✅ Your contact import API

@@ -15,7 +15,7 @@ import { CustomerAdvInterface, customerAssignInterface, customerGetDataInterface
 import DeleteDialog from "../component/popups/DeleteDialog";
 import { getCampaign } from "@/store/masters/campaign/campaign";
 import { getTypes } from "@/store/masters/types/types";
-import { getSubtype } from "@/store/masters/subtype/subtype";
+import { getSubtype } from "@/store/masters/subtype/subtypes";
 import { getCity } from "@/store/masters/city/city";
 import { getLocation } from "@/store/masters/location/location";
 import { handleFieldOptions } from "../utils/handleFieldOptions";
