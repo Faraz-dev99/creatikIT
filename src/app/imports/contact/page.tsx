@@ -7,9 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import SingleSelect from "@/app/component/SingleSelect";
 import { useRouter } from "next/navigation";
 
-import { getCampaign } from "@/store/masters/campaign/campaign";
-import { getTypes } from "@/store/masters/types/types";           // ContactType
-import { getSubtype } from "@/store/masters/statussubtype/statussubtype";     // Range
+import { getCampaign } from "@/store/masters/campaign/campaign";   // Range
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 import { importContact } from "@/store/contact";   // ✅ Your contact import API
