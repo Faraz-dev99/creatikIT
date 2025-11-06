@@ -6,8 +6,8 @@ import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import { useRouter, useParams } from "next/navigation";
-import { subtypeAllDataInterface } from "@/store/masters/subtype/subtypes.interface";
-import { getSubtypeById, updateSubtype } from "@/store/masters/subtype/subtypes";
+import { subtypeAllDataInterface } from "@/store/masters/statussubtype/statussubtype.interface";
+import { getSubtypeById, updateSubtype } from "@/store/masters/statussubtype/statussubtype";
 
 
 interface ErrorInterface { [key: string]: string; }

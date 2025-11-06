@@ -1,7 +1,7 @@
 // note do not use any
 
 import { API_ROUTES } from "@/constants/ApiRoute"
-import { subtypeAllDataInterface } from "./subtypes.interface";
+import { subtypeAllDataInterface } from "./statussubtype.interface";
 
 
 
