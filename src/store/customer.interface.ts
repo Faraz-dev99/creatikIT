@@ -53,6 +53,11 @@ export interface CustomerAdvInterface {
     Limit: string[];
   }
 
+export interface customerAssignInterface{
+  customerIds:string[];
+  assignToId:string;
+}
+
 export interface DeleteDialogDataInterface {
     id: string;
     customerName: string;

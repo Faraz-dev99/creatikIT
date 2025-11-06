@@ -10,8 +10,8 @@ import Link from "next/link";
 import { PlusSquare } from "lucide-react";
 import ProtectedRoute from "../component/ProtectedRoutes";
 import toast, { Toaster } from "react-hot-toast";
-import { getCustomer, deleteCustomer, getFilteredCustomer, updateCustomer } from "@/store/customer";
-import { CustomerAdvInterface, customerGetDataInterface, DeleteDialogDataInterface } from "@/store/customer.interface";
+import { getCustomer, deleteCustomer, getFilteredCustomer, updateCustomer, assignCustomer, deleteAllCustomer } from "@/store/customer";
+import { CustomerAdvInterface, customerAssignInterface, customerGetDataInterface, DeleteDialogDataInterface } from "@/store/customer.interface";
 import DeleteDialog from "../component/popups/DeleteDialog";
 import { getCampaign } from "@/store/masters/campaign/campaign";
 import { getTypes } from "@/store/masters/types/types";
@@ -19,18 +19,35 @@ import { getSubtype } from "@/store/masters/subtype/subtype";
 import { getCity } from "@/store/masters/city/city";
 import { getLocation } from "@/store/masters/location/location";
 import { handleFieldOptions } from "../utils/handleFieldOptions";
+import PopupMenu from "../component/popups/PopupMenu";
+import { getAllAdmins } from "@/store/auth";
+import { usersGetDataInterface } from "@/store/auth.interface";
+
+
+interface DeleteAllDialogDataInterface { }
 
 export default function Customer() {
   const router = useRouter();
 
+  /*NEW STATE FOR SELECTED CUSTOMERS */
+  const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
+  const [selectedUser, setSelectUser] = useState<string>();
+  const [users, setUsers] = useState<usersGetDataInterface[]>([])
+
+
+  /*REST OF YOUR STATES (UNCHANGED) */
   const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
   const [currentTablePage, setCurrentTablePage] = useState(1);
+  const [isAssignOpen, setIsAssignOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [isFavouriteDialogOpen, setIsFavouriteDialogOpen] = useState(false);
   const [dialogData, setDialogData] = useState<DeleteDialogDataInterface | null>(null);
   const [dialogType, setDialogType] = useState<"delete" | "favourite" | null>(null);
   const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
-  const [isFavrouteCustomer,setIsFavrouteCustomer]=useState<boolean>(false);
+  const [isFavrouteCustomer, setIsFavrouteCustomer] = useState<boolean>(false);
+  const [deleteAllDialogData, setDeleteAllDialogData] =
+    useState<DeleteAllDialogDataInterface | null>(null);
 
   const rowsPerTablePage = 10;
   const [filters, setFilters] = useState({
@@ -50,7 +67,7 @@ export default function Customer() {
 
   useEffect(() => {
     getCustomers();
-     fetchFields();
+    fetchFields();
   }, []);
 
   const getCustomers = async () => {
@@ -116,7 +133,7 @@ export default function Customer() {
     }
   };
 
-  const handleFavouriteToggle = (id: string, name: string, number: string,isFavourite:boolean) => {
+  const handleFavouriteToggle = (id: string, name: string, number: string, isFavourite: boolean) => {
     setDialogType("favourite");
     setIsFavouriteDialogOpen(true);
     setDialogData({
@@ -174,7 +191,7 @@ export default function Customer() {
   const prevtablePage = () => {
     if (currentTablePage !== 1) setCurrentTablePage(currentTablePage - 1);
   };
-  
+
   const [filterOptions, setFilterOptions] = useState({
     StatusAssign: [] as string[],
     Campaign: [],
@@ -185,23 +202,99 @@ export default function Customer() {
     User: [] as string[],
   });
 
+  const fetchUsers = async () => {
+    const response = await getAllAdmins();
+
+    if (response) {
+      console.log("response ", response);
+
+      const admins = response?.admins?.filter((e) => e.role === "user") ?? []; //ensure only user roles are fetched
+
+      setUsers(
+        admins.map((item: any): usersGetDataInterface => ({
+          _id: item?._id ?? "",
+          name: item?.name ?? "",
+        }))
+      );
+
+      return;
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    if (customerData.length === 0) return;
+
+    const response = await deleteAllCustomer();
+    if (response) {
+      toast.success(`All contacts deleted`);
+      setIsDeleteAllDialogOpen(false);
+      setDeleteAllDialogData(null);
+      getCustomers();
+    }
+  };
 
 
-//fields dropdown options fetching
+  // ✅ Fetch dropdown data
   const fetchFields = async () => {
-     await handleFieldOptions(
-       [
-         { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
-         { key: "Campaign", fetchFn: getCampaign },
-         { key: "CustomerType", fetchFn: getTypes },
-         { key: "CustomerSubtype", fetchFn: getSubtype },
-         { key: "City", fetchFn: getCity },
-         { key: "Location", fetchFn: getLocation },
-         { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
-       ],
-       setFieldOptions
-     );
-   }
+    await handleFieldOptions(
+      [
+        { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+        { key: "Campaign", fetchFn: getCampaign },
+        { key: "CustomerType", fetchFn: getTypes },
+        { key: "CustomerSubtype", fetchFn: getSubtype },
+        { key: "City", fetchFn: getCity },
+        { key: "Location", fetchFn: getLocation },
+        { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
+      ],
+      setFieldOptions
+    );
+  };
+
+  /* ✅ SELECT ALL HANDLER */
+  const handleSelectAll = () => {
+    const allIds = currentRows.map((c) => c._id);
+    setSelectedCustomers((prev) =>
+      allIds.every((id) => prev.includes(id))
+        ? prev.filter((id) => !allIds.includes(id)) // unselect all
+        : [...new Set([...prev, ...allIds])] // select all visible rows
+    );
+  };
+
+  /* ✅ SELECT SINGLE ROW HANDLER */
+  const handleSelectRow = (id: string) => {
+    setSelectedCustomers((prev) =>
+      prev.includes(id)
+        ? prev.filter((cid) => cid !== id)
+        : [...prev, id]
+    );
+  };
+
+  const handleSelectUser = (id: string) => {
+    setSelectUser(id); // ✅ only one user at a time
+  };
+
+
+  const handleAssignto = async () => {
+    if (!selectedUser) {
+      toast.error("Please select a user");
+      return;
+    }
+
+    const payload: customerAssignInterface = {
+      customerIds: selectedCustomers,
+      assignToId: selectedUser,
+    };
+
+    console.log(payload)
+
+    const response = await assignCustomer(payload);
+    if (response) {
+      toast.success(" customers assigned succesfully")
+      return response
+    }
+    toast.error("failed to assign customers")
+  };
+
 
   return (
     <ProtectedRoute>
@@ -220,10 +313,21 @@ export default function Customer() {
           onDelete={handleDelete}
         />
 
+        <DeleteDialog<DeleteAllDialogDataInterface>
+          isOpen={isDeleteAllDialogOpen}
+          title="Are you sure you want to delete ALL customers?"
+          data={deleteAllDialogData}
+          onClose={() => {
+            setIsDeleteAllDialogOpen(false);
+            setDeleteAllDialogData(null);
+          }}
+          onDelete={handleDeleteAll}
+        />
+
         {/* Favourite Dialog */}
         <DeleteDialog<DeleteDialogDataInterface>
           isOpen={isFavouriteDialogOpen}
-          title={`Are you sure you want to ${isFavrouteCustomer?"unfavourite":"favourite"} this customer?`}
+          title={`Are you sure you want to ${isFavrouteCustomer ? "unfavourite" : "favourite"} this customer?`}
           data={dialogData}
           onClose={() => {
             setIsFavouriteDialogOpen(false);
@@ -232,6 +336,47 @@ export default function Customer() {
           onDelete={handleFavourite}
         />
 
+        {isAssignOpen && (selectedCustomers.length > 0) && (
+          <PopupMenu onClose={() => setIsAssignOpen(false)}>
+            <div className="flex flex-col gap-8 py-6 px-2 m-2 bg-white  w-full max-w-[400px] rounded-md">
+              <h2 className="text-2xl text-gray-800 px-6 font-extrabold">Assign <span className=" text-blue-600">Customers</span></h2>
+              <div className=" max-h-[40vh] flex flex-col gap-2 overflow-y-auto">
+                {users.map((user, index) => {
+                  return <div key={user._id + index}>
+                    <label className=" flex justify-between gap-2 cursor-pointer px-6 py-2 hover:bg-gray-200">
+
+
+                      <div>{user.name}</div>
+                      <input
+                        type="checkbox"
+                        checked={selectedUser === user._id}
+                        onChange={() => handleSelectUser(user._id)}
+                      />
+
+                    </label>
+
+                  </div>
+                })}
+              </div>
+              <div className="flex justify-between px-6 items-center">
+                <button
+                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
+                  onClick={handleAssignto}
+                >
+                  Assign
+                </button>
+                <button
+                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
+                  onClick={() => setIsAssignOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </PopupMenu>
+        )}
+
+        {/* ---------- TABLE START ---------- */}
         <div className="p-4 max-md:p-3 w-full">
           <div className="flex justify-between items-center">
             <h2 className="flex gap-2 items-center font-light">
@@ -246,63 +391,50 @@ export default function Customer() {
             </Link>
           </div>
 
-          {/* Table Section */}
+
+
+          {/* TABLE */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
-            {/* Advanced Search */}
-            <div className="m-5 relative">
-              <div className="flex justify-between items-center py-1 px-2 border border-gray-800 rounded-md">
-                <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
-                <button
-                  type="button"
-                  onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}
-                  className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
-                >
-                  {toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
-                </button>
-              </div>
-
-              <div className={`overflow-hidden ${toggleSearchDropdown ? 'max-h-[2000px]' : 'max-h-0'} transition-all duration-500 ease-in-out px-5`}>
-                <div className="grid grid-cols-3 max-md:grid-cols-1 max-lg:grid-cols-2 gap-5 my-5">
-                  
-                    <SingleSelect options={Array.isArray(fieldOptions?.StatusAssign)?fieldOptions.StatusAssign:[]} value={filters.StatusAssign[0]} label="Status Assign" onChange={(val) => handleSelectChange("StatusAssign", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} value={filters.Campaign[0]} label="Campaign" onChange={(val) => handleSelectChange("Campaign", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} value={filters.CustomerType[0]} label="Customer Type" onChange={(val) => handleSelectChange("CustomerType", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerSubType)?fieldOptions.CustomerSubType:[]} value={filters.CustomerSubtype[0]} label="Customer Subtype" onChange={(val) => handleSelectChange("CustomerSubtype", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.City)?fieldOptions.City:[]} value={filters.City[0]} label="City" onChange={(val) => handleSelectChange("City", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.Location)?fieldOptions.Location:[]} value={filters.Location[0]} label="Location" onChange={(val) => handleSelectChange("Location", val)} />
-                    <SingleSelect options={Array.isArray(fieldOptions?.User)?fieldOptions.User:[]} value={filters.User[0]} label="User" onChange={(val) => handleSelectChange("User", val)} />
-                    <SingleSelect options={["10", "25", "50", "100"]} value={filters.Limit[0]} label="Limit" onChange={(val) => handleSelectChange("Limit", val)} />
-                
-                </div>
-
-                <form className="flex flex-wrap max-md:flex-col justify-between items-center mb-5">
-                  <div className="min-w-[80%]">
-                    <label className="block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
-                    <input
-                      type="text"
-                      placeholder="type text here.."
-                      className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full"
-                      value={filters.Keyword}
-                      onChange={(e) => handleSelectChange("Keyword", e.target.value)}
-                    />
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <button type="submit" className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
-                      Explore
-                    </button>
-                    <button type="reset" onClick={clearFilter} className="text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">
-                      Clear Search
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-
-            {/* TABLE */}
             <div className="border border-gray-300 rounded-md m-2 overflow-auto">
+              <div className="flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
+                <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
+                  if(customerData.length>0){
+                     setIsDeleteAllDialogOpen(true);
+                  setDeleteAllDialogData({});
+                  } 
+                }}>Delete All</button>
+                <label htmlFor="selectall" className="hover:text-gray-950 cursor-pointer">Select All</label>
+                <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
+                  if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
+                  else {
+                    setIsAssignOpen(true);
+                    fetchUsers()
+                  }
+                }}>Assign To</button>
+                <button type="button" className="hover:text-gray-950 cursor-pointer">SMS All</button>
+                <button type="button" className="hover:text-gray-950 cursor-pointer">Email All</button>
+                <button type="button" className="hover:text-gray-950 cursor-pointer">Mass Update</button>
+              </div>
+
               <table className="table-auto w-full border-collapse text-sm">
                 <thead className="bg-gray-900 text-white">
                   <tr>
+
+                    {/* ✅ SELECT ALL CHECKBOX COLUMN */}
+                    <th className="px-2 py-3 text-left">
+
+                      <input
+                        id="selectall"
+                        type="checkbox"
+                        className=" hidden"
+                        checked={
+                          currentRows.length > 0 &&
+                          currentRows.every((r) => selectedCustomers.includes(r._id))
+                        }
+                        onChange={handleSelectAll}
+                      />
+                    </th>
+
                     <th className="px-4 py-3 text-left">S.No.</th>
                     <th className="px-4 py-3 text-left">Campaign</th>
                     <th className="px-4 py-3 text-left">Customer Type</th>
@@ -314,18 +446,30 @@ export default function Customer() {
                     <th className="px-4 py-3 text-left">Actions</th>
                   </tr>
                 </thead>
+
                 <tbody>
                   {currentRows.length > 0 ? (
                     currentRows.map((item, index) => (
                       <tr key={item._id} className="border-t hover:bg-[#f7f6f3] transition-all duration-200">
+
+                        {/* ✅ ROW CHECKBOX */}
+                        <td className="px-2 py-3">
+                          <input
+                            type="checkbox"
+                            checked={selectedCustomers.includes(item._id)}
+                            onChange={() => handleSelectRow(item._id)}
+                          />
+                        </td>
+
                         <td className="px-4 py-3">{indexOfFirstRow + index + 1}</td>
                         <td className="px-4 py-3">{item.Campaign}</td>
                         <td className="px-4 py-3">{item.Type}</td>
                         <td className="px-4 py-3">{item.SubType}</td>
                         <td className="px-4 py-3">{item.Location}</td>
                         <td className="px-4 py-3">{item.ContactNumber}</td>
-                        <td className="px-4 py-3">{item.AssignTo}</td>
+                        <td className="px-4 py-3">{/* {item.AssignTo} */}</td>
                         <td className="px-4 py-3">{item.Date}</td>
+
                         <td className="px-4 py-2 flex gap-2 items-center">
                           <Button
                             sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
@@ -333,12 +477,14 @@ export default function Customer() {
                           >
                             <MdAdd />
                           </Button>
+
                           <Button
                             sx={{ backgroundColor: "#E8F5E9", color: "#2E7D32", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => router.push(`/customer/edit/${item._id}`)}
                           >
                             <MdEdit />
                           </Button>
+
                           <Button
                             sx={{ backgroundColor: "#FDECEA", color: "#C62828", minWidth: "32px", height: "32px", borderRadius: "8px" }}
                             onClick={() => {
@@ -353,6 +499,7 @@ export default function Customer() {
                           >
                             <MdDelete />
                           </Button>
+
                           <Button
                             sx={{
                               backgroundColor: "#FFF0F5",
@@ -362,7 +509,7 @@ export default function Customer() {
                               borderRadius: "8px",
                             }}
                             onClick={() =>
-                              handleFavouriteToggle(item._id, item.Name, item.ContactNumber,item.isFavourite??false)
+                              handleFavouriteToggle(item._id, item.Name, item.ContactNumber, item.isFavourite ?? false)
                             }
                           >
                             {item.isFavourite ? <MdFavorite /> : <MdFavoriteBorder />}
@@ -372,7 +519,7 @@ export default function Customer() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan={9} className="text-center py-4 text-gray-500">
+                      <td colSpan={10} className="text-center py-4 text-gray-500">
                         No data available.
                       </td>
                     </tr>
@@ -408,6 +555,7 @@ export default function Customer() {
               </div>
             </div>
           </section>
+
         </div>
       </div>
     </ProtectedRoute>

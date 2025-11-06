@@ -41,6 +41,11 @@ export interface ContactAdvInterface {
     Limit: string[];
   }
 
+  export interface contactAssignInterface{
+  contactIds:string[];
+  assignToId:string;
+}
+
 export interface DeleteDialogDataInterface {
     id: string;
     contactName: string;

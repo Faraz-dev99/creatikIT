@@ -1,7 +1,7 @@
 // note do not use any
 
 import { API_ROUTES } from "@/constants/ApiRoute"
-import { contactAllDataInterface } from "./contact.interface";
+import { contactAllDataInterface, contactAssignInterface } from "./contact.interface";
 
 export const getContact = async () => {
     try {
@@ -72,6 +72,52 @@ export const addContact = async (data: contactAllDataInterface) => {
     }
 }
 
+export const importContact = async (formData:FormData) => {
+  try {
+
+    /* for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    } */
+    const response = await fetch(API_ROUTES.CONTACT.CONTACTIMPORT, {
+      method: "POST",
+      body: formData,
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
+export const assignContact = async (data:contactAssignInterface) => {
+  try {
+
+    console.log("assign contact data ",data)
+    const response = await fetch(API_ROUTES.CONTACT.ASSIGNCONTACT, {
+      method: "POST",
+      body: JSON.stringify(data),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
 export const updateContact = async (id: string, data: contactAllDataInterface) => {
     try {
         let response = await fetch(API_ROUTES.CONTACT.UPDATE(id),
@@ -95,6 +141,26 @@ export const updateContact = async (id: string, data: contactAllDataInterface) =
 export const deleteContact = async (id: string) => {
     try {
         const response = await fetch(API_ROUTES.CONTACT.DELETE(id),
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        return data;
+
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
+export const deleteAllContact = async () => {
+    try {
+        const response = await fetch(API_ROUTES.CONTACT.DELETEALL,
             {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },

@@ -124,7 +124,7 @@ export default function CustomerImport() {
             Import <span className="text-blue-600">Customers</span>
           </h1>
 
-          <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
+          <div className="grid grid-cols-3 gap-6  max-md:grid-cols-1 max-lg:grid-cols-2">
             <SingleSelect
               options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]}
               label="Campaign"

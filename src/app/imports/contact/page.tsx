@@ -1,156 +1,187 @@
 'use client'
 
-import { useState } from "react";
-import { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import ProtectedRoute from "../../component/ProtectedRoutes";
+import { useState, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import SingleSelect from "@/app/component/SingleSelect";
-import toast from "react-hot-toast";
-import Button from "@mui/material/Button";
+import { useRouter } from "next/navigation";
+
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getTypes } from "@/store/masters/types/types";           // ContactType
+import { getSubtype } from "@/store/masters/subtype/subtype";     // Range
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+
+import { importContact } from "@/store/contact";   // ✅ Your contact import API
+import { getContactType } from "@/store/masters/contacttype/contacttype";
+
 
 export default function ContactImport() {
-  const router = useRouter();
 
-  const [formData, setFormData] = useState({
-    campaign: "",
-    contactType: "",
-    contactSubtype: "",
-    name: "",
+  const [importData, setImportData] = useState({
+    Campaign: "",
+    ContactType: "",
+    Range: "",
     file: null as File | null,
-    user: "",
   });
 
-  const campaigns = ["Campaign A", "Campaign B", "Campaign C"];
-  const contactTypes = ["Retail", "Wholesale", "Online"];
-  const contactSubtypes = ["Premium", "Regular", "New"];
-  const users = ["Admin", "Staff1", "Staff2"];
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const router = useRouter();
 
-  const handleSelectChange = (field: string, value: string) => {
-    setFormData({ ...formData, [field]: value });
+
+  // ✅ Fetch dropdown data
+  useEffect(() => {
+    fetchFields();
+  }, []);
+
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "Campaign", fetchFn: getCampaign },
+        { key: "ContactType", fetchFn: getContactType }, // ✅ Reuse types for contact types
+        { key: "Range",staticData: ["10", "20", "30"] },     // ✅ Range from subtype API
+      ],
+      setFieldOptions
+    );
   };
 
+
+  // ✅ Select change
+  const handleSelectChange = useCallback((label: string, value: string) => {
+    setImportData((prev) => ({ ...prev, [label]: value }));
+    setErrors((prev) => ({ ...prev, [label]: "" }));
+  }, []);
+
+
+  // ✅ File upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, file: e.target.files?.[0] || null });
+    const file = e.target.files?.[0] || null;
+    setImportData((prev) => ({ ...prev, file }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.file) {
-      toast.error("Please select a file to import.");
+
+  // ✅ Validation
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!importData.Campaign) newErrors.Campaign = "Campaign is required";
+    if (!importData.ContactType) newErrors.ContactType = "Contact Type is required";
+    if (!importData.Range) newErrors.Range = "Range is required";
+    if (!importData.file) newErrors.file = "Please upload an Excel file";
+
+    return newErrors;
+  };
+
+
+  // ✅ Submit
+  const handleSubmit = async () => {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       return;
     }
-    toast.success("Contact file imported successfully!");
-    console.log(formData);
+
+    try {
+      const formData = new FormData();
+      formData.append("Campaign", importData.Campaign);
+      formData.append("ContactType", importData.ContactType);
+      formData.append("Range", importData.Range);
+      if (importData.file) formData.append("file", importData.file);
+
+      const result = await importContact(formData);
+
+      if (result) {
+        toast.success("Contacts imported successfully!");
+        router.push("/contact");
+      } else {
+        toast.error("Failed to import contacts");
+      }
+    } catch (error) {
+      console.error("Import Error:", error);
+      toast.error("Error importing contacts");
+    }
   };
 
+
   return (
-    <ProtectedRoute>
-      <div className="flex min-h-[calc(100vh-56px)] overflow-auto bg-gray-200 max-md:py-10">
-        <Toaster position="top-right" />
-        <div className="p-4 w-full">
-          {/* HEADER */}
-          <div className="flex justify-between items-center">
-            <h2 className="flex gap-2 items-center font-light">
-              <span className="text-gray-900 text-2xl">Dashboard</span> /
-              <span> Contact / Import</span>
-            </h2>
+    <div className="bg-slate-200 min-h-screen p-6 max-md:p-0 flex justify-center">
+      <Toaster position="top-right" />
+
+      <div className="w-full">
+        <div className="flex justify-end mb-4">
+          <Link
+            href="/contact"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
+          >
+            <ArrowLeft size={18} /> Back
+          </Link>
+        </div>
+
+        <div className="bg-white/90 backdrop-blur-lg p-10 w-full rounded-3xl shadow-2xl h-auto">
+          <h1 className="text-2xl font-extrabold text-gray-800 mb-8 border-b pb-4">
+            Import <span className="text-blue-600">Contacts</span>
+          </h1>
+
+          <div className="grid grid-cols-3 gap-6 max-md:grid-cols-1 max-lg:grid-cols-2">
+
+            <SingleSelect
+              options={Array.isArray(fieldOptions?.Campaign) ? fieldOptions.Campaign : []}
+              label="Campaign"
+              value={importData.Campaign}
+              onChange={(v) => handleSelectChange("Campaign", v)}
+              error={errors.Campaign}
+            />
+
+            <SingleSelect
+              options={Array.isArray(fieldOptions?.ContactType) ? fieldOptions.ContactType : []}
+              label="Contact Type"
+              value={importData.ContactType}
+              onChange={(v) => handleSelectChange("ContactType", v)}
+              error={errors.ContactType}
+            />
+
+            <SingleSelect
+              options={Array.isArray(fieldOptions?.Range) ? fieldOptions.Range : []}
+              label="Range"
+              value={importData.Range}
+              onChange={(v) => handleSelectChange("Range", v)}
+              error={errors.Range}
+            />
+
+            <FileUpload
+              label="Choose Excel File"
+              onChange={handleFileChange}
+              error={errors.file}
+            />
           </div>
 
-          {/* IMPORT FORM */}
-          <div className="bg-white mt-6 p-6 rounded-md border">
-            <h3 className="font-semibold text-gray-700 mb-4">
-              Import Contact File
-            </h3>
-
-            <form
-              className="flex flex-col gap-5 max-w-2xl"
-              onSubmit={handleSubmit}
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={handleSubmit}
+              className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-40 rounded-md font-semibold hover:scale-105 transition-all"
             >
-              <SingleSelect
-                options={campaigns}
-                label="Campaign"
-                value={formData.campaign}
-                onChange={(val) => handleSelectChange("campaign", val)}
-              />
-
-              <SingleSelect
-                options={contactTypes}
-                label="Contact Type"
-                value={formData.contactType}
-                onChange={(val) => handleSelectChange("contactType", val)}
-              />
-
-              <SingleSelect
-                options={contactSubtypes}
-                label="Contact Subtype"
-                value={formData.contactSubtype}
-                onChange={(val) => handleSelectChange("contactSubtype", val)}
-              />
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  placeholder="Enter name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2 text-sm font-medium text-gray-900">
-                  File
-                </label>
-                <input
-                  type="file"
-                  accept=".csv,.xlsx,.xls"
-                  onChange={handleFileChange}
-                  className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full cursor-pointer"
-                />
-                {formData.file && (
-                  <p className="text-sm text-gray-600 mt-1">
-                    Selected file: {formData.file.name}
-                  </p>
-                )}
-              </div>
-
-              <SingleSelect
-                options={users}
-                label="User"
-                value={formData.user}
-                onChange={(val) => handleSelectChange("user", val)}
-              />
-
-              <div className="flex justify-end mt-5">
-                <Button
-                  type="submit"
-                  sx={{
-                    background:
-                      "linear-gradient(to right, #1a2a4f, #4e6787)",
-                    color: "white",
-                    fontWeight: 600,
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: "8px",
-                    textTransform: "none",
-                    "&:hover": {
-                      background:
-                        "linear-gradient(to right, #16213b, #435e7b)",
-                    },
-                  }}
-                >
-                  Save
-                </Button>
-              </div>
-            </form>
+              Import
+            </button>
           </div>
         </div>
       </div>
-    </ProtectedRoute>
+    </div>
   );
 }
+
+
+
+// ✅ File Upload Component
+const FileUpload = ({ label, onChange, error }: any) => (
+  <div className="flex flex-col">
+    <label className="font-semibold text-gray-700 mb-2">{label}</label>
+    <input
+      type="file"
+      accept=".xlsx, .xls"
+      onChange={onChange}
+      className="border border-gray-300 rounded-md p-2"
+    />
+    {error && <span className="text-red-500 text-sm mt-2">{error}</span>}
+  </div>
+);

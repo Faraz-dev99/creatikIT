@@ -8,6 +8,9 @@ export const API_ROUTES = {
     ADD: `${BASE_URL}/contact`,
     UPDATE: (id: string) => `${BASE_URL}/contact/${id}`,
     DELETE: (id: string) => `${BASE_URL}/contact/${id}`,
+    DELETEALL: `${BASE_URL}/contact/delete/all`,
+    CONTACTIMPORT: `${BASE_URL}/contact/import`,
+    ASSIGNCONTACT:`${BASE_URL}/contact/assign`
   },
   CUSTOMER: {
     GET_ALL: `${BASE_URL}/customer`,
@@ -17,7 +20,9 @@ export const API_ROUTES = {
     ADD: `${BASE_URL}/customer`,
     UPDATE: (id: string) => `${BASE_URL}/customer/${id}`,
     DELETE: (id: string) => `${BASE_URL}/customer/${id}`,
-    CUSTOMERIMPORT:`${BASE_URL}/customer/import`,
+    DELETEALL: `${BASE_URL}/customer`,
+    CUSTOMERIMPORT: `${BASE_URL}/customer/import`,
+    ASSIGNCUSTOMER:`${BASE_URL}/customer/assign`
   },
   COMPANYPROJECTS: {
     GET_ALL: `${BASE_URL}/com/pro`,
@@ -121,6 +126,14 @@ export const API_ROUTES = {
       ADD: `${BASE_URL}/mas/amen`,
       UPDATE: (id: string) => `${BASE_URL}/mas/amen/${id}`,
       DELETE: (id: string) => `${BASE_URL}/mas/amen/${id}`,
+    },
+    BUILDERSLIDERS: {
+      GET_ALL: `${BASE_URL}/mas/buil`,
+      GET_BY_ID: (id: string) => `${BASE_URL}/mas/buil/${id}`,
+      GET_BY_PARAMS: (params: string) => `${BASE_URL}/mas/buil?${params}`,
+      ADD: `${BASE_URL}/mas/buil`,
+      UPDATE: (id: string) => `${BASE_URL}/mas/buil/${id}`,
+      DELETE: (id: string) => `${BASE_URL}/mas/buil/${id}`,
     },
     FUNCTIONALAREA: {
       GET_ALL: `${BASE_URL}/mas/func`,
@@ -229,25 +242,25 @@ export const API_ROUTES = {
       DELETE: (id: string) => `${BASE_URL}/v1/templates/${id}`,
     },
   },
-  FINANCIAL:{
+  FINANCIAL: {
     INCOMEMARKETING: {
-    GET_ALL: `${BASE_URL}/fin/inc`,
-    GET_BY_ID: (id: string) => `${BASE_URL}/fin/inc/${id}`,
-    GET_BY_PARAMS: (params: string) => `${BASE_URL}/fin/inc?${params}`,
-    ADD: `${BASE_URL}/fin/inc`,
-    UPDATE: (id: string) => `${BASE_URL}/fin/inc/${id}`,
-    DELETE: (id: string) => `${BASE_URL}/fin/inc/${id}`,
+      GET_ALL: `${BASE_URL}/fin/inc`,
+      GET_BY_ID: (id: string) => `${BASE_URL}/fin/inc/${id}`,
+      GET_BY_PARAMS: (params: string) => `${BASE_URL}/fin/inc?${params}`,
+      ADD: `${BASE_URL}/fin/inc`,
+      UPDATE: (id: string) => `${BASE_URL}/fin/inc/${id}`,
+      DELETE: (id: string) => `${BASE_URL}/fin/inc/${id}`,
+    },
+    EXPENSEMARKETING: {
+      GET_ALL: `${BASE_URL}/fin/exp`,
+      GET_BY_ID: (id: string) => `${BASE_URL}/fin/exp/${id}`,
+      GET_BY_PARAMS: (params: string) => `${BASE_URL}/fin/exp?${params}`,
+      ADD: `${BASE_URL}/fin/exp`,
+      UPDATE: (id: string) => `${BASE_URL}/fin/exp/${id}`,
+      DELETE: (id: string) => `${BASE_URL}/fin/exp/${id}`,
+    }
   },
-  EXPENSEMARKETING: {
-    GET_ALL: `${BASE_URL}/fin/exp`,
-    GET_BY_ID: (id: string) => `${BASE_URL}/fin/exp/${id}`,
-    GET_BY_PARAMS: (params: string) => `${BASE_URL}/fin/exp?${params}`,
-    ADD: `${BASE_URL}/fin/exp`,
-    UPDATE: (id: string) => `${BASE_URL}/fin/exp/${id}`,
-    DELETE: (id: string) => `${BASE_URL}/fin/exp/${id}`,
-  }
-  },
-  FAVOURITES:{
+  FAVOURITES: {
     GET_ALL: `${BASE_URL}/favourites`,
     GET_BY_ID: (id: string) => `${BASE_URL}/favourites/${id}`,
     GET_BY_PARAMS: (params: string) => `${BASE_URL}/favourites?${params}`,
@@ -255,12 +268,23 @@ export const API_ROUTES = {
     UPDATE: (id: string) => `${BASE_URL}/favourites/${id}`,
     DELETE: (id: string) => `${BASE_URL}/favourites/${id}`,
   },
- 
+
 
   ADMIN: {
+    // 🔓 Public Routes
+    SIGNUP: `${BASE_URL}/admin/signup`,
     LOGIN: `${BASE_URL}/admin/login`,
     LOGOUT: `${BASE_URL}/admin/logout`,
-    PASSWORDUPDATE: (id: string) => `${BASE_URL}/admin/${id}/password`,
+
+    // 🔐 Protected Routes
     CHECK: `${BASE_URL}/admin/check`,
+
+    // 👤 Admin Management
+    CREATE: `${BASE_URL}/admin/create`,
+    GET_ALL: `${BASE_URL}/admin/all`,
+    GET_BY_ID: (id: String) => `${BASE_URL}/admin/${id}`,
+    UPDATE_DETAILS: (id: String) => `${BASE_URL}/admin/${id}/details`,
+    UPDATE_PASSWORD: (id: String) => `${BASE_URL}/admin/${id}/password`,
+    DELETE: (id: String) => `${BASE_URL}/admin/${id}`,
   },
 };

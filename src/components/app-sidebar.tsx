@@ -67,11 +67,11 @@ const data = {
       url: "/company_project/enquiry",
       icon: Info,
     },
-    {
+    /* {
       title: "Customer Enquiry",
       url: "/customer/enquiry",
       icon: Info,
-    },
+    }, */
     {
       title: "Schedules",
       url: "/schedules",
@@ -240,7 +240,7 @@ const data = {
       url: "/imports/contact",
       icon: MessageSquare,
     },
-    {
+    /* {
       title: "Customer Report",
       url: "/reports/customer",
       icon: LineChart,
@@ -249,7 +249,7 @@ const data = {
       title: "Contact Report",
       url: "/reports/contact",
       icon: LineChart,
-    },
+    }, */
     {
       title: "Database Manager",
       url: "/database_manager",

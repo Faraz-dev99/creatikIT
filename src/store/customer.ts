@@ -2,7 +2,7 @@
 
 import { API_ROUTES } from "@/constants/ApiRoute"
 import { contactAllDataInterface } from "./contact.interface";
-import { customerAllDataInterface } from "./customer.interface";
+import { customerAllDataInterface, customerAssignInterface } from "./customer.interface";
 
 export const getCustomer = async () => {
     try {
@@ -109,6 +109,28 @@ export const importCustomer = async (formData:FormData) => {
   }
 };
 
+export const assignCustomer = async (data:customerAssignInterface) => {
+  try {
+
+    console.log("assign customer data ",data)
+    const response = await fetch(API_ROUTES.CUSTOMER.ASSIGNCUSTOMER, {
+      method: "POST",
+      body: JSON.stringify(data),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
 
 export const updateCustomer = async (id: string, formData: FormData) => {
   try {
@@ -153,4 +175,25 @@ export const deleteCustomer = async (id: string) => {
         return null;
     }
 }
+
+export const deleteAllCustomer = async () => {
+    try {
+        const response = await fetch(API_ROUTES.CUSTOMER.DELETEALL,
+            {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include"
+            }
+        );
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const data = await response.json();
+        return data;
+
+    }
+    catch (error) {
+        console.log("SERVER ERROR: ", error)
+        return null;
+    }
+}
+
 

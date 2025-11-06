@@ -1,33 +1,62 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { createAdmin } from "@/store/auth"; // ✅ import your API call
-import { CreateAdminData } from "@/store/auth.interface"; // ✅ types
+import { useRouter, useParams } from "next/navigation";
+
+import { getAdminById, updateAdminDetails } from "@/store/auth";
+import { Admin, UpdateAdminDetailsData } from "@/store/auth.interface";
 
 interface ErrorInterface {
   [key: string]: string;
 }
 
-export default function AdminCreatePage() {
+export default function AdminEditPage() {
+  const { id } = useParams();
+  const router = useRouter();
+
   const [userData, setUserData] = useState({
     Role: "",
     FirstName: "",
     Email: "",
     MobileNumber: "",
     City: "",
-    Password: "",
     AddressLine1: "",
     AddressLine2: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ErrorInterface>({});
-  const router = useRouter();
+
+  // ✅ Fetch user data
+  useEffect(() => {
+    loadUserDetails();
+  }, []);
+
+  const loadUserDetails = async () => {
+    const res = await getAdminById(String(id));
+
+    if (!res.success || !res.adminData) {
+      toast.error("Failed to load user details");
+      return;
+    }
+
+    const data: Admin = res.adminData;
+
+    // ✅ Map backend fields → frontend fields of Add Page
+    setUserData({
+      Role: data.role || "",
+      FirstName: data.name || "",
+      Email: data.email || "",
+      MobileNumber: data.phone || "",
+      City: data.city || "",
+      AddressLine1: data.AddressLine1 || "",
+      AddressLine2: data.AddressLine2 || "",
+    });
+  };
 
   // ✅ Handle input change
   const handleInputChange = useCallback(
@@ -45,7 +74,7 @@ export default function AdminCreatePage() {
     setErrors((prev) => ({ ...prev, [label]: "" }));
   }, []);
 
-  // ✅ Form validation
+  // ✅ Form validation (Password removed ✅)
   const validateForm = () => {
     const newErrors: ErrorInterface = {};
     if (!userData.FirstName.trim())
@@ -53,13 +82,14 @@ export default function AdminCreatePage() {
     if (!userData.Email.trim()) newErrors.Email = "Email is required";
     else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(userData.Email))
       newErrors.Email = "Invalid email format";
-    if (!userData.Password.trim()) newErrors.Password = "Password is required";
     if (!userData.Role.trim()) newErrors.Role = "Role is required";
-    if (!userData.AddressLine1.trim()) newErrors.AddressLine1 = "AddressLine1 is required";
+    if (!userData.AddressLine1.trim())
+      newErrors.AddressLine1 = "AddressLine1 is required";
+
     return newErrors;
   };
 
-  // ✅ Submit handler
+  // ✅ Submit handler (UPDATE)
   const handleSubmit = async () => {
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -69,55 +99,22 @@ export default function AdminCreatePage() {
 
     setLoading(true);
 
-    // ✅ Prepare admin payload matching backend
-    const adminPayload: CreateAdminData = {
-      name: `${userData.FirstName}`.trim(),
-      email: userData.Email,
-      password: userData.Password,
-      role:
-        userData.Role === "administrator"
-          ? "administrator"
-          : userData.Role === "city_admin"
-          ? "city_admin"
-          : "user",
-      city:  userData.City, // hide for admin
-      phone: userData.MobileNumber,
-      AddressLine1: userData.AddressLine1,
-      AddressLine2: userData.AddressLine2,
-    };
-   
-    console.log("📦 Sending adminPayload:", adminPayload);
+    
 
-    try {
-      const res = await createAdmin(adminPayload);
+    const res = await updateAdminDetails(String(id), userData);
 
-      if (res.success) {
-        toast.success(res.message || "Admin created successfully!");
-        setUserData({
-          Role: "",
-          FirstName: "",
-          Email: "",
-          MobileNumber: "",
-          City: "",
-          Password: "",
-          AddressLine1: "",
-          AddressLine2: "",
-        });
-        setErrors({});
-        setTimeout(() => router.push("/users"), 1500);
-      } else {
-        toast.error(res.message || "Failed to create admin");
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
-    } finally {
-      setLoading(false);
+    if (res.success) {
+      toast.success("User updated successfully!");
+      setTimeout(() => router.push("/users"), 1500);
+    } else {
+      toast.error(res.message || "Failed to update user");
     }
+
+    setLoading(false);
   };
 
-  // ✅ Dropdown data
+  // ✅ Dropdown values
   const roles = ["administrator", "city_admin", "user"];
-  const statusOptions = ["active", "inactive"];
   const cities = ["Jaipur", "Ajmer", "Udaipur"];
 
   return (
@@ -126,7 +123,7 @@ export default function AdminCreatePage() {
       <div className="w-full max-w-[900px]">
         <div className="flex justify-end mb-4">
           <Link
-            href="/admin/all"
+            href="/users"
             className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
           >
             <ArrowLeft size={18} /> Back
@@ -137,7 +134,7 @@ export default function AdminCreatePage() {
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                Add <span className="text-blue-600">Admin</span>
+                Edit <span className="text-blue-600">Admin</span>
               </h1>
             </div>
 
@@ -147,6 +144,7 @@ export default function AdminCreatePage() {
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">
                   User Level
                 </h2>
+
                 <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
                   <SingleSelect
                     options={roles}
@@ -167,6 +165,7 @@ export default function AdminCreatePage() {
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">
                   Personal Information
                 </h2>
+
                 <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
                   <InputField
                     label="First Name"
@@ -183,49 +182,40 @@ export default function AdminCreatePage() {
                     onChange={handleInputChange}
                     error={errors.Email}
                   />
+
                   <InputField
                     label="Mobile Number"
                     name="MobileNumber"
                     value={userData.MobileNumber}
                     onChange={handleInputChange}
                   />
-                  
 
-                
-                
-                    <SingleSelect
-                      options={cities}
-                      label="City"
-                      value={userData.City}
-                      onChange={(selected) =>
-                        handleSelectChange("City", selected)
-                      }
-                    />
-                 
-
-                  <InputField
-                    label="Password"
-                    name="Password"
-                    value={userData.Password}
-                    onChange={handleInputChange}
-                    error={errors.Password}
+                  <SingleSelect
+                    options={cities}
+                    label="City"
+                    value={userData.City}
+                    onChange={(selected) =>
+                      handleSelectChange("City", selected)
+                    }
                   />
                 </div>
               </div>
 
-              {/* ADDRESS INFORMATION */}
+              {/* ADDRESS */}
               <div>
                 <h2 className="text-xl font-semibold text-gray-700 mb-4">
                   Address Information
                 </h2>
+
                 <div className="grid grid-cols-2 gap-6 max-lg:grid-cols-1">
                   <InputField
                     label="Address Line 1"
                     name="AddressLine1"
                     value={userData.AddressLine1}
-                    error={errors.AddressLine1}
                     onChange={handleInputChange}
+                    error={errors.AddressLine1}
                   />
+
                   <InputField
                     label="Address Line 2"
                     name="AddressLine2"
@@ -235,6 +225,7 @@ export default function AdminCreatePage() {
                 </div>
               </div>
 
+              {/* BUTTON */}
               <div className="flex justify-end mt-6">
                 <button
                   onClick={handleSubmit}
@@ -243,7 +234,7 @@ export default function AdminCreatePage() {
                     loading ? "opacity-70 cursor-not-allowed" : ""
                   }`}
                 >
-                  {loading ? "Saving..." : "Save"}
+                  {loading ? "Updating..." : "Update"}
                 </button>
               </div>
             </div>
@@ -260,9 +251,7 @@ const InputField: React.FC<{
   name: string;
   value: string;
   error?: string;
-  onChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onChange: any;
 }> = ({ label, name, value, onChange, error }) => (
   <label className="relative block w-full">
     <input

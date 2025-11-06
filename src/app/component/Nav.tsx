@@ -159,7 +159,9 @@ export default function Navbar() {
                       <IoPersonOutline />
                       <p>Edit Profile</p>
                     </div>
-                    <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3">
+                    <div className="flex items-center gap-2 hover:bg-gray-200 py-3 px-3" onClick={()=>{
+                      setOpenMenu(null)
+                      router.push("/users/change_password")}}>
                       <LuKey />
                       <p>Change Password</p>
                     </div>

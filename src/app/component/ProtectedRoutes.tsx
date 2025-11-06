@@ -16,6 +16,6 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
     }
   }, [admin, router]);
 
-  if (loading) return null;
+  if (loading) return <div className=" grid place-items-center min-h-[calc(100vh-0px)] w-full text-lg text-gray-600">Loading page..</div>;
   return children;
 }
