@@ -10,7 +10,7 @@ import { getCampaign } from "@/store/masters/campaign/campaign";
 import { getTypes } from "@/store/masters/types/types";
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 import { importCustomer } from "@/store/customer";
-import { getSubtype } from "@/store/masters/statussubtype/statussubtype";
+import { getSubtype } from "@/store/masters/subtype/subtype";
 
 export default function CustomerImport() {
   const [importData, setImportData] = useState({

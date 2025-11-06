@@ -1,7 +1,7 @@
 // note do not use any
 
 import { API_ROUTES } from "@/constants/ApiRoute"
-import { subtypeAllDataInterface } from "./statussubtype.interface";
+import { subtypeAllDataInterface } from "./subtype.interface";
 
 
 
@@ -63,7 +63,7 @@ export const getFilteredSubtype = async (params: string) => {
     }
 }
 
-export const addSubtype = async (data: subtypeAllDataInterface) => {
+export const addSubtype = async (data:subtypeAllDataInterface) => {
     try {
         let response = await fetch(API_ROUTES.MASTERS.SUBTYPE.ADD,
             {

@@ -11,10 +11,10 @@ import { addCustomer } from "@/store/customer";
 import { customerAllDataInterface } from "@/store/customer.interface";
 import { getCampaign } from "@/store/masters/campaign/campaign";
 import { getTypes } from "@/store/masters/types/types";
-import { getSubtype } from "@/store/masters/statussubtype/statussubtype";
 import { getCity } from "@/store/masters/city/city";
 import { getLocation } from "@/store/masters/location/location";
 import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getSubtype } from "@/store/masters/subtype/subtype";
 
 interface ErrorInterface {
   [key: string]: string;
