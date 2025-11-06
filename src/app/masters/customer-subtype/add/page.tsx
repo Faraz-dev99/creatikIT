@@ -6,8 +6,7 @@ import SingleSelect from "@/app/component/SingleSelect";
 import toast, { Toaster } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-
-import { subtypeAllDataInterface } from "@/store/masters/subtype/subtype.interface";
+import { subtypeDialogDataInterface, subtypeGetDataInterface ,subtypeAllDataInterface} from "@/store/masters/subtype/subtype.interface";
 import { addSubtype } from "@/store/masters/subtype/subtype";
 
 

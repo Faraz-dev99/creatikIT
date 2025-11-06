@@ -7,13 +7,9 @@ import { MdDelete, MdEdit } from "react-icons/md";
 import Button from "@mui/material/Button";
 import { PlusSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
-import PopupMenu from "../../component/popups/PopupMenu";
-import {
-  subtypeGetDataInterface,
-  subtypeDialogDataInterface,
-} from "@/store/masters/subtype/subtype.interface";
 import { deleteSubtype, getSubtype } from "@/store/masters/subtype/subtype";
 import DeleteDialog from "@/app/component/popups/DeleteDialog";
+import { subtypeDialogDataInterface, subtypeGetDataInterface } from "@/store/masters/subtype/subtype.interface";
 
 
 export default function CustomerSubtypePage() {
