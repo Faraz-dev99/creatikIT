@@ -300,7 +300,7 @@ console.log("filed optoins ", fieldOptions.Location,dropdownOptions)
             <div className="grid grid-cols-3 gap-6 max-lg:grid-cols-1">
               <SingleSelect options={Array.isArray(fieldOptions?.Campaign)?fieldOptions.Campaign:[]} label="Campaign" value={customerData.Campaign} onChange={(v) => handleSelectChange("Campaign", v)} />
               <SingleSelect options={Array.isArray(fieldOptions?.CustomerType)?fieldOptions.CustomerType:[]} label="Customer Type" value={customerData.CustomerType} onChange={(v) => handleSelectChange("CustomerType", v)} />
-              <InputField label="Customer Name" name="CustomerName" value={customerData.customerName} onChange={handleInputChange} error={errors.CustomerName} />
+              <InputField label="Customer Name" name="customerName" value={customerData.customerName} onChange={handleInputChange} error={errors.CustomerName} />
               <InputField label="Contact No" name="ContactNumber" value={customerData.ContactNumber} onChange={handleInputChange} error={errors.ContactNumber} />
               <SingleSelect options={Array.isArray(fieldOptions?.City)?fieldOptions.City:[]} label="City" value={customerData.City} onChange={(v) => handleSelectChange("City", v)} />
               <SingleSelect options={dropdownOptions} label="Location" value={customerData.Location} onChange={(v) => handleSelectChange("Location", v)} />

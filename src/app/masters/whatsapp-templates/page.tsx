@@ -226,7 +226,7 @@ export default function WhatsappPage() {
                               setDeleteDialogData({
                                 id: t._id || String(i),
                                 name: t.name,
-                                status: t.status,
+                                status: t.status??"Active",
                               });
                             }}
                           >

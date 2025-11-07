@@ -222,7 +222,7 @@ export default function MailPage() {
                               setDeleteDialogData({
                                 id: m._id || String(i),
                                 name: m.name,
-                                status: m.status,
+                                status: m.status??"Active",
                               });
                             }}
                           >

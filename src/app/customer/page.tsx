@@ -227,6 +227,7 @@ export default function Customer() {
           name: item?.name ?? "",
         }))
       );
+      setIsAssignOpen(false);
 
       return;
     }
@@ -246,6 +247,7 @@ export default function Customer() {
           name: item?.name ?? "",
         }))
       );
+      setIsMailAllOpen(false);
 
       return;
     }
@@ -265,6 +267,7 @@ export default function Customer() {
           name: item?.name ?? "",
         }))
       );
+      setIsWhatsappAllOpen(false)
 
       return;
     }
