@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   {/* Main Area */}
                   <SidebarInset className="flex flex-col flex-1 min-h-screen overflow-hidden">
                     {/* Navbar */}
-                    <header className="flex items-center gap-2 shrink-0 bg-gray-900 text-white px-4 py-2 shadow-sm z-10">
+                    <header className="flex items-center gap-2 shrink-0 bg-gray-900 text-white px-4 shadow-sm z-10">
                       <div className="flex items-center gap-2 max-md:hidden">
                         <SidebarTrigger className="-ml-1 cursor-pointer" />
                         <Separator
