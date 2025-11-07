@@ -7,7 +7,13 @@ export interface whatsappAllDataInterface {
 export interface whatsappGetDataInterface {
     _id: string;
     name:string;
-    status:string;
+    status?:string;
+}
+
+
+export interface whatsappAllCustomerInterface {
+    templateId: string,
+    customerIds: string[]
 }
 
 export interface whatsappDialogDataInterface {

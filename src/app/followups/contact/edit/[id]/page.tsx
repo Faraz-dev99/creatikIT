@@ -27,6 +27,7 @@ export default function ContactFollowupEdit() {
   });
 
   const [errors, setErrors] = useState<ErrorInterface>({});
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     const fetchFollowup = async () => {
@@ -92,7 +93,7 @@ export default function ContactFollowupEdit() {
     toast.error("Failed to update followup!");
   };
 
-  const statusOptions = ["Pending", "Completed", "In Progress"];
+  const statusOptions = ["Active","Inactive"];
 
   return (
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">

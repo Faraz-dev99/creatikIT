@@ -102,6 +102,7 @@ export const assignContact = async (data:contactAssignInterface) => {
     console.log("assign contact data ",data)
     const response = await fetch(API_ROUTES.CONTACT.ASSIGNCONTACT, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
       credentials: "include"
     });

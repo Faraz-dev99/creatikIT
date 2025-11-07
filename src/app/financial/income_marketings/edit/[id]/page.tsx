@@ -12,6 +12,8 @@ import {
   updateIncomeMarketing,
 } from "@/store/financial/incomemarketing/incomemarketing";
 import { IncomeMarketingAllDataInterface } from "@/store/financial/incomemarketing/incomemarketing.interface";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getPayments } from "@/store/masters/payments/payments";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -35,6 +37,7 @@ export default function IncomeMarketingEdit() {
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [loading, setLoading] = useState(true);
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   // Fetch by id
   useEffect(() => {
@@ -125,9 +128,19 @@ export default function IncomeMarketingEdit() {
     }
   };
 
+  const fetchFields = async () => {
+      await handleFieldOptions(
+        [
+          { key: "PaymentMethods", fetchFn: getPayments },
+        ],
+        setFieldOptions
+      );
+    }
+
   const users = ["Admin", "Seller", "Visitor"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];
   const statusOptions = ["Active", "Inactive"];
+  
 
   if (loading)
     return (

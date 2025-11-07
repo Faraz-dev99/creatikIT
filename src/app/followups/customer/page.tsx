@@ -29,6 +29,10 @@ import {
     FollowupDeleteDialogDataInterface,
     customerFollowupAllDataInterface,
 } from "@/store/customerFollowups.interface";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
 
 export default function CustomerFollowups() {
     const router = useRouter();
@@ -43,6 +47,7 @@ export default function CustomerFollowups() {
     const [followupdeleteDialogData, setFollowupDeleteDialogData] = useState<FollowupDeleteDialogDataInterface | null>(null);
     const [isfollowupDialogOpen, setIsFollowupDialogOpen] = useState(false);
     const [followupDialogData, setFollowupDialogData] = useState<customerFollowupAllDataInterface[] | null>([]);
+    const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
     const rowsPerTablePage = 10;
 
@@ -201,7 +206,19 @@ export default function CustomerFollowups() {
 
 
 
-
+const fetchFields = async () => {
+      await handleFieldOptions(
+        [
+          { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+          { key: "Campaign", fetchFn: getCampaign },
+          { key: "PropertyTypes", staticData:["Flat","Villa","Plot","Coomercial"] },
+          { key: "City", fetchFn: getCity },
+          { key: "Location", fetchFn: getLocation },
+          { key: "Users", staticData: ["Admin1", "Admin2"] }
+        ],
+        setFieldOptions
+      );
+    }
 
     const campaign = ['Buyer', 'Seller', 'Rent Out', 'Rent In', 'Hostel/PG', 'Agents', 'Services', 'Others', 'Guest House', 'Happy Stay'];
     const propertyTypes = ['Flat', 'Villa', 'Plot', 'Commercial'];

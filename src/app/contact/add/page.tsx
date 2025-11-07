@@ -9,6 +9,14 @@ import DateSelector from "@/app/component/DateSelector";
 import { useRouter } from "next/navigation";
 import { addContact } from "@/store/contact";
 import { contactAllDataInterface } from "@/store/contact.interface";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getContactType } from "@/store/masters/contacttype/contacttype";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
+import { getIndustries } from "@/store/masters/industries/industries";
+import { getFunctionalAreas } from "@/store/masters/functionalarea/functionalarea";
+import { getReferences } from "@/store/masters/references/references";
 
 interface ErrorInterface {
   [key: string]: string; // dynamic key type for any field
@@ -36,6 +44,7 @@ export default function ContactAdd() {
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -101,6 +110,22 @@ export default function ContactAdd() {
     }
     toast.error("Failed to add contact");
   };
+
+  const fetchFields = async () => {
+      await handleFieldOptions(
+        [
+          { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+          { key: "Campaign", fetchFn: getCampaign },
+          { key: "ContactType", fetchFn: getContactType },
+          { key: "City", fetchFn: getCity },
+          { key: "Location", fetchFn: getLocation },
+          { key: "ContactIndustry", fetchFn: getIndustries },
+          { key: "ContactFunctionalArea", fetchFn: getFunctionalAreas },
+          { key: "ReferenceId", fetchFn: getReferences },
+        ],
+        setFieldOptions
+      );
+    }
 
   // Dropdown data
   const campaign = ['Buyer', 'Seller', 'Rent Out', 'Rent In', 'Hostel/PG', 'Agents', 'Services', 'Others', 'Guest House', 'Happy Stay'];

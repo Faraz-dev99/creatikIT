@@ -25,6 +25,9 @@ import {
 } from "@/store/financial/expensemarketing/expensemarketing";
 
 import DeleteDialog from "@/app/component/popups/DeleteDialog";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getExpenses } from "@/store/masters/expenses/expenses";
+import { getPayments } from "@/store/masters/payments/payments";
 
 export default function FinanceExpense() {
   const router = useRouter();
@@ -43,6 +46,7 @@ export default function FinanceExpense() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     getExpenseList();
@@ -111,6 +115,18 @@ export default function FinanceExpense() {
   const currentRows = expenseData.slice(startIndex, startIndex + rowsPerPage);
 
   // Dummy dropdown options (replace with dynamic adv API if available)
+
+  const fetchFields = async () => {
+        await handleFieldOptions(
+          [
+            { key: "Expenses", fetchFn: getExpenses },
+            { key: "PropertyTypes", staticData:["Flat","Villa","Plot","Coomercial"] },
+            { key: "PaymentMethods", fetchFn: getPayments },
+            { key: "Users", staticData: ["Admin1", "Admin2"] }
+          ],
+          setFieldOptions
+        );
+      }
   const users = ["Admin", "Staff1", "Staff2"];
   const expenses = ["Purchase", "Salary", "Utility"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];

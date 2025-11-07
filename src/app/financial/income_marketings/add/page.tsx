@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import DateSelector from "@/app/component/DateSelector";
 import { IncomeMarketingAllDataInterface } from "@/store/financial/incomemarketing/incomemarketing.interface";
 import { addIncomeMarketing } from "@/store/financial/incomemarketing/incomemarketing";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getPayments } from "@/store/masters/payments/payments";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -27,6 +29,7 @@ export default function IncomeMarketingAdd() {
   });
 
   const [errors, setErrors] = useState<ErrorInterface>({});
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
   const router = useRouter();
 
   // Input change handler
@@ -67,13 +70,13 @@ export default function IncomeMarketingAdd() {
     }
 
     try {
-      
+
       /* console.log("Submitting Income Marketing Data:", incomeData); */ // Debug log
       const result = await addIncomeMarketing(incomeData);
 
       if (result) {
         toast.success("Income Marketing added successfully!");
-       // router.push("/financial/income_marketings");
+        // router.push("/financial/income_marketings");
       }
     } catch (error) {
       toast.error("Failed to add Income Marketing");
@@ -82,6 +85,16 @@ export default function IncomeMarketingAdd() {
   };
 
   // Dropdown data
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "PaymentMethods", fetchFn: getPayments },
+      ],
+      setFieldOptions
+    );
+  }
+
+
   const users = ["Admin", "Seller", "Visitor"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];
   const statusOptions = ["Active", "Inactive"];
@@ -217,11 +230,10 @@ const InputField: React.FC<{
     />
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
-      ${
-        value || error
+      ${value || error
           ? "-top-2 text-xs text-blue-500"
           : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-500"
-      }`}
+        }`}
     >
       {label}
     </p>

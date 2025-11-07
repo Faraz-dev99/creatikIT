@@ -105,7 +105,7 @@ export default function WhatsappEdit() {
         <div className="flex justify-end mb-4">
           <Link
             href="/masters/whatsapp-templates"
-            className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-all"
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-all"
           >
             <ArrowLeft size={18} /> Back
           </Link>
@@ -115,7 +115,7 @@ export default function WhatsappEdit() {
           <form onSubmit={(e) => e.preventDefault()} className="w-full">
             <div className="mb-8 text-left border-b pb-4 border-gray-200">
               <h1 className="text-3xl font-extrabold text-gray-800 leading-tight tracking-tight">
-                Edit <span className="text-green-600">WhatsApp Template</span>
+                Edit <span className="text-blue-600">WhatsApp Template</span>
               </h1>
             </div>
 
@@ -148,7 +148,7 @@ export default function WhatsappEdit() {
               <div className="flex justify-end mt-4">
                 <button
                   onClick={handleSubmit}
-                  className="bg-gradient-to-r from-green-600 to-green-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
+                  className="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-2 w-32 rounded-md font-semibold hover:scale-105 transition-all"
                 >
                   Update
                 </button>
@@ -177,14 +177,14 @@ const InputField: React.FC<{
       onChange={onChange}
       placeholder=" "
       className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none 
-        ${error ? "border-red-500" : "border-gray-400 focus:border-green-500"}`}
+        ${error ? "border-red-500" : "border-gray-400 focus:border-blue-500"}`}
     />
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
       ${
         value || error
-          ? "-top-2 text-xs text-green-600"
-          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-green-600"
+          ? "-top-2 text-xs text-blue-600"
+          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600"
       }`}
     >
       {label}
@@ -209,14 +209,14 @@ const TextAreaField: React.FC<{
       placeholder=" "
       rows={5}
       className={`peer w-full border rounded-sm bg-transparent py-3 px-4 outline-none resize-none
-        ${error ? "border-red-500" : "border-gray-400 focus:border-green-500"}`}
+        ${error ? "border-red-500" : "border-gray-400 focus:border-blue-500"}`}
     />
     <p
       className={`absolute left-2 bg-white px-1 text-gray-500 text-sm transition-all duration-300
       ${
         value || error
-          ? "-top-2 text-xs text-green-600"
-          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-green-600"
+          ? "-top-2 text-xs text-blue-600"
+          : "peer-placeholder-shown:top-3 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:-top-2 peer-focus:text-xs peer-focus:text-blue-600"
       }`}
     >
       {label}

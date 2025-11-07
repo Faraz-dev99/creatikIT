@@ -12,6 +12,8 @@ import {
   updateExpenseMarketing,
 } from "@/store/financial/expensemarketing/expensemarketing";
 import { ExpenseMarketingAllDataInterface } from "@/store/financial/expensemarketing/expensemarketing.interface";
+import { getPayments } from "@/store/masters/payments/payments";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -34,6 +36,7 @@ export default function ExpenseMarketingEdit() {
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const [loading, setLoading] = useState(true);
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   // Fetch by id
   useEffect(() => {
@@ -116,6 +119,15 @@ export default function ExpenseMarketingEdit() {
       console.error("Update Expense Marketing Error:", error);
     }
   };
+
+  const fetchFields = async () => {
+      await handleFieldOptions(
+        [
+          { key: "PaymentMethods", fetchFn: getPayments },
+        ],
+        setFieldOptions
+      );
+    }
 
   const users = ["Admin", "Seller", "Visitor"];
   const paymentMethods = ["Cash", "UPI", "Bank Transfer"];

@@ -1,5 +1,5 @@
 import { API_ROUTES } from "@/constants/ApiRoute";
-import { mailAllDataInterface } from "./mail.interface";
+import { mailAllCustomerInterface, mailAllDataInterface } from "./mail.interface";
 
 export const getMail = async () => {
   try {
@@ -102,6 +102,29 @@ export const deleteMail = async (id: string) => {
     return await response.json();
   } catch (error) {
     console.log("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
+export const emailAllCustomer = async (data: mailAllCustomerInterface) => {
+  try {
+
+    console.log("emailall customer data ", data)
+    const response = await fetch(API_ROUTES.MASTERS.MAIL.MAILALL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
     return null;
   }
 };

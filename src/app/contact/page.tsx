@@ -29,8 +29,13 @@ import {
 
 import DeleteDialog from "../component/popups/DeleteDialog";
 import { getAllAdmins } from "@/store/auth";
+import { handleFieldOptions } from "../utils/handleFieldOptions";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getContactType } from "@/store/masters/contacttype/contacttype";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
 
-interface DeleteAllDialogDataInterface {}
+interface DeleteAllDialogDataInterface { }
 
 export default function Contacts() {
   const router = useRouter();
@@ -66,10 +71,12 @@ export default function Contacts() {
 
   const [contactData, setContactData] = useState<contactGetDataInterface[]>([]);
   const [contactAdv, setContactAdv] = useState<ContactAdvInterface[]>([]);
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   /* ✅ FETCH CONTACTS */
   useEffect(() => {
     getContacts();
+    fetchFields();
   }, []);
 
   const getContacts = async () => {
@@ -242,6 +249,21 @@ export default function Contacts() {
     if (data) setContactData(data);
   };
 
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "StatusAssign", staticData: ["Assigned", "Unassigned"] },
+        { key: "Campaign", fetchFn: getCampaign },
+        { key: "ContactType", fetchFn: getContactType },
+        { key: "City", fetchFn: getCity },
+        { key: "Location", fetchFn: getLocation },
+        { key: "User", staticData: ["Admin", "Agent1", "Agent2"] },
+        { key: "Verified", staticData: ["yes", "no"] },
+      ],
+      setFieldOptions
+    );
+  }
+
   const clearFilter = async () => {
     setFilters({
       StatusAssign: [],
@@ -344,6 +366,65 @@ export default function Contacts() {
 
           {/* TABLE SECTION */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
+            <div className="m-5 relative">
+              <div className="flex justify-between items-center py-1 px-2 border border-gray-800 rounded-md">
+                <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
+                <button
+                  type="button"
+                  onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}
+                  className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                >
+                  {toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                </button>
+              </div>
+
+              <div className={`overflow-hidden ${toggleSearchDropdown ? "max-h-[2000px]" : "max-h-0"} transition-all duration-500 ease-in-out px-5`}>
+
+                <div className="flex flex-col gap-5 my-5">
+                  <div className="grid grid-cols-3 gap-5 max-md:grid-cols-1 max-lg:grid-cols-2">
+
+                    <SingleSelect options={Array.isArray(fieldOptions.StatusAssign) ? fieldOptions.StatusAssign : []} value={filters.StatusAssign[0]} label="Status Assign" onChange={(v) => handleSelectChange("StatusAssign", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions.Campaign) ? fieldOptions.Campaign : []} value={filters.Campaign[0]} label="Campaign" onChange={(v) => handleSelectChange("Campaign", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions.ContactType) ? fieldOptions.ContactType : []} value={filters.ContactType[0]} label="Contact Type" onChange={(v) => handleSelectChange("ContactType", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions.City) ? fieldOptions.City : []} value={filters.City[0]} label="City" onChange={(v) => handleSelectChange("City", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions.Location) ? fieldOptions.Location : []} value={filters.Location[0]} label="Location" onChange={(v) => handleSelectChange("Location", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions.User) ? fieldOptions.User : []} value={filters.User[0]} label="User" onChange={(v) => handleSelectChange("User", v)} />
+
+                    <SingleSelect options={Array.isArray(["10", "25", "50", "100"]) ? ["10", "25", "50", "100"] : []} value={filters.Limit[0]} label="Limit" onChange={(v) => handleSelectChange("Limit", v)} />
+
+                  </div>
+
+                </div>
+
+                {/* ✅ Keyword Search */}
+                <form className="flex flex-wrap max-md:flex-col justify-between items-center mb-5">
+                  <div className="min-w-[80%]">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
+                    <input
+                      type="text"
+                      placeholder="type text here.."
+                      className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full"
+                      value={filters.Keyword}
+                      onChange={(e) => handleSelectChange("Keyword", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex justify-center items-center">
+                    <button type="submit" className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
+                      Explore
+                    </button>
+                    <button type="reset" onClick={clearFilter} className="text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">
+                      Clear Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
             <div className="border border-gray-300 rounded-md m-2 overflow-auto">
               <div className="flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
                 <button

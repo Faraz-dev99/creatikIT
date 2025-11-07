@@ -8,6 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import SingleSelect from "@/app/component/SingleSelect";
 import { companyprojectAllDataInterface } from "@/store/companyproject/companyproject.interface";
 import { getCompanyProjectsById, updateCompanyProjects } from "@/store/companyproject/companyproject";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 
 interface ErrorInterface {
@@ -40,6 +41,7 @@ export default function CompanyProjectEdit() {
   const [sitePlanPreview, setSitePlanPreview] = useState<string>("");
   const [deletedImages, setDeletedImages] = useState<string[]>([]);
   const [errors, setErrors] = useState<ErrorInterface>({});
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -163,6 +165,16 @@ export default function CompanyProjectEdit() {
       console.error(error);
     }
   };
+
+  const fetchFields = async () => {
+        await handleFieldOptions(
+          [
+            { key: "ProjectType", staticData: ["type1", "type2"] },
+            { key: "ProjectStatus", staticData:["Active","Inactive"] },
+          ],
+          setFieldOptions
+        );
+      }
 
   const dropdownOptions = ["Residential", "Commercial", "Industrial"];
 

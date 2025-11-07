@@ -22,6 +22,10 @@ import PopupMenu from "../component/popups/PopupMenu";
 import { getAllAdmins } from "@/store/auth";
 import { usersGetDataInterface } from "@/store/auth.interface";
 import { getSubtype } from "@/store/masters/subtype/subtype";
+import { mailAllCustomerInterface, mailGetDataInterface } from "@/store/masters/mail/mail.interface";
+import { whatsappAllCustomerInterface, whatsappGetDataInterface } from "@/store/masters/whatsapp/whatsapp.interface";
+import { emailAllCustomer, getMail } from "@/store/masters/mail/mail";
+import { getWhatsapp, whatsappAllCustomer } from "@/store/masters/whatsapp/whatsapp";
 
 
 interface DeleteAllDialogDataInterface { }
@@ -32,13 +36,20 @@ export default function Customer() {
   /*NEW STATE FOR SELECTED CUSTOMERS */
   const [selectedCustomers, setSelectedCustomers] = useState<string[]>([]);
   const [selectedUser, setSelectUser] = useState<string>();
+  const [selectedWhatsapptemplate, setSelectedWhatsapptemplate] = useState<string>();
+  const [selectedMailtemplate, setSelectedMailtemplate] = useState<string>();
   const [users, setUsers] = useState<usersGetDataInterface[]>([])
+
+  const [mailTemplates, setMailtemplates] = useState<mailGetDataInterface[]>([])
+  const [whatsappTemplates, setWhatsappTemplates] = useState<whatsappGetDataInterface[]>([])
 
 
   /*REST OF YOUR STATES (UNCHANGED) */
   const [toggleSearchDropdown, setToggleSearchDropdown] = useState(false);
   const [currentTablePage, setCurrentTablePage] = useState(1);
   const [isAssignOpen, setIsAssignOpen] = useState(false);
+  const [isMailAllOpen, setIsMailAllOpen] = useState(false);
+  const [isWhatsappAllOpen, setIsWhatsappAllOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
   const [isFavouriteDialogOpen, setIsFavouriteDialogOpen] = useState(false);
@@ -221,6 +232,44 @@ export default function Customer() {
     }
   };
 
+  const fetchEmailTemplates = async () => {
+    const response = await getMail();
+
+    if (response) {
+      console.log("response ", response);
+
+      const mailtemplates = response?.filter((e: any) => e.status === "Active") ?? []; //ensure only user roles are fetched
+      console.log(" mail data ", response)
+      setMailtemplates(
+        mailtemplates.map((item: any): mailGetDataInterface => ({
+          _id: item?._id ?? "",
+          name: item?.name ?? "",
+        }))
+      );
+
+      return;
+    }
+  };
+
+  const fetchWhatsappTemplates = async () => {
+    const response = await getWhatsapp();
+
+    if (response) {
+      console.log("response ", response);
+
+      const whatsapptemplates = response?.filter((e: any) => e.status === "Active") ?? []; //ensure only active status are fetched
+      console.log(" mail data ", response)
+      setWhatsappTemplates(
+        whatsapptemplates.map((item: any): whatsappGetDataInterface => ({
+          _id: item?._id ?? "",
+          name: item?.name ?? "",
+        }))
+      );
+
+      return;
+    }
+  };
+
   const handleDeleteAll = async () => {
     if (customerData.length === 0) return;
 
@@ -273,6 +322,14 @@ export default function Customer() {
     setSelectUser(id); // ✅ only one user at a time
   };
 
+  const handleSelectMailtemplate = (id: string) => {
+    setSelectedMailtemplate(id); // ✅ only one user at a time
+  };
+
+  const handleSelectWhatsapptemplate = (id: string) => {
+    setSelectedWhatsapptemplate(id); // ✅ only one user at a time
+  };
+
 
   const handleAssignto = async () => {
     if (!selectedUser) {
@@ -293,6 +350,48 @@ export default function Customer() {
       return response
     }
     toast.error("failed to assign customers")
+  };
+
+  const handleMailAll = async () => {
+    if (!selectedMailtemplate) {
+      toast.error("Please select a template");
+      return;
+    }
+
+    const payload: mailAllCustomerInterface = {
+      customerIds: selectedCustomers,
+      templateId: selectedMailtemplate,
+    };
+
+    console.log(payload)
+
+    const response = await emailAllCustomer(payload);
+    if (response) {
+      toast.success("Email customers succesfully")
+      return response
+    }
+    toast.error("failed to email customers")
+  };
+
+  const handleWhatsappAll = async () => {
+    if (!selectedWhatsapptemplate) {
+      toast.error("Please select a template");
+      return;
+    }
+
+    const payload: whatsappAllCustomerInterface = {
+      customerIds: selectedCustomers,
+      templateId: selectedWhatsapptemplate,
+    };
+
+    console.log(payload)
+
+    const response = await whatsappAllCustomer(payload);
+    if (response) {
+      toast.success("Whatsapp customers succesfully")
+      return response
+    }
+    toast.error("failed to whatsapp customers")
   };
 
 
@@ -335,7 +434,7 @@ export default function Customer() {
           }}
           onDelete={handleFavourite}
         />
-
+        {/* Assign to customer popup */}
         {isAssignOpen && (selectedCustomers.length > 0) && (
           <PopupMenu onClose={() => setIsAssignOpen(false)}>
             <div className="flex flex-col gap-8 py-6 px-2 m-2 bg-white  w-full max-w-[400px] rounded-md">
@@ -375,6 +474,89 @@ export default function Customer() {
             </div>
           </PopupMenu>
         )}
+        {/* mail all popup */}
+        {isMailAllOpen && (selectedCustomers.length > 0) && (
+          <PopupMenu onClose={() => setIsMailAllOpen(false)}>
+            <div className="flex flex-col gap-8 py-6 px-2 m-2 bg-white  w-full max-w-[400px] rounded-md">
+              <h2 className="text-2xl text-gray-800 px-6 font-extrabold">Mail to All <span className=" text-blue-600">Customers</span></h2>
+              <div className=" max-h-[40vh] flex flex-col gap-2 overflow-y-auto">
+                {mailTemplates.map((template, index) => {
+                  return <div key={template._id + index}>
+                    <label className=" flex justify-between gap-2 cursor-pointer px-6 py-2 hover:bg-gray-200">
+
+
+                      <div>{template.name}</div>
+                      <input
+                        type="checkbox"
+                        checked={selectedMailtemplate === template._id}
+                        onChange={() => handleSelectMailtemplate(template._id)}
+                      />
+
+                    </label>
+
+                  </div>
+                })}
+              </div>
+              <div className="flex justify-between px-6 items-center">
+                <button
+                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
+                  onClick={handleMailAll}
+                >
+                  Mail All
+                </button>
+                <button
+                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
+                  onClick={() => setIsMailAllOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </PopupMenu>
+        )}
+
+        {/* whatsapp all popup */}
+        {isWhatsappAllOpen && (selectedCustomers.length > 0) && (
+          <PopupMenu onClose={() => setIsWhatsappAllOpen(false)}>
+            <div className="flex flex-col gap-8 py-6 px-2 m-2 bg-white  w-full max-w-[400px] rounded-md">
+              <h2 className="text-2xl text-gray-800 px-6 font-extrabold">Whatsapp to All <span className=" text-blue-600">Customers</span></h2>
+              <div className=" max-h-[40vh] flex flex-col gap-2 overflow-y-auto">
+                {whatsappTemplates.map((template, index) => {
+                  return <div key={template._id + index}>
+                    <label className=" flex justify-between gap-2 cursor-pointer px-6 py-2 hover:bg-gray-200">
+
+
+                      <div>{template.name}</div>
+                      <input
+                        type="checkbox"
+                        checked={selectedWhatsapptemplate === template._id}
+                        onChange={() => handleSelectWhatsapptemplate(template._id)}
+                      />
+
+                    </label>
+
+                  </div>
+                })}
+              </div>
+              <div className="flex justify-between px-6 items-center">
+                <button
+                  className="text-[#C62828] bg-[#FDECEA] hover:bg-[#F9D0C4] cursor-pointer rounded-md px-4 py-2"
+                  onClick={handleWhatsappAll}
+                >
+                  Whatsapp All
+                </button>
+                <button
+                  className="cursor-pointer text-blue-800 hover:bg-gray-200 rounded-md px-4 py-2"
+                  onClick={() => setIsWhatsappAllOpen(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </PopupMenu>
+        )}
+
+
 
         {/* ---------- TABLE START ---------- */}
         <div className="p-4 max-md:p-3 w-full">
@@ -395,24 +577,94 @@ export default function Customer() {
 
           {/* TABLE */}
           <section className="flex flex-col mt-6 p-2 bg-white rounded-md">
+            <div className="m-5 relative">
+              <div className="flex justify-between items-center py-1 px-2 border border-gray-800 rounded-md">
+                <h3 className="flex items-center gap-1"><CiSearch />Advance Search</h3>
+                <button
+                  type="button"
+                  onClick={() => setToggleSearchDropdown(!toggleSearchDropdown)}
+                  className="p-2 hover:bg-gray-200 rounded-md cursor-pointer"
+                >
+                  {toggleSearchDropdown ? <IoIosArrowUp /> : <IoIosArrowDown />}
+                </button>
+              </div>
+
+              <div className={`overflow-hidden ${toggleSearchDropdown ? "max-h-[2000px]" : "max-h-0"} transition-all duration-500 ease-in-out px-5`}>
+                <div className="flex flex-col gap-5 my-5">
+                  <div className="grid grid-cols-3 gap-5 max-md:grid-cols-1 max-lg:grid-cols-2">
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.Campaign) ? fieldOptions.Campaign : []} value={filters.Campaign[0]} label="Campaign" onChange={(v) => handleSelectChange("Campaign", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerType) ? fieldOptions.CustomerType : []} value={filters.CustomerType[0]} label="Customer Type" onChange={(v) => handleSelectChange("CustomerType", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.CustomerSubtype) ? fieldOptions.CustomerSubtype : []} value={filters.CustomerSubtype[0]} label="Customer Subtype" onChange={(v) => handleSelectChange("CustomerSubtype", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.City) ? fieldOptions.City : []} value={filters.City[0]} label="City" onChange={(v) => handleSelectChange("City", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.Location) ? fieldOptions.Location : []} value={filters.Location[0]} label="Location" onChange={(v) => handleSelectChange("Location", v)} />
+
+                    <SingleSelect options={Array.isArray(fieldOptions?.User) ? fieldOptions.User : []} value={filters.User[0]} label="User" onChange={(v) => handleSelectChange("User", v)} />
+
+                    <SingleSelect options={Array.isArray(["10", "25", "50", "100"]) ? ["10", "25", "50", "100"] : []} value={filters.Limit[0]} label="Limit" onChange={(v) => handleSelectChange("Limit", v)} />
+
+                  </div>
+
+                </div>
+
+                {/* ✅ Keyword Search */}
+                <form className="flex flex-wrap max-md:flex-col justify-between items-center mb-5">
+                  <div className="min-w-[80%]">
+                    <label className="block mb-2 text-sm font-medium text-gray-900">AI Genie</label>
+                    <input
+                      type="text"
+                      placeholder="type text here.."
+                      className="border border-gray-300 rounded-md px-3 py-2 outline-none w-full"
+                      value={filters.Keyword}
+                      onChange={(e) => handleSelectChange("Keyword", e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex justify-center items-center">
+                    <button type="submit" className="border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all duration-300 cursor-pointer px-3 py-2 mt-6 rounded-md">
+                      Explore
+                    </button>
+                    <button type="reset" onClick={clearFilter} className="text-red-500 text-sm px-5 py-2 mt-6 rounded-md ml-3">
+                      Clear Search
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
             <div className="border border-gray-300 rounded-md m-2 overflow-auto">
               <div className="flex gap-5 items-center px-3 py-4 min-w-max text-gray-700">
                 <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
-                  if(customerData.length>0){
-                     setIsDeleteAllDialogOpen(true);
-                  setDeleteAllDialogData({});
-                  } 
+                  if (customerData.length > 0) {
+                    setIsDeleteAllDialogOpen(true);
+                    setDeleteAllDialogData({});
+                  }
                 }}>Delete All</button>
                 <label htmlFor="selectall" className="hover:text-gray-950 cursor-pointer">Select All</label>
                 <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
                   if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
                   else {
-                    setIsAssignOpen(true);
+                    setIsWhatsappAllOpen(true);
                     fetchUsers()
                   }
                 }}>Assign To</button>
-                <button type="button" className="hover:text-gray-950 cursor-pointer">SMS All</button>
-                <button type="button" className="hover:text-gray-950 cursor-pointer">Email All</button>
+                <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
+                  if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
+                  else {
+                    setIsMailAllOpen(true);
+                    fetchEmailTemplates()
+                  }
+                }}>EMAIL All</button>
+                <button type="button" className="hover:text-gray-950 cursor-pointer" onClick={() => {
+                  if (selectedCustomers.length <= 0) toast.error("please select atleast 1 customer")
+                  else {
+                    setIsWhatsappAllOpen(true);
+                    fetchWhatsappTemplates()
+                  }
+                }}>SMS All</button>
                 <button type="button" className="hover:text-gray-950 cursor-pointer">Mass Update</button>
               </div>
 

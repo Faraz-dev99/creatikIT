@@ -17,6 +17,9 @@ import toast from "react-hot-toast";
 import { IncomeMarketingGetDataInterface, IncomeMarketingDialogDataInterface } from "@/store/financial/incomemarketing/incomemarketing.interface";
 import { deleteIncomeMarketing, getFilteredIncomeMarketing, getIncomeMarketing } from "@/store/financial/incomemarketing/incomemarketing";
 import DeleteDialog from "@/app/component/popups/DeleteDialog";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getIncome } from "@/store/masters/income/income";
+import { getPayments } from "@/store/masters/payments/payments";
 
 
 
@@ -37,6 +40,7 @@ export default function FinanceIncome() {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   useEffect(() => {
     getIncomeList();
@@ -100,6 +104,19 @@ export default function FinanceIncome() {
   const totalPages = Math.ceil(incomeData.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
   const currentRows = incomeData.slice(startIndex, startIndex + rowsPerPage);
+
+
+  const fetchFields = async () => {
+    await handleFieldOptions(
+      [
+        { key: "Incomes", fetchFn: getIncome },
+        { key: "PropertyTypes", staticData: ["Flat", "Villa", "Plot", "Coomercial"] },
+        { key: "PaymentMethods", fetchFn: getPayments },
+        { key: "Users", staticData: ["Admin1", "Admin2"] }
+      ],
+      setFieldOptions
+    );
+  }
 
   // Dummy dropdown options
   const users = ["Admin", "Staff1", "Staff2"];

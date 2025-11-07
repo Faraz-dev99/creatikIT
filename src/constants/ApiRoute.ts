@@ -232,6 +232,7 @@ export const API_ROUTES = {
       ADD: `${BASE_URL}/v1/templates`,
       UPDATE: (id: string) => `${BASE_URL}/v1/templates/${id}`,
       DELETE: (id: string) => `${BASE_URL}/v1/templates/${id}`,
+      MAILALL:`${BASE_URL}/v1/messages/email`
     },
     WHATSAPP: {
       GET_ALL: `${BASE_URL}/v1/templates?type=whatsapp`,
@@ -240,6 +241,7 @@ export const API_ROUTES = {
       ADD: `${BASE_URL}/v1/templates`,
       UPDATE: (id: string) => `${BASE_URL}/v1/templates/${id}`,
       DELETE: (id: string) => `${BASE_URL}/v1/templates/${id}`,
+      WHATSAPPALL:`${BASE_URL}/v1/messages/whatsapp`
     },
   },
   FINANCIAL: {

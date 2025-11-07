@@ -9,6 +9,8 @@ import { useRouter } from "next/navigation";
 import DateSelector from "@/app/component/DateSelector";
 import { ExpenseMarketingAllDataInterface } from "@/store/financial/expensemarketing/expensemarketing.interface";
 import { addExpenseMarketing } from "@/store/financial/expensemarketing/expensemarketing";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
+import { getPayments } from "@/store/masters/payments/payments";
 
 interface ErrorInterface {
   [key: string]: string;
@@ -28,6 +30,7 @@ export default function ExpenseMarketingAdd() {
 
   const [errors, setErrors] = useState<ErrorInterface>({});
   const router = useRouter();
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   // Input change handler
   const handleInputChange = useCallback(
@@ -80,6 +83,15 @@ export default function ExpenseMarketingAdd() {
       console.error("Expense Marketing Add Error:", error);
     }
   };
+
+  const fetchFields = async () => {
+      await handleFieldOptions(
+        [
+          { key: "PaymentMethods", fetchFn: getPayments },
+        ],
+        setFieldOptions
+      );
+    }
 
   // Dropdown data
   const users = ["Admin", "Seller", "Visitor"];
@@ -148,7 +160,7 @@ export default function ExpenseMarketingAdd() {
 
                 {/* Payment Method */}
                 <SingleSelect
-                  options={paymentMethods}
+                  options={Array.isArray(fieldOptions?.PaymentMethods) ? fieldOptions.PaymentMethods : []}
                   label="Payment Method"
                   value={expenseData.PaymentMethode}
                   onChange={(v) => handleSelectChange("PaymentMethode", v)}

@@ -25,6 +25,7 @@ export default function ContactFollowupAdd() {
   const { id } = useParams();
   const router = useRouter();
   const [errors, setErrors] = useState<ErrorInterface>({});
+  const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -80,7 +81,8 @@ export default function ContactFollowupAdd() {
     toast.error("Failed to add Followup!");
   };
 
-  const statusOptions = ["Pending", "Completed", "In Progress"];
+  
+  const statusOptions = ["Active", "Inactive"];
 
   return (
     <div className="bg-slate-200 min-h-screen p-6 flex justify-center">

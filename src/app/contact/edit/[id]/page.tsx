@@ -9,6 +9,14 @@ import toast, { Toaster } from "react-hot-toast";
 import DateSelector from "@/app/component/DateSelector";
 import { getContact, getContactById, updateContact } from "@/store/contact";
 import { contactAllDataInterface } from "@/store/contact.interface";
+import { getCampaign } from "@/store/masters/campaign/campaign";
+import { getContactType } from "@/store/masters/contacttype/contacttype";
+import { getCity } from "@/store/masters/city/city";
+import { getLocation } from "@/store/masters/location/location";
+import { getIndustries } from "@/store/masters/industries/industries";
+import { getFunctionalAreas } from "@/store/masters/functionalarea/functionalarea";
+import { getReferences } from "@/store/masters/references/references";
+import { handleFieldOptions } from "@/app/utils/handleFieldOptions";
 
 
 interface ErrorInterface {
@@ -18,6 +26,7 @@ interface ErrorInterface {
 export default function ContactEdit() {
     const { id } = useParams(); 
     const router = useRouter();
+    const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
     const [contactData, setContactData] = useState<contactAllDataInterface>({
         Campaign: "",
@@ -107,6 +116,22 @@ export default function ContactEdit() {
 
 
     };
+
+    const fetchFields = async () => {
+          await handleFieldOptions(
+            [
+              { key: "Status", staticData: ["Active", "Inactive"] },
+              { key: "Campaign", fetchFn: getCampaign },
+              { key: "ContactType", fetchFn: getContactType },
+              { key: "City", fetchFn: getCity },
+              { key: "Location", fetchFn: getLocation },
+              { key: "ContactIndustry", fetchFn: getIndustries },
+              { key: "ContactFunctionalArea", fetchFn: getFunctionalAreas },
+              { key: "ReferenceId", fetchFn: getReferences},
+            ],
+            setFieldOptions
+          );
+        }
 
     const campaign = ['Buyer', 'Seller', 'Rent Out', 'Rent In', 'Hostel/PG', 'Agents', 'Services', 'Others', 'Guest House', 'Happy Stay'];
     const city = ['Jaipur', 'Ajmer'];

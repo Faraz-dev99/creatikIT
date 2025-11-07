@@ -1,5 +1,5 @@
 import { API_ROUTES } from "@/constants/ApiRoute";
-import { whatsappAllDataInterface } from "./whatsapp.interface";
+import { whatsappAllCustomerInterface, whatsappAllDataInterface } from "./whatsapp.interface";
 
 export const getWhatsapp = async () => {
   try {
@@ -62,6 +62,7 @@ export const addWhatsapp = async (data: whatsappAllDataInterface) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
+      credentials: "include"
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     response = await response.json();
@@ -78,6 +79,7 @@ export const updateWhatsapp = async (id: string, data: whatsappAllDataInterface)
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include"
     });
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
     response = await response.json();
@@ -103,3 +105,28 @@ export const deleteWhatsapp = async (id: string) => {
     return null;
   }
 };
+
+export const whatsappAllCustomer = async (data: whatsappAllCustomerInterface) => {
+  try {
+
+    console.log("whatsappall customer data ", data)
+    const response = await fetch(API_ROUTES.MASTERS.WHATSAPP.WHATSAPPALL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+      credentials: "include"
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("SERVER ERROR: ", error);
+    return null;
+  }
+};
+
+

@@ -39,6 +39,7 @@ export default function ContactFollowups() {
     const [followupdeleteDialogData, setFollowupDeleteDialogData] = useState<FollowupDeleteDialogDataInterface | null>(null);
     const [isfollowupDialogOpen, setIsFollowupDialogOpen] = useState(false);
     const [followupDialogData, setFollowupDialogData] = useState<contactFollowupAllDataInterface[] | null>([]);
+    const [fieldOptions, setFieldOptions] = useState<Record<string, any[]>>({});
 
     const rowsPerTablePage = 10;
 
